@@ -8,148 +8,67 @@ class Category {
   final Color color;
   final bool isDefault;
   final CategoryType type;
-  final IconData icon; // Add icon field
-  late final Color backgroundColor; // Background color derived from color
+  final IconData icon;
 
-  // Constructor for Category
   Category({
     required this.name,
     required this.color,
     this.isDefault = true,
     required this.type,
     required this.icon,
-  }) {
-    backgroundColor = color.withOpacity(0.2); // Light version of the color
-  }
+  });
 
-  // Convert a Category instance to a Map (for JSON serialization)
   Map<String, dynamic> toJson() {
     return {
       'name': name,
-      'color': color.value, // Convert Color to int
+      'color': color.value,
       'isDefault': isDefault,
-      'type': type.toString().split('.').last, // Save type as a string
-      'icon': icon.codePoint, // Save icon as codePoint
+      'type': type.toString().split('.').last,
+      'icon': _iconToString(icon),
     };
   }
 
-  // Create a Category instance from a Map (for JSON deserialization)
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
       name: json['name'],
-      color: Color(json['color']), // Convert int back to Color
-      isDefault: json['isDefault'] ?? false, // Default to false if not present
+      color: Color(json['color']),
+      isDefault: json['isDefault'] ?? false,
       type: CategoryType.values.firstWhere((e) =>
-          e.toString().split('.').last == json['type']), // Deserialize type
-      icon: IconData(json['icon'],
-          fontFamily: 'MaterialIcons'), // Deserialize icon
+          e.toString().split('.').last == json['type']),
+      icon: _stringToIcon(json['icon']),
     );
   }
+
+  static const Map<String, IconData> _iconMap = {
+    'restaurant': Icons.restaurant,
+    'train': Icons.train,
+    'tv': Icons.tv,
+    'spa': Icons.spa,
+    'devices_other': Icons.devices_other,
+    'celebration': Icons.celebration,
+    'chair': Icons.chair,
+    'cast_for_education': Icons.cast_for_education,
+    'sports': Icons.sports,
+    'fitness_center': Icons.fitness_center,
+    'link': Icons.link,
+    'videocam': Icons.videocam,
+    'apartment': Icons.apartment,
+    'currency_bitcoin': Icons.currency_bitcoin,
+    'people': Icons.people,
+    'show_chart': Icons.show_chart,
+    'shopping_bag': Icons.shopping_bag,
+    'cloud': Icons.cloud,
+    'work_outline': Icons.work_outline,
+    'chat_bubble': Icons.chat_bubble,
+  };
+
+  static IconData _stringToIcon(String? key) {
+    return _iconMap[key] ?? Icons.help; // Default to a fallback icon
+  }
+
+  static String _iconToString(IconData icon) {
+    return _iconMap.entries
+        .firstWhere((entry) => entry.value == icon, orElse: () => MapEntry('help', Icons.help))
+        .key;
+  }
 }
-
-// // Updated list of categories with icons and background colors
-// List<Category> categories = [
-//   // Expense Categories
-//   Category(
-//       name: 'Dining Out',
-//       color: Colors.deepOrange,
-//       type: CategoryType.expense,
-//       icon: Icons.restaurant),
-//   Category(
-//       name: 'Public Transport',
-//       color: Colors.blueAccent,
-//       type: CategoryType.expense,
-//       icon: Icons.train),
-//   Category(
-//       name: 'Streaming Services',
-//       color: Colors.purpleAccent,
-//       type: CategoryType.expense,
-//       icon: Icons.tv),
-//   Category(
-//       name: 'Wellness & Spa',
-//       color: Colors.lightGreen,
-//       type: CategoryType.expense,
-//       icon: Icons.spa),
-//   Category(
-//       name: 'Tech Gadgets',
-//       color: Colors.cyan,
-//       type: CategoryType.expense,
-//       icon: Icons.devices_other),
-//   Category(
-//       name: 'Party Expenses',
-//       color: Colors.pinkAccent,
-//       type: CategoryType.expense,
-//       icon: Icons.celebration),
-//   Category(
-//       name: 'Home Decor',
-//       color: Colors.brown,
-//       type: CategoryType.expense,
-//       icon: Icons.chair),
-//   Category(
-//       name: 'Learning Platforms',
-//       color: Colors.indigo,
-//       type: CategoryType.expense,
-//       icon: Icons.cast_for_education),
-//   Category(
-//       name: 'Adventure Sports',
-//       color: Colors.teal,
-//       type: CategoryType.expense,
-//       icon: Icons.sports),
-//   Category(
-//       name: 'Fitness Subscriptions',
-//       color: Colors.lime,
-//       type: CategoryType.expense,
-//       icon: Icons.fitness_center),
-
-//   // Income Categories
-//   Category(
-//       name: 'Affiliate Earnings',
-//       color: Colors.lightBlue,
-//       type: CategoryType.income,
-//       icon: Icons.link),
-//   Category(
-//       name: 'Content Creation',
-//       color: Colors.orangeAccent,
-//       type: CategoryType.income,
-//       icon: Icons.videocam),
-//   Category(
-//       name: 'Rental Properties',
-//       color: Colors.greenAccent,
-//       type: CategoryType.income,
-//       icon: Icons.apartment),
-//   Category(
-//       name: 'Crypto Investments',
-//       color: Colors.amber,
-//       type: CategoryType.income,
-//       icon: Icons.currency_bitcoin),
-//   Category(
-//       name: 'Crowdfunding',
-//       color: Colors.pinkAccent,
-//       type: CategoryType.income,
-//       icon: Icons.people),
-//   Category(
-//       name: 'Stock Dividends',
-//       color: Colors.deepPurpleAccent,
-//       type: CategoryType.income,
-//       icon: Icons.show_chart),
-//   Category(
-//       name: 'E-Commerce Sales',
-//       color: Colors.brown,
-//       type: CategoryType.income,
-//       icon: Icons.shopping_bag),
-//   Category(
-//       name: 'Digital Products',
-//       color: Colors.teal,
-//       type: CategoryType.income,
-//       icon: Icons.cloud),
-//   Category(
-//       name: 'Freelance Projects',
-//       color: Colors.green,
-//       type: CategoryType.income,
-//       icon: Icons.work_outline),
-//   Category(
-//       name: 'Consulting',
-//       color: Colors.blueGrey,
-//       type: CategoryType.income,
-//       icon: Icons.chat_bubble),
-// ];

@@ -1,3 +1,4 @@
+import 'package:expense_tracker/components/fade_effect.dart';
 import 'package:expense_tracker/utils/appColors.dart';
 import 'package:expense_tracker/utils/helpers/shared_preference.dart';
 import 'package:expense_tracker/view/dashboard/bottom_nav/bottom_navigator.dart';
@@ -52,10 +53,12 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              "assets/images/wallet.png",
-              height: 250,
-              width: double.infinity,
+            FadeTransitionEffect(
+              child: Image.asset(
+                "assets/images/wallet.png",
+                height: 250,
+                width: double.infinity,
+              ),
             ),
           ],
         ),

@@ -115,8 +115,6 @@ class _AllTransactionState extends State<AllTransaction>
                                       transaction: filteredTransactions[index]);
                                 }));
                               },
-                              color: getCategoryLightColor(
-                                  transactions[index].category),
                               transaction: filteredTransactions[index],
                               iconData: filteredTransactions[index].category,
                             ),

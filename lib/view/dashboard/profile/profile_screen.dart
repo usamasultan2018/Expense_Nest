@@ -46,96 +46,103 @@ class ProfileScreen extends StatelessWidget {
         ],
       ),
       body: SafeArea(
-        child: StreamBuilder<UserModel?>(
-            stream: UserRepository().streamUserData(currentUser.uid),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const LoadingWidget();
-              }
+        child: SingleChildScrollView(
+          child: StreamBuilder<UserModel?>(
+              stream: UserRepository().streamUserData(currentUser.uid),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const LoadingWidget();
+                }
 
-              if (snapshot.hasError) {
-                return Center(child: Text("Error: ${snapshot.error}"));
-              }
+                if (snapshot.hasError) {
+                  return Center(child: Text("Error: ${snapshot.error}"));
+                }
 
-              if (!snapshot.hasData) {
-                return const Center(child: Text("No user data available."));
-              }
+                if (!snapshot.hasData) {
+                  return const Center(child: Text("No user data available."));
+                }
 
-              final UserModel userModel = snapshot.data!;
+                final UserModel userModel = snapshot.data!;
 
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: FadeTransitionEffect(
-                  child: Column(
-                    children: [
-                      Center(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                width: 2,
-                                color: AppColors.primary,
-                              )),
-                          child: CircleAvatar(
-                            radius: 60,
-                            backgroundImage: userModel.profilePicture.isNotEmpty
-                                ? NetworkImage(userModel.profilePicture)
-                                : const AssetImage('assets/images/boy.png')
-                                    as ImageProvider<Object>,
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: FadeTransitionEffect(
+                    child: Column(
+                      children: [
+                        Center(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  width: 2,
+                                  color: AppColors.primary,
+                                )),
+                            child: CircleAvatar(
+                              radius: 60,
+                              backgroundImage: userModel
+                                      .profilePicture.isNotEmpty
+                                  ? NetworkImage(userModel.profilePicture)
+                                  : const AssetImage('assets/images/boy.png')
+                                      as ImageProvider<Object>,
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        userModel.username,
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      Text(userModel.email),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      CustomTile(
-                        onTap: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (ctx) {
-                            return MyAccountScreen();
-                          }));
-                        },
-                        title: AppLocalizations.of(context)!.my_account,
-                        iconData: Icons.person,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      CustomTile(
-                        onTap: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (ctx) {
-                            return AppearanceScreen();
-                          }));
-                        },
-                        title: AppLocalizations.of(context)!.appearance,
-                        iconData: FontAwesomeIcons.paintRoller,
-                        bckColor: AppColors.yellow,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      CustomTile(
-                        title: AppLocalizations.of(context)!.rate_app,
-                        iconData: Icons.star,
-                        bckColor: AppColors.green,
-                      ),
-                    ],
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          userModel.username,
+                          style:
+                              Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                        Text(userModel.email),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        CustomTile(
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (ctx) {
+                              return MyAccountScreen();
+                            }));
+                          },
+                          title: AppLocalizations.of(context)!.my_account,
+                          iconData: Icons.person,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        CustomTile(
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (ctx) {
+                              return AppearanceScreen();
+                            }));
+                          },
+                          title: AppLocalizations.of(context)!.appearance,
+                          iconData: FontAwesomeIcons.paintRoller,
+                          bckColor: AppColors.yellow,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        CustomTile(
+                          title: AppLocalizations.of(context)!.rate_app,
+                          iconData: Icons.star,
+                          bckColor: AppColors.green,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            }),
+                );
+              }),
+        ),
       ),
     );
   }

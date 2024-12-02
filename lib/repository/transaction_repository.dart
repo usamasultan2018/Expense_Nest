@@ -1,30 +1,29 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expense_tracker/models/category.dart';
-import 'package:expense_tracker/models/transaction.dart';
+import 'dart:io';
 
-class TransactionRepository {
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:expense_tracker/models/transaction.dart';
+import 'package:expense_tracker/repository/base/i_trasaction_repository.dart';
+import 'package:expense_tracker/utils/helpers/constant.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+
+class TransactionRepository implements ITransactionRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
   final CollectionReference _transactionsCollection =
       FirebaseFirestore.instance.collection('transactions');
   final CollectionReference _accountsCollection =
       FirebaseFirestore.instance.collection('accounts');
-  final CollectionReference _categoriesCollection =
-      FirebaseFirestore.instance.collection('categories');
 
-  // Fetch transaction counts by type
+  @override
   Future<Map<String, int>> getTransactionCounts() async {
     try {
       final incomeCount = await _countTransactionsByType('income');
       final expenseCount = await _countTransactionsByType('expense');
-
-      return {
-        'income': incomeCount,
-        'expense': expenseCount,
-      };
+      return {'income': incomeCount, 'expense': expenseCount};
     } catch (e) {
       print("Error fetching transaction counts: $e");
-      return {'income': 0, 'expense': 0};
+      rethrow;
     }
   }
 
@@ -34,12 +33,11 @@ class TransactionRepository {
     return snapshot.docs.length;
   }
 
-  // Add a new transaction and update the related account
+  @override
   Future<void> addTransaction(TransactionModel transaction) async {
     try {
       DocumentReference ref =
           await _transactionsCollection.add(transaction.toJson());
-
       await ref.update({"id": ref.id});
       await _updateAccountBalanceOnAdd(
           transaction.userId, transaction.amount, transaction.type);
@@ -49,7 +47,7 @@ class TransactionRepository {
     }
   }
 
-  // Delete a transaction and update the account accordingly
+  @override
   Future<void> deleteTransaction(TransactionModel transaction) async {
     try {
       await _transactionsCollection.doc(transaction.id).delete();
@@ -61,11 +59,10 @@ class TransactionRepository {
     }
   }
 
-  // Update an existing transaction and adjust the account balance
+  @override
   Future<void> updateTransaction(TransactionModel newTransaction) async {
     try {
       final transactionRef = _transactionsCollection.doc(newTransaction.id);
-
       final oldTransactionSnapshot = await transactionRef.get();
       if (!oldTransactionSnapshot.exists)
         throw Exception("Transaction not found");
@@ -81,35 +78,27 @@ class TransactionRepository {
     }
   }
 
-  // Fetch all transactions for a specific user
+  @override
   Stream<List<TransactionModel>> getTransactions(String userId) {
-    try {
-      return _transactionsCollection
-          .where('userId', isEqualTo: userId)
-          .snapshots()
-          .map((snapshot) => snapshot.docs
-              .map((doc) =>
-                  TransactionModel.fromJson(doc.data() as Map<String, dynamic>))
-              .toList());
-    } catch (e) {
-      print('Error fetching transactions: $e');
-      rethrow;
-    }
+    return _transactionsCollection
+        .where('userId', isEqualTo: userId)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) =>
+                TransactionModel.fromJson(doc.data() as Map<String, dynamic>))
+            .toList());
   }
 
-  // Update account balance after a new transaction is added
   Future<void> _updateAccountBalanceOnAdd(
       String userId, double amount, TransactionType type) async {
     await _updateAccountBalance(userId, amount, type, isAddition: true);
   }
 
-  // Update account balance after a transaction is deleted
   Future<void> _updateAccountBalanceOnDelete(
       String userId, double amount, TransactionType type) async {
     await _updateAccountBalance(userId, amount, type, isAddition: false);
   }
 
-  // Adjust account balance after a transaction is updated
   Future<void> _adjustAccountBalanceOnUpdate(
       TransactionModel oldTransaction, TransactionModel newTransaction) async {
     final userId = newTransaction.userId;
@@ -121,7 +110,6 @@ class TransactionRepository {
         isAddition: true);
   }
 
-  // Helper method to update account balance based on transaction type and operation
   Future<void> _updateAccountBalance(
       String userId, double amount, TransactionType type,
       {required bool isAddition}) async {
@@ -153,28 +141,7 @@ class TransactionRepository {
     }
   }
 
-  // Fetch categories by type (income or expense)
-  Future<List<Category>> fetchCategories(String type) async {
-    try {
-      final query = _categoriesCollection.where("type", isEqualTo: type);
-      final snapshot = await query.get();
-
-      return snapshot.docs.map((doc) {
-        return Category.fromJson(doc.data() as Map<String, dynamic>);
-      }).toList();
-    } catch (e) {
-      print('Error fetching categories: $e');
-      rethrow;
-    }
-  }
-
-  // Fetch income categories
-  Future<List<Category>> fetchIncomeCategories() => fetchCategories("income");
-
-  // Fetch expense categories
-  Future<List<Category>> fetchExpenseCategories() => fetchCategories("expense");
-
-  // Fetch income transactions from Firestore
+  @override
   Stream<List<TransactionModel>> getIncomeTransactions(String userId) {
     return _transactionsCollection
         .where('type', isEqualTo: 'income') // Filter by 'income' type
@@ -188,7 +155,7 @@ class TransactionRepository {
     });
   }
 
-  // Fetch expense transactions from Firestore
+  @override
   Stream<List<TransactionModel>> getExpenseTransactions(String userId) {
     return _transactionsCollection
         .where('type', isEqualTo: 'expense') // Filter by 'expense' type
@@ -200,5 +167,46 @@ class TransactionRepository {
               TransactionModel.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
     });
+  }
+
+  @override
+  Future<void> addImagesToTransaction(
+      String transactionId, List<String> imageUrls) async {
+    try {
+      // Get a reference to the transaction document
+      DocumentReference transactionRef =
+          _transactionsCollection.doc(transactionId);
+
+      // Update the transaction with the list of image URLs
+      await transactionRef.update({
+        'imageUrls': FieldValue.arrayUnion(
+            imageUrls), // Adds the image URLs to the 'imageUrls' field
+      });
+    } catch (e) {
+      print('Error adding images to transaction: $e');
+      rethrow;
+    }
+  }
+
+  // Uploads images to Firebase Storage and returns a list of download URLs
+  Future<String> uploadImagesToFirebase(File image) async {
+    try {
+      // Generate a unique file name for each image
+      String fileName =
+          'transactions/${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+      // Upload the image to Firebase Storage
+      final storageReference = FirebaseStorage.instance.ref().child(fileName);
+      final uploadTask = storageReference.putFile(image);
+
+      // Wait for the upload to complete
+      await uploadTask.whenComplete(() => null);
+
+      // Get the download URL of the uploaded image
+      String imageUrl = await storageReference.getDownloadURL();
+      return imageUrl; // Return the download URL
+    } catch (e) {
+      throw Exception('Image upload failed: $e');
+    }
   }
 }

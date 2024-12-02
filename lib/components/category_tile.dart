@@ -2,10 +2,10 @@ import 'package:expense_tracker/utils/helpers/geticons.dart';
 import 'package:flutter/material.dart';
 
 class CategoryTile extends StatelessWidget {
-  final IconData iconData;
+  final String iconData;
   final VoidCallback onpressed;
   final String title;
-  final Color bckColor;
+  final String bckColor;
   const CategoryTile(
       {super.key,
       required this.iconData,
@@ -28,17 +28,12 @@ class CategoryTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: bckColor.withOpacity(0.7),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                iconData,
-                color: getCategoryDarkColor(title),
-                size: 20,
-              ),
-            ),
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: getColorFromHex(bckColor).withOpacity(0.2),
+                ),
+                child: getIconFromName(iconData, bckColor)),
             SizedBox(
               width: 10,
             ),

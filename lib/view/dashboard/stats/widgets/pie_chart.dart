@@ -21,7 +21,7 @@ class PieChartTransaction extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(12, 20, 12, 12),
             child: MyChartWithLegend(
-              transactionType: provider.selectedTransactionType,
+              transactionType: provider.selectedType,
             ),
           ),
         );

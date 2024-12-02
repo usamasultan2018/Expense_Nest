@@ -1,11 +1,12 @@
 import 'package:expense_tracker/components/fade_effect.dart';
 import 'package:expense_tracker/components/no_transaction.dart';
+import 'package:expense_tracker/utils/helpers/constant.dart';
 import 'package:expense_tracker/utils/helpers/geticons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/models/transaction.dart';
-import 'package:expense_tracker/repository/transaction_repo.dart';
+import 'package:expense_tracker/repository/transaction_repository.dart';
 
 class MyChartWithLegend extends StatelessWidget {
   final TransactionType transactionType;
@@ -83,7 +84,7 @@ class MyChartWithLegend extends StatelessWidget {
       return PieChartSectionData(
         value: entry.value,
         title: '$percentage%',
-        color: getCategoryLightColor(entry.key),
+        color: getColorsForTile(entry.key),
         radius: 60,
         titleStyle: const TextStyle(
           color: Colors.white,
@@ -110,7 +111,7 @@ class MyChartWithLegend extends StatelessWidget {
         child: Row(
           children: categoryTotals.entries.map((entry) {
             return _LegendItem(
-              color: getCategoryLightColor(entry.key),
+              color: getColorsForTile(entry.key),
               label: entry.key,
               amount: entry.value,
             );

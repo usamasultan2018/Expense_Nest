@@ -1,6 +1,7 @@
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:expense_tracker/models/transaction.dart';
 import 'package:expense_tracker/utils/appColors.dart';
+import 'package:expense_tracker/utils/helpers/constant.dart';
 import 'package:expense_tracker/view%20model/transaction_controller/transaction_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +19,7 @@ class StatsTransactionType extends StatelessWidget {
       builder: (context, provider, child) {
         // Using the provider's transaction type
         final selectedIndex =
-            provider.selectedTransactionType == TransactionType.income ? 1 : 2;
+            provider.selectedType == TransactionType.income ? 1 : 2;
 
         // Calculate screen width and set segment width dynamically
         final screenWidth = MediaQuery.of(context).size.width;
@@ -61,7 +62,7 @@ class StatsTransactionType extends StatelessWidget {
             // Notify the provider of the selected transaction type
             final transactionType =
                 value == 1 ? TransactionType.income : TransactionType.expense;
-            provider.setTransactionType(transactionType);
+            provider.setType(transactionType);
 
             // Optionally, notify the parent widget
             onTransactionTypeChanged(transactionType);

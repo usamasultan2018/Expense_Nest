@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracker/models/user.dart';
 import 'package:expense_tracker/models/account.dart';
+import 'package:expense_tracker/repository/base/i_auth_repository.dart';
 import 'package:expense_tracker/utils/helpers/shared_preference.dart';
 import 'package:expense_tracker/utils/helpers/snackbar_util.dart';
 import 'package:expense_tracker/view/introduction/introduction.dart';
@@ -8,12 +9,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-class AuthRepository {
+class AuthRepository implements IAuthRepository {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   // Sign up with Google
+  @override
   Future<User?> signUpWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
@@ -42,6 +44,7 @@ class AuthRepository {
   }
 
   // Sign up with email and password
+  @override
   Future<User?> signUp(String email, String password, String username) async {
     try {
       UserCredential userCredential =
@@ -63,6 +66,7 @@ class AuthRepository {
   }
 
   // Sign in with email and password
+  @override
   Future<User?> signIn(String email, String password) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
@@ -83,6 +87,7 @@ class AuthRepository {
   }
 
   // Sign out
+  @override
   Future<void> signOut() async {
     await _auth.signOut();
     await HTrackerSharedPreferences.removeKey('userId');
@@ -100,6 +105,7 @@ class AuthRepository {
     }
   }
 
+  @override
   Future<void> deleteAccount(BuildContext context) async {
     try {
       User? user = _auth.currentUser;
@@ -253,6 +259,7 @@ class AuthRepository {
   }
 
   // Retrieve current user
+  @override
   User? getCurrentUser() {
     return _auth.currentUser;
   }

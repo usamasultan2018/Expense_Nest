@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:expense_tracker/models/user.dart';
-import 'package:expense_tracker/repository/auth/auth_repo.dart';
+import 'package:expense_tracker/repository/auth_repository.dart';
 import 'package:expense_tracker/repository/user_repositpory.dart';
 import 'package:expense_tracker/utils/helpers/dialog.dart';
 import 'package:expense_tracker/utils/helpers/image_picker.dart';

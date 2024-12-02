@@ -1,6 +1,6 @@
 import 'package:expense_tracker/components/loading_widget.dart';
 import 'package:expense_tracker/models/user.dart';
-import 'package:expense_tracker/repository/transaction_repo.dart';
+import 'package:expense_tracker/repository/transaction_repository.dart';
 import 'package:expense_tracker/repository/user_repositpory.dart';
 import 'package:expense_tracker/utils/appColors.dart';
 

@@ -1,5 +1,6 @@
 import 'package:expense_tracker/models/transaction.dart';
 import 'package:expense_tracker/utils/appColors.dart';
+import 'package:expense_tracker/utils/helpers/constant.dart';
 import 'package:expense_tracker/utils/helpers/date.dart';
 import 'package:expense_tracker/utils/helpers/geticons.dart';
 import 'package:flutter/material.dart';
@@ -8,14 +9,12 @@ class TransactionTile extends StatelessWidget {
   final TransactionModel transaction;
   final Function()? onPressed;
   final String iconData;
-  final Color color;
 
   const TransactionTile({
     Key? key,
     required this.transaction,
     this.onPressed,
     required this.iconData,
-    required this.color,
   }) : super(key: key);
 
   @override
@@ -39,15 +38,10 @@ class TransactionTile extends StatelessWidget {
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: color.withOpacity(0.7),
+                      color: getColorsForTile(transaction.category)
+                          .withOpacity(0.2),
                     ),
-                    child: Center(
-                      child: Icon(
-                        getIconForCategory(transaction.category),
-                        color: getCategoryDarkColor(transaction.category),
-                        size: 20,
-                      ),
-                    ),
+                    child: Center(child: getIconsForTile(transaction.category)),
                   ),
                   const SizedBox(width: 12),
                   Column(

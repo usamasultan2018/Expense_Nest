@@ -18,9 +18,7 @@ class RoundSaveButton extends StatelessWidget {
           onPress: () async {
             try {
               await transactionController.createNewTransaction(context);
-              Navigator.pop(context); // Close the current screen
             } catch (e) {
-              // Handle error (show dialog, snackbar, etc.)
               print(e);
             }
           },

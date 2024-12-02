@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:expense_tracker/view%20model/transaction_controller/transaction_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -98,18 +100,24 @@ class AddPictureField extends StatelessWidget {
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: value.images.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3),
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 10.0,
+                    crossAxisSpacing: 10.0),
                 itemBuilder: (context, index) {
+                  dynamic image = value.images[index];
+
                   return Container(
                     alignment: Alignment.topRight,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         image: DecorationImage(
                             fit: BoxFit.cover,
-                            image: FileImage(value.images[index]))),
+                            image: image is File
+                                ? FileImage(image) // Local file image
+                                : NetworkImage(image) as ImageProvider)),
                     child: IconButton(
                         onPressed: () {
-                          value.images.removeAt(index);
+                          value.removeImageAtIndex(index);
                         },
                         icon: Icon(
                           Icons.close,

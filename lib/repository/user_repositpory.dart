@@ -3,15 +3,17 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracker/models/account.dart';
 import 'package:expense_tracker/models/user.dart';
+import 'package:expense_tracker/repository/base/i_user_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
 import 'package:firebase_storage/firebase_storage.dart';
 
-class UserRepository {
+class UserRepository implements IUserRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance; // Initialize FirebaseAuth
 
   // Get user data
+  @override
   Future<UserModel?> getUserData(String uid) async {
     try {
       DocumentSnapshot doc =
@@ -29,6 +31,7 @@ class UserRepository {
   }
 
   // Stream user data
+  @override
   Stream<UserModel?> streamUserData(String uid) {
     return _firestore.collection('users').doc(uid).snapshots().map((snapshot) {
       if (snapshot.exists) {
@@ -40,6 +43,7 @@ class UserRepository {
   }
 
   // Update user data
+  @override
   Future<void> updateUserData(UserModel userModel) async {
     try {
       await _firestore
@@ -54,6 +58,7 @@ class UserRepository {
   }
 
   // Delete user data
+  @override
   Future<void> deleteUserData(String uid) async {
     try {
       await _firestore.collection('users').doc(uid).delete();
@@ -65,6 +70,7 @@ class UserRepository {
   }
 
   // Upload profile picture to Firebase Storage
+  @override
   Future<String?> uploadProfilePicture(File imageFile, String userId) async {
     try {
       String filePath =
@@ -83,6 +89,7 @@ class UserRepository {
   }
 
   // Stream Account data for user
+  @override
   Stream<AccountModel?> streamAccount(String userId) {
     return _firestore.collection('accounts').doc(userId).snapshots().map((doc) {
       if (doc.exists) {
@@ -98,6 +105,7 @@ class UserRepository {
   }
 
   // Logout function
+  @override
   Future<void> logout() async {
     try {
       await _auth.signOut();

@@ -33,3 +33,34 @@ class NoTransaction extends StatelessWidget {
     );
   }
 }
+
+class NoGraph extends StatelessWidget {
+  const NoGraph({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              children: [
+                Icon(Icons.auto_graph),
+                Text(
+                  AppLocalizations.of(context)!.noTransactions,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}

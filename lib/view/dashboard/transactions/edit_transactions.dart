@@ -1,10 +1,12 @@
 import 'package:expense_tracker/components/custom_button.dart';
 import 'package:expense_tracker/components/fade_effect.dart';
 import 'package:expense_tracker/models/transaction.dart';
-import 'package:expense_tracker/repository/transaction_repo.dart';
+import 'package:expense_tracker/repository/transaction_repository.dart';
+import 'package:expense_tracker/utils/helpers/constant.dart';
 import 'package:expense_tracker/utils/helpers/dialog.dart';
 import 'package:expense_tracker/utils/helpers/snackbar_util.dart';
 import 'package:expense_tracker/view%20model/transaction_controller/transaction_controller.dart';
+import 'package:expense_tracker/view/dashboard/transactions/widget/add_picture_field.dart';
 import 'package:expense_tracker/view/dashboard/transactions/widget/amount_field.dart';
 import 'package:expense_tracker/view/dashboard/transactions/widget/category_widget.dart';
 import 'package:expense_tracker/view/dashboard/transactions/widget/date_field.dart';
@@ -96,6 +98,8 @@ class _EditTransactionState extends State<EditTransaction> {
                 const CategoryWidget(),
                 const SizedBox(height: 20),
                 const PaymentField(),
+                SizedBox(height: 20),
+                AddPictureField(),
                 const SizedBox(height: 40),
                 Consumer<TransactionController>(
                   builder: (context, transactionController, child) {
@@ -106,7 +110,6 @@ class _EditTransactionState extends State<EditTransaction> {
                         try {
                           await transactionController.modifyTransaction(
                               context, widget.transaction.id);
-                          Navigator.pop(context); // Close the current screen
                         } catch (e) {
                           // Handle error (show dialog, snackbar, etc.)
                           print(e);

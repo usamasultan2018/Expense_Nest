@@ -2,7 +2,8 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracker/firebase_options.dart';
 import 'package:expense_tracker/models/category.dart';
-import 'package:expense_tracker/repository/transaction_repo.dart';
+import 'package:expense_tracker/repository/category_repository.dart';
+import 'package:expense_tracker/repository/transaction_repository.dart';
 import 'package:expense_tracker/utils/app_theme.dart';
 import 'package:expense_tracker/utils/helpers/shared_preference.dart';
 import 'package:expense_tracker/view%20model/transaction_controller/transaction_controller.dart';
@@ -17,6 +18,8 @@ import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'package:expense_tracker/view%20model/category_controller/category_controller.dart'; // Import the CategoryController
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -27,16 +30,13 @@ void main() async {
 
   // Initialize SharedPreferences
   await HTrackerSharedPreferences.getInit(); // Initializes SharedPreferences
-
-  // You can now use prefs to save or retrieve data
-
-  // Upload categories to Firestore when the app starts
   // await addAllCategoriesToFirestore(categories);
-
   runApp(const MyApp());
 }
 
 final _transactionRepository = TransactionRepository();
+final _categoryRepository =
+    CategoryRepository(); // Instantiate the CategoryRepository
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -49,10 +49,18 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LoginController()),
         ChangeNotifierProvider(create: (_) => UserController()),
         ChangeNotifierProvider(
-            create: (_) => TransactionController(
-                transactionRepository: _transactionRepository)),
+          create: (_) => TransactionController(
+              transactionRepository: _transactionRepository,
+              categoryController: CategoryController(
+                  categoryRepository: _categoryRepository,
+                  transactionRepository: _transactionRepository)),
+        ),
         ChangeNotifierProvider(
-            create: (_) => SettingController()), // Add SettingController
+            create: (_) => SettingController()), // SettingController
+        ChangeNotifierProvider(
+            create: (_) => CategoryController(
+                categoryRepository: _categoryRepository,
+                transactionRepository: _transactionRepository)),
       ],
       child: Consumer<SettingController>(
         builder: (context, settingController, child) {
@@ -83,14 +91,14 @@ class MyApp extends StatelessWidget {
 }
 
 // Function to add all categories to Firestore
-Future<void> addAllCategoriesToFirestore(List<Category> categories) async {
+Future<void> addAllCategoriesToFirestore(List<CategoryModel> categories) async {
   CollectionReference categoriesCollection =
       FirebaseFirestore.instance.collection('categories');
 
   // Loop through the categories and add them to Firestore
   for (var category in categories) {
     try {
-      await categoriesCollection.add(category.toJson());
+      await categoriesCollection.add(category.toMap());
       print("Added category: ${category.name}");
     } catch (e) {
       print("Failed to add category ${category.name}: $e");

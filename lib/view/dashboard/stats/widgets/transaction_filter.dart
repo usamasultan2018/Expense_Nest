@@ -15,8 +15,7 @@ class TransactionFilter extends StatelessWidget {
     return Consumer<TransactionController>(
       builder: (context, provider, child) {
         return StreamBuilder<List<TransactionModel>>(
-          stream:
-              provider.getTransactionsByType(provider.selectedTransactionType),
+          stream: provider.getTransactionsByType(provider.selectedType),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -40,7 +39,6 @@ class TransactionFilter extends StatelessWidget {
                 return TransactionTile(
                   transaction: transaction,
                   iconData: transactions[index].category,
-                  color: getCategoryLightColor(transactions[index].category),
                 );
               },
             );

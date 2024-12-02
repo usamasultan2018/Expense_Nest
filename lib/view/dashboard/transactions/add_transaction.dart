@@ -1,5 +1,8 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:expense_tracker/components/fade_effect.dart';
+import 'package:expense_tracker/repository/category_repository.dart';
+import 'package:expense_tracker/utils/helpers/constant.dart';
+import 'package:expense_tracker/view%20model/category_controller/category_controller.dart';
 import 'package:expense_tracker/view/dashboard/transactions/widget/add_picture_field.dart';
 import 'package:expense_tracker/view/dashboard/transactions/widget/amount_field.dart';
 import 'package:expense_tracker/view/dashboard/transactions/widget/category_widget.dart';
@@ -12,7 +15,7 @@ import 'package:expense_tracker/view/dashboard/transactions/widget/date_field.da
 import 'package:expense_tracker/view/dashboard/transactions/widget/note_textfield.dart';
 import 'package:expense_tracker/view/dashboard/transactions/widget/save_button.dart';
 import 'package:expense_tracker/view/dashboard/transactions/widget/transaction_type.dart';
-import 'package:expense_tracker/repository/transaction_repo.dart';
+import 'package:expense_tracker/repository/transaction_repository.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddTransaction extends StatefulWidget {
@@ -23,17 +26,11 @@ class AddTransaction extends StatefulWidget {
 }
 
 class _AddTransactionState extends State<AddTransaction> {
-  List<String> _list = [
-    'Developer',
-    'Designer',
-    'Consultant',
-    'Student',
-  ];
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) =>
-          TransactionController(transactionRepository: TransactionRepository()),
+          TransactionController(transactionRepository: TransactionRepository(), categoryController: CategoryController(categoryRepository: CategoryRepository(), transactionRepository:TransactionRepository()),),
       child: Scaffold(
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.addTransaction),

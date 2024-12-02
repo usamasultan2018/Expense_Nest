@@ -1,4 +1,4 @@
-import 'package:expense_tracker/repository/auth/auth_repo.dart';
+import 'package:expense_tracker/repository/auth_repository.dart';
 import 'package:expense_tracker/utils/helpers/firebase_exception_handler.dart';
 import 'package:expense_tracker/utils/helpers/snackbar_util.dart';
 import 'package:expense_tracker/view/dashboard/bottom_nav/bottom_navigator.dart';

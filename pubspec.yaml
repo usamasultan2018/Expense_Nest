@@ -70,6 +70,7 @@ dependencies:
   google: ^0.0.1
   google_fonts: ^6.2.1
   animated_custom_dropdown: ^3.1.1
+  flex_color_picker: ^3.6.0
 
   
   

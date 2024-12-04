@@ -21,7 +21,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Java (Java 17, necessary for Android builds)
+      # Step 2: Set up Java (Java 11, necessary for Android builds)
       - name: Set up Java 17
         uses: actions/setup-java@v3
         with:
@@ -38,32 +38,11 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # Step 5: Set keystore environment variables
-      - name: Set keystore environment variables
-        run: |
-          echo "KEYSTORE_FILE=${{ secrets.KEYSTORE_FILE }}" >> $GITHUB_ENV
-          echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> $GITHUB_ENV
-          echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_ENV
-          echo "KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
-
-      # Step 6: Decode keystore file from base64
-      - name: Decode keystore file
-        run: |
-          echo "${{ secrets.KEYSTORE_FILE }}" | base64 --decode > /tmp/release.keystore
-          
-      # Step 7: Add key.properties to your repository (use secrets or generate the file)
-      - name: Create key.properties file
-        run: |
-          echo "storeFile=/tmp/release.keystore" > android/key.properties
-          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
-          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
-          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
-
-      # Step 8: Build Android APK
+      # Step 5: Build the APK for Android (split per ABI for optimized APKs)
       - name: Build Android APK
         run: flutter build apk --release --split-per-abi
 
-      # Step 9: Build the IPA for iOS (without code signing)
+      # Step 6: Build the IPA for iOS (without code signing)
       - name: Build iOS IPA
         run: |
           flutter build ios --no-codesign
@@ -72,7 +51,7 @@ jobs:
           mv Runner.app Payload/
           zip -r app.ipa Payload
 
-      # Step 10: Create GitHub Release and upload the build artifacts (APK & IPA)
+      # Step 7: Create a GitHub Release and upload the build artifacts (APK & IPA)
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
@@ -80,4 +59,4 @@ jobs:
             build/app/outputs/apk/release/*,
             build/ios/iphoneos/app.ipa
           tag: v1.0.${{ github.run_number }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.TOKEN }}

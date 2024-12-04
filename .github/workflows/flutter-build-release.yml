@@ -21,7 +21,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Java (Java 11, necessary for Android builds)
+      # Step 2: Set up Java 17 (necessary for Android builds)
       - name: Set up Java 17
         uses: actions/setup-java@v3
         with:
@@ -38,11 +38,19 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # Step 5: Build the APK for Android (split per ABI for optimized APKs)
+      # Step 5: Set up environment variables for keystore credentials
+      - name: Set keystore environment variables
+        run: |
+          echo "KEYSTORE_FILE=${{ secrets.KEYSTORE_FILE }}" >> $GITHUB_ENV
+          echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> $GITHUB_ENV
+          echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_ENV
+          echo "KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
+
+      # Step 6: Build the APK for Android (split per ABI for optimized APKs)
       - name: Build Android APK
         run: flutter build apk --release --split-per-abi
 
-      # Step 6: Build the IPA for iOS (without code signing)
+      # Step 7: Build the IPA for iOS (without code signing)
       - name: Build iOS IPA
         run: |
           flutter build ios --no-codesign
@@ -51,7 +59,7 @@ jobs:
           mv Runner.app Payload/
           zip -r app.ipa Payload
 
-      # Step 7: Create a GitHub Release and upload the build artifacts (APK & IPA)
+      # Step 8: Create a GitHub Release and upload the build artifacts (APK & IPA)
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:

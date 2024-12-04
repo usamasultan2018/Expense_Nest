@@ -38,12 +38,13 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # Step 5: Set up the keystore file from GitHub secrets
+      # Step 5: Set up the keystore file from GitHub secrets (base64 encoded)
       - name: Set up Keystore for Android
         run: |
+          mkdir -p ./android/app
           echo "$KEYSTORE_FILE" | base64 -d > ./android/app/key.jks
         env:
-          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}  # Use the secret containing base64 encoded keystore
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}  # Ensure the secret name matches
 
       # Step 6: Build the APK for Android (split per ABI for optimized APKs)
       - name: Build Android APK

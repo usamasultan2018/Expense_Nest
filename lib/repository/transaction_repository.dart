@@ -206,7 +206,7 @@ class TransactionRepository implements ITransactionRepository {
       String imageUrl = await storageReference.getDownloadURL();
       return imageUrl; // Return the download URL
     } catch (e) {
-      throw Exception('Image upload failed: $e');
+      throw Exception('Image upload faild: $e');
     }
   }
 }

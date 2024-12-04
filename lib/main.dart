@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracker/firebase_options.dart';
 import 'package:expense_tracker/models/category.dart';

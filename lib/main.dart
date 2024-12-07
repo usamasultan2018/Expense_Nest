@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
       child: Consumer<SettingController>(
         builder: (context, settingController, child) {
           return MaterialApp(
-            title: 'Expense Tracker',
+            title: 'ExpenseNest',
             debugShowCheckedModeBanner: false,
             locale: settingController.locale,
             localizationsDelegates: [

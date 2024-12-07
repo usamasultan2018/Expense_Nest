@@ -8,7 +8,7 @@ class TransactionModel {
   final String note;
   final TransactionType type; // Enum for transaction type
   final PayMethod payMethod; // Enum for payment method
-  final List<String>? pictures; // Optional list of image URLs
+  final String? picture; // Optional image URL
   final DateTime date; // Date of the transaction
   final DateTime time; // Time of the transaction
 
@@ -20,7 +20,7 @@ class TransactionModel {
     required this.note,
     required this.type,
     required this.payMethod,
-    this.pictures, // Optional field
+    this.picture, // Optional field
     required this.date,
     required this.time,
   });
@@ -35,7 +35,7 @@ class TransactionModel {
       'note': note,
       'type': type.toString().split('.').last,
       'payMethod': payMethod.toString().split('.').last,
-      'pictures': pictures ?? [], // Store an empty list if pictures are null
+      'picture': picture ?? '', // Store an empty string if picture is null
       'date': date.toIso8601String(),
       'time': time.toIso8601String(),
     };
@@ -53,48 +53,9 @@ class TransactionModel {
           .firstWhere((e) => e.toString() == 'TransactionType.${json['type']}'),
       payMethod: PayMethod.values
           .firstWhere((e) => e.toString() == 'PayMethod.${json['payMethod']}'),
-      pictures: json['pictures'] != null
-          ? List<String>.from(json['pictures'])
-          : null, // Handle null case for pictures
+      picture: json['picture'], // Single image URL
       date: DateTime.parse(json['date']),
       time: DateTime.parse(json['time']),
     );
   }
 }
-
-
-
-// extension PaymentMethodExtension on PayMethod {
-//   String get displayName {
-//     switch (this) {
-//       case PayMethod.creditCard:
-//         return 'Credit Card';
-//       case PayMethod.debitCard:
-//         return 'Debit Card';
-
-//       case PayMethod.onlineTransfer:
-//         return 'Online Transfer';
-//       case PayMethod.cash:
-//         return 'Cash';
-//       case PayMethod.wallet:
-//         return "Wallet";
-//     }
-//   }
-// }
-
-// PayMethod getPayMethodFromDisplayName(String displayName) {
-//   switch (displayName) {
-//     case 'Credit Card':
-//       return PayMethod.creditCard;
-//     case 'Debit Card':
-//       return PayMethod.debitCard;
-//     case 'Online Transfer':
-//       return PayMethod.onlineTransfer;
-//     case 'Wallet':
-//       return PayMethod.wallet;
-//     case 'Cash':
-//       return PayMethod.cash;
-//     default:
-//       return PayMethod.cash; // Default to PayMethod.cash if no match
-//   }
-// }

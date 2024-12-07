@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracker/models/transaction.dart';
 import 'package:expense_tracker/repository/base/i_trasaction_repository.dart';
-import 'package:expense_tracker/utils/helpers/constant.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+
+import 'package:expense_tracker/utils/helpers/constant.dart';
 
 class TransactionRepository implements ITransactionRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -64,8 +65,9 @@ class TransactionRepository implements ITransactionRepository {
     try {
       final transactionRef = _transactionsCollection.doc(newTransaction.id);
       final oldTransactionSnapshot = await transactionRef.get();
-      if (!oldTransactionSnapshot.exists)
+      if (!oldTransactionSnapshot.exists) {
         throw Exception("Transaction not found");
+      }
 
       TransactionModel oldTransaction = TransactionModel.fromJson(
           oldTransactionSnapshot.data() as Map<String, dynamic>);
@@ -142,6 +144,36 @@ class TransactionRepository implements ITransactionRepository {
   }
 
   @override
+  Future<void> addImageToTransaction(
+      String transactionId, String imageUrl) async {
+    try {
+      await _transactionsCollection
+          .doc(transactionId)
+          .update({'imageUrl': imageUrl});
+    } catch (e) {
+      print('Error adding image to transaction: $e');
+      rethrow;
+    }
+  }
+
+  Future<String> uploadImageToFirebase(File image) async {
+    try {
+      String fileName =
+          'transactions/${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+      final storageReference = FirebaseStorage.instance.ref().child(fileName);
+      final uploadTask = storageReference.putFile(image);
+
+      await uploadTask.whenComplete(() => null);
+
+      String imageUrl = await storageReference.getDownloadURL();
+      return imageUrl;
+    } catch (e) {
+      throw Exception('Image upload failed: $e');
+    }
+  }
+
+  @override
   Stream<List<TransactionModel>> getIncomeTransactions(String userId) {
     return _transactionsCollection
         .where('type', isEqualTo: 'income') // Filter by 'income' type
@@ -167,46 +199,5 @@ class TransactionRepository implements ITransactionRepository {
               TransactionModel.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
     });
-  }
-
-  @override
-  Future<void> addImagesToTransaction(
-      String transactionId, List<String> imageUrls) async {
-    try {
-      // Get a reference to the transaction document
-      DocumentReference transactionRef =
-          _transactionsCollection.doc(transactionId);
-
-      // Update the transaction with the list of image URLs
-      await transactionRef.update({
-        'imageUrls': FieldValue.arrayUnion(
-            imageUrls), // Adds the image URLs to the 'imageUrls' field
-      });
-    } catch (e) {
-      print('Error adding images to transaction: $e');
-      rethrow;
-    }
-  }
-
-  // Uploads images to Firebase Storage and returns a list of download URLs
-  Future<String> uploadImagesToFirebase(File image) async {
-    try {
-      // Generate a unique file name for each image
-      String fileName =
-          'transactions/${DateTime.now().millisecondsSinceEpoch}.jpg';
-
-      // Upload the image to Firebase Storage
-      final storageReference = FirebaseStorage.instance.ref().child(fileName);
-      final uploadTask = storageReference.putFile(image);
-
-      // Wait for the upload to complete
-      await uploadTask.whenComplete(() => null);
-
-      // Get the download URL of the uploaded image
-      String imageUrl = await storageReference.getDownloadURL();
-      return imageUrl; // Return the download URL
-    } catch (e) {
-      throw Exception('Image upload faild: $e');
-    }
   }
 }

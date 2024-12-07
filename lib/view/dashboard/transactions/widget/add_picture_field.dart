@@ -19,7 +19,9 @@ class AddPictureField extends StatelessWidget {
               children: [
                 Expanded(
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      value.pickImageCamera();
+                    },
                     child: Container(
                       alignment: Alignment.center,
                       padding:
@@ -57,7 +59,7 @@ class AddPictureField extends StatelessWidget {
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      value.pickSingleImage();
+                      value.pickImageGallery();
                     },
                     child: Container(
                       alignment: Alignment.center,
@@ -95,36 +97,35 @@ class AddPictureField extends StatelessWidget {
             SizedBox(
               height: 10,
             ),
-            GridView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: value.images.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 10.0,
-                    crossAxisSpacing: 10.0),
-                itemBuilder: (context, index) {
-                  dynamic image = value.images[index];
-
-                  return Container(
-                    alignment: Alignment.topRight,
+            (value.imageUrlTrasaction.isNotEmpty || value.images != null)
+                ? Container(
+                    height: 300,
+                    width: double.infinity,
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: image is File
-                                ? FileImage(image) // Local file image
-                                : NetworkImage(image) as ImageProvider)),
-                    child: IconButton(
+                      borderRadius: BorderRadius.circular(10),
+                      image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image: value.images != null
+                            ? FileImage(value
+                                .images!) // Use FileImage if images is not null
+                            : value.imageUrlTrasaction.isNotEmpty
+                                ? NetworkImage(value
+                                    .imageUrlTrasaction) // Network image if URL is not empty
+                                : AssetImage('assets/placeholder_image.png')
+                                    as ImageProvider, // Placeholder image if no image is found
+                      ),
+                    ),
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
                         onPressed: () {
-                          value.removeImageAtIndex(index);
+                          value.removeImage(); // Remove image on button press
                         },
-                        icon: Icon(
-                          Icons.close,
-                          color: Colors.red,
-                        )),
-                  );
-                }),
+                        icon: Icon(Icons.close, color: Colors.red),
+                      ),
+                    ),
+                  )
+                : SizedBox(),
           ],
         );
       },

@@ -23,6 +23,5 @@ abstract class ITransactionRepository {
   Stream<List<TransactionModel>> getExpenseTransactions(String userId);
 
   // Add a list of images to Firebase associated with a transaction
-  Future<void> addImagesToTransaction(
-      String transactionId, List<String> imageUrls);
+  Future<void> addImageToTransaction(String transactionId, String imageUrl);
 }

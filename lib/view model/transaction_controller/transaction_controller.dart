@@ -5,7 +5,6 @@ import 'package:expense_tracker/utils/helpers/image_picker.dart';
 import 'package:expense_tracker/utils/helpers/snackbar_util.dart';
 import 'package:expense_tracker/utils/helpers/trasaction_filter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/models/transaction.dart';
 import 'package:expense_tracker/repository/transaction_repository.dart';
@@ -22,7 +21,8 @@ class TransactionController extends ChangeNotifier {
 
   PayMethod? selectedPaymentMethod;
   String? _selectedCategory;
-  List<File> images = [];
+  File? images;
+  String imageUrlTrasaction = "";
   TransactionType _selectedType = TransactionType.income;
   bool _isLoading = false;
   String _searchQuery = '';
@@ -95,20 +95,27 @@ class TransactionController extends ChangeNotifier {
     }
   }
 
-  void pickSingleImage() async {
+  void pickImageGallery() async {
     File? image =
         await CustomImagePicker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      images.add(image);
+      images = image;
       notifyListeners();
     }
   }
 
-  void removeImageAtIndex(int index) {
-    if (index >= 0 && index < images.length) {
-      images.removeAt(index); // Removes the image at the specified index
-      notifyListeners(); // Notify listeners to update the UI
+  void pickImageCamera() async {
+    File? image = await CustomImagePicker.pickImage(source: ImageSource.camera);
+    if (image != null) {
+      images = image;
+      notifyListeners();
     }
+  }
+
+  void removeImage() {
+    images = null; // Clear the image
+    imageUrlTrasaction = "";
+    notifyListeners();
   }
 
   Future<void> createNewTransaction(BuildContext context) async {
@@ -125,12 +132,9 @@ class TransactionController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Step 1: Upload images to Firebase Storage
-      List<String> imageUrls = [];
-      for (var image in images) {
-        final imageUrl =
-            await transactionRepository.uploadImagesToFirebase(image);
-        imageUrls.add(imageUrl);
+      String imageUrl = '';
+      if (images != null) {
+        imageUrl = await transactionRepository.uploadImageToFirebase(images!);
       }
 
       // Step 2: Create the transaction object
@@ -144,7 +148,7 @@ class TransactionController extends ChangeNotifier {
         date: DateFormat('dd-MM-yyyy').parse(dateEditingController.text),
         time: DateTime.now(),
         payMethod: selectedPaymentMethod!,
-        pictures: imageUrls, // Include uploaded image URLs
+        picture: imageUrl,
       );
 
       // Step 3: Add the transaction to Firestore
@@ -154,6 +158,7 @@ class TransactionController extends ChangeNotifier {
       SnackbarUtil.showSuccessSnackbar(
           context, AppLocalizations.of(context)!.transactionAddedSuccessfully);
       Navigator.pop(context);
+      images = null;
     } catch (e) {
       // Handle errors during transaction creation or image upload
       SnackbarUtil.showErrorSnackbar(context, e.toString());
@@ -179,11 +184,9 @@ class TransactionController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      List<String> imageUrls = [];
-      for (var image in images) {
-        final imageUrl =
-            await transactionRepository.uploadImagesToFirebase(image);
-        imageUrls.add(imageUrl);
+      String imageUrl = '';
+      if (images != null) {
+        imageUrl = await transactionRepository.uploadImageToFirebase(images!);
       }
 
       final updatedTransaction = TransactionModel(
@@ -196,13 +199,14 @@ class TransactionController extends ChangeNotifier {
         date: DateFormat('dd-MM-yyyy').parse(dateEditingController.text),
         time: DateTime.now(),
         payMethod: selectedPaymentMethod!,
-        pictures: imageUrls, // Updated images for the transaction
+        picture: imageUrl, // Updated images for the transaction
       );
 
       await transactionRepository.updateTransaction(updatedTransaction);
       SnackbarUtil.showSuccessSnackbar(context,
           AppLocalizations.of(context)!.transactionUpdatedSuccessfully);
       Navigator.pop(context);
+      images = null;
     } catch (e) {
       SnackbarUtil.showErrorSnackbar(context, e.toString());
     } finally {
@@ -243,33 +247,13 @@ class TransactionController extends ChangeNotifier {
         DateFormat('dd-MM-yyyy').format(transaction.date);
     _selectedType = transaction.type;
     selectedPaymentMethod = transaction.payMethod;
-
-    // Clear the current images before adding new ones
-    images.clear();
-
-    // Check if pictures is not null or empty before iterating
-    if (transaction.pictures != null && transaction.pictures!.isNotEmpty) {
-      // Load the first image from the list of URLs stored in the transaction's pictures field
-      String imageUrl = transaction.pictures!.first;
-
-      // Convert image URL to a File (this can be done via downloading or using a file path)
-      File image = await downloadImage(imageUrl);
-      images.add(image);
+    if (transaction.picture!.isNotEmpty) {
+      // If the picture URL is provided, assign it.
+      imageUrlTrasaction = transaction.picture!;
+    } else {
+      imageUrlTrasaction = ''; // Reset if no image
     }
 
     notifyListeners();
-  }
-
-// Helper function to download an image from Firebase Storage
-  Future<File> downloadImage(String imageUrl) async {
-    try {
-      final imageRef = FirebaseStorage.instance.refFromURL(imageUrl);
-      final tempFile = File(
-          '${Directory.systemTemp.path}/${DateTime.now().millisecondsSinceEpoch}.jpg');
-      await imageRef.writeToFile(tempFile);
-      return tempFile;
-    } catch (e) {
-      throw Exception("Failed to download image: $e");
-    }
   }
 }

@@ -61,15 +61,14 @@ android {
         versionName flutterVersionName
     }
 
-signingConfigs {
-release {
-    keyAlias keystoreProperties['keyAlias']
-    keyPassword keystoreProperties['keyPassword']
-    storeFile file(keystoreProperties['storeFile'])
-    storePassword keystoreProperties['storePassword']
-  }
-}
-
+  signingConfigs {
+        release {
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+        }
+    }
 
     buildTypes {
         release {

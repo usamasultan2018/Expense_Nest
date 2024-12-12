@@ -32,16 +32,16 @@ jobs:
         run: flutter pub get
 
       # Step 4: Decode Keystore
-      - name: Decode Keystore
+      - name: Decode and Save Keystore
         run: |
-          echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > android/app/upload-keystore.jks
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
 
       # Step 5: Create key.properties
       - name: Create key.properties
         run: |
-          echo "storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" > android/key.properties
-          echo "keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/key.properties
-          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/key.properties
+          echo "storePassword=${{ secrets.STORE_PASSWORD }}" > android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
           echo "storeFile=android/app/upload-keystore.jks" >> android/key.properties
 
       # Step 6: Build APK for Android
@@ -56,19 +56,20 @@ jobs:
           mkdir Payload
           mv Runner.app Payload/
           zip -r app.ipa Payload
+        if: runner.os == 'macOS'  # Ensure iOS build is only executed on macOS
 
       # Step 8: Create GitHub Release and upload the build artifacts (APK & IPA)
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
           artifacts: |
-            build/app/outputs/flutter-apk/app-release.apk, # Correct APK file location
-            build/ios/iphoneos/app.ipa  # IPA file location
+            build/app/outputs/flutter-apk/app-release.apk
+            build/ios/iphoneos/app.ipa
           tag: v1.0.${{ github.run_number }}
           token: ${{ secrets.TOKEN }}
 
-      # Step 9: Cleanup keystore and key.properties
+      # Step 9: Cleanup sensitive files
       - name: Cleanup sensitive files
         run: |
-          rm android/app/upload-keystore.jks
-          rm android/key.properties
+          rm -f android/app/upload-keystore.jks
+          rm -f android/key.properties

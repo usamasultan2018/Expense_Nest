@@ -43,7 +43,7 @@ class _MyBarChartState extends State<MyBarChart> {
         }
 
         return Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(10),
           child: BarChart(
             _mainData(transactions),
           ),
@@ -109,14 +109,7 @@ class _MyBarChartState extends State<MyBarChart> {
       ),
       leftTitles: AxisTitles(
         sideTitles: SideTitles(
-          showTitles: false,
-          interval: 1,
-          getTitlesWidget: (value, meta) {
-            return Text(
-              value.toInt().toString(),
-              style: const TextStyle(fontSize: 10),
-            );
-          },
+          showTitles: true,
         ),
       ),
       topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -141,7 +134,7 @@ class _MyBarChartState extends State<MyBarChart> {
             BarChartRodData(
               toY: amount,
               gradient: AppColors.primaryGradient,
-              width: 30,
+              width: 23,
               borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(5), topRight: Radius.circular(5)),
             ),

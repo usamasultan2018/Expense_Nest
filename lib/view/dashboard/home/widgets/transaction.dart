@@ -5,7 +5,6 @@ import 'package:expense_tracker/components/transaction_tile.dart';
 import 'package:expense_tracker/models/transaction.dart';
 import 'package:expense_tracker/repository/transaction_repository.dart';
 import 'package:expense_tracker/utils/helpers/skeleton.dart';
-import 'package:expense_tracker/utils/helpers/geticons.dart';
 import 'package:expense_tracker/view/dashboard/transactions/edit_transactions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +21,8 @@ class Transactions extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return ListView.builder(
                 shrinkWrap: true,
-                itemBuilder: (context, index) => TransactionCardSkeleton(),
+                itemBuilder: (context, index) =>
+                    const TransactionCardSkeleton(),
                 itemCount: 4);
           } else if (snapshot.hasError) {
             return Center(
@@ -30,7 +30,7 @@ class Transactions extends StatelessWidget {
             );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             // Check for no data or empty list
-            return Center(child: NoTransaction());
+            return const Center(child: NoTransaction());
           } else {
             List<TransactionModel> transactions = snapshot.data!;
             int itemCount = min(transactions.length, 4); // Adjust itemCount

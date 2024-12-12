@@ -25,7 +25,7 @@ class UserData extends StatelessWidget {
       stream: UserRepository().streamUserData(currentUser.uid),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return WelcomeSkeleton();
+          return const WelcomeSkeleton();
         } else if (snapshot.hasError) {
           return const Center(
               child: Text("An error occurred. Please try again."));
@@ -37,10 +37,10 @@ class UserData extends StatelessWidget {
           return FadeTransitionEffect(
             child: Row(
               children: [
-                InkWell(
+                GestureDetector(
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                      return ProfileScreen();
+                      return const ProfileScreen();
                     }));
                   },
                   child: Container(

@@ -2,7 +2,7 @@ import 'package:expense_tracker/components/balance_card_tile.dart';
 import 'package:expense_tracker/components/fade_effect.dart';
 import 'package:expense_tracker/models/account.dart';
 import 'package:expense_tracker/repository/user_repositpory.dart';
-import 'package:expense_tracker/utils/helpers/Skeleton.dart';
+import 'package:expense_tracker/utils/helpers/skeleton.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';

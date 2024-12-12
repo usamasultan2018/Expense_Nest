@@ -1,7 +1,7 @@
 import 'package:expense_tracker/components/fade_effect.dart';
 import 'package:expense_tracker/repository/user_repositpory.dart';
 import 'package:expense_tracker/utils/appColors.dart';
-import 'package:expense_tracker/utils/helpers/Skeleton.dart';
+import 'package:expense_tracker/utils/helpers/skeleton.dart';
 import 'package:expense_tracker/view/dashboard/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/models/user.dart';

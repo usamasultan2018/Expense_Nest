@@ -58,10 +58,11 @@ class _AllTransactionState extends State<AllTransaction>
               stream: transactionController.transactionsStream,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return ListView.builder(
-                    itemCount: 10,
-                    itemBuilder: (context, index) => Skeleton(),
-                  );
+                  // return ListView.builder(
+                  //   itemCount: 10,
+                  //   itemBuilder: (context, index) => const TileSkeleton(),
+
+                  return Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text(snapshot.error.toString()));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {

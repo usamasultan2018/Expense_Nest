@@ -12,7 +12,7 @@ class TransactionCardSkeleton extends StatelessWidget {
         children: [
           Row(
             children: [
-              Skeleton(
+              TileSkeleton(
                 height: 40,
                 width: 40,
               ),
@@ -22,14 +22,14 @@ class TransactionCardSkeleton extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Skeleton(
+                  TileSkeleton(
                     height: 10,
                     width: 100,
                   ),
                   SizedBox(
                     height: 10,
                   ),
-                  Skeleton(
+                  TileSkeleton(
                     height: 10,
                     width: 60,
                   ),
@@ -40,14 +40,14 @@ class TransactionCardSkeleton extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Skeleton(
+              TileSkeleton(
                 height: 10,
                 width: 100,
               ),
               SizedBox(
                 height: 10,
               ),
-              Skeleton(
+              TileSkeleton(
                 height: 10,
                 width: 60,
               ),
@@ -72,14 +72,14 @@ class WelcomeSkeleton extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Skeleton(
+              TileSkeleton(
                 height: 10,
                 width: 60,
               ),
               SizedBox(
                 height: 5,
               ),
-              Skeleton(
+              TileSkeleton(
                 height: 10,
                 width: 100,
               ),
@@ -105,10 +105,11 @@ class BalanceCardTileSkeleton extends StatelessWidget {
       child: const Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Skeleton(
+          TileSkeleton(
               width: 100, height: 20), // Placeholder for "Total Balance" text
           SizedBox(height: 10),
-          Skeleton(width: 150, height: 40), // Placeholder for balance amount
+          TileSkeleton(
+              width: 150, height: 40), // Placeholder for balance amount
           SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -120,11 +121,11 @@ class BalanceCardTileSkeleton extends StatelessWidget {
                   SizedBox(width: 8),
                   Column(
                     children: [
-                      Skeleton(
+                      TileSkeleton(
                           width: 50,
                           height: 14), // Placeholder for "Income" label
                       SizedBox(height: 4),
-                      Skeleton(
+                      TileSkeleton(
                           width: 60,
                           height: 14), // Placeholder for income amount
                     ],
@@ -138,11 +139,11 @@ class BalanceCardTileSkeleton extends StatelessWidget {
                   SizedBox(width: 8),
                   Column(
                     children: [
-                      Skeleton(
+                      TileSkeleton(
                           width: 50,
                           height: 14), // Placeholder for "Expense" label
                       SizedBox(height: 4),
-                      Skeleton(
+                      TileSkeleton(
                           width: 60,
                           height: 14), // Placeholder for expense amount
                     ],
@@ -157,8 +158,8 @@ class BalanceCardTileSkeleton extends StatelessWidget {
   }
 }
 
-class Skeleton extends StatelessWidget {
-  const Skeleton({Key? key, this.height, this.width}) : super(key: key);
+class TileSkeleton extends StatelessWidget {
+  const TileSkeleton({Key? key, this.height, this.width}) : super(key: key);
 
   final double? height, width;
 

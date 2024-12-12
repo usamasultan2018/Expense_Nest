@@ -32,7 +32,7 @@ class BalanceCard extends StatelessWidget {
             child: Text(snapshot.error.toString()),
           );
         } else if (!snapshot.hasData) {
-          return Center(child: Text('No account data available.'));
+          return const Center(child: Text('No account data available.'));
         } else {
           AccountModel accountModel = snapshot.data!;
           return FadeTransitionEffect(

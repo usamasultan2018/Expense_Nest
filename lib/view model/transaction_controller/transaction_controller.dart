@@ -46,6 +46,7 @@ class TransactionController extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String get selectedTimePeriod => _selectedTimePeriod;
   String get searchQuery => _searchQuery;
+
   List<CategoryModel> get expenseCategories =>
       categoryController.expenseCategories;
   List<CategoryModel> get incomeCategories =>
@@ -78,6 +79,11 @@ class TransactionController extends ChangeNotifier {
   void setType(TransactionType type) {
     _selectedType = type;
     notifyListeners();
+  }
+
+  void updateSearchQuery(String query) {
+    _searchQuery = query;
+    notifyListeners(); // Notify listeners when the search query changes
   }
 
   Future<void> selectDate(BuildContext context) async {

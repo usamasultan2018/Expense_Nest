@@ -5,6 +5,7 @@ import 'package:expense_tracker/utils/appColors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class BottomNavigatorWidget extends StatefulWidget {
   const BottomNavigatorWidget({super.key});
@@ -25,10 +26,8 @@ class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      // Bottom Navigation Bar
       bottomNavigationBar: NavigationBar(
-        height: 70,
-        indicatorColor: AppColors.secondary.withOpacity(0.4),
+        indicatorColor: AppColors.secondary.withOpacity(0.2),
         selectedIndex: _currentIndex,
         onDestinationSelected: (index) {
           setState(() {
@@ -38,11 +37,23 @@ class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
         backgroundColor: theme.cardColor,
         destinations: [
           NavigationDestination(
-            icon: Icon(CupertinoIcons.home),
+            icon: _currentIndex == 0
+                ? Icon(FontAwesomeIcons.home,
+                    color: AppColors
+                        .secondary) // Enlarged and colored when selected
+                : Icon(
+                    FontAwesomeIcons.home,
+                  ), // Default size and color
             label: AppLocalizations.of(context)!.home,
           ),
           NavigationDestination(
-            icon: Icon(CupertinoIcons.graph_square_fill),
+            icon: _currentIndex == 1
+                ? Icon(FontAwesomeIcons.chartLine,
+                    color: AppColors
+                        .secondary) // Enlarged and colored when selected
+                : Icon(
+                    FontAwesomeIcons.chartLine,
+                  ), // Default size and color
             label: AppLocalizations.of(context)!.stats,
           ),
         ],

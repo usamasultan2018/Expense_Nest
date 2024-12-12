@@ -1,18 +1,12 @@
-import 'package:expense_tracker/components/fade_effect.dart';
-import 'package:expense_tracker/components/loading_widget.dart';
+import 'package:expense_tracker/models/transaction.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:expense_tracker/view/dashboard/transactions/edit_transactions.dart';
 import 'package:expense_tracker/components/no_transaction.dart';
 import 'package:expense_tracker/components/transaction_tile.dart';
-import 'package:expense_tracker/models/transaction.dart';
-import 'package:expense_tracker/utils/helpers/Skeleton.dart';
-import 'package:expense_tracker/utils/appColors.dart';
-import 'package:expense_tracker/utils/helpers/geticons.dart';
+import 'package:expense_tracker/utils/helpers/skeleton.dart';
 import 'package:expense_tracker/view%20model/transaction_controller/transaction_controller.dart';
-import 'package:expense_tracker/view/dashboard/transactions/edit_transactions.dart';
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:lottie/lottie.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AllTransaction extends StatefulWidget {
   const AllTransaction({super.key});
@@ -29,23 +23,18 @@ class _AllTransactionState extends State<AllTransaction>
   @override
   void initState() {
     super.initState();
-    // Initialize the AnimationController
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 500), // Duration of the animation
+      duration: const Duration(milliseconds: 500),
       vsync: this,
     );
-
-    // Create the fade animation
     _fadeAnimation =
         Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
-
-    // Start the animation when the widget is built
     _animationController.forward();
   }
 
   @override
   void dispose() {
-    _animationController.dispose(); // Dispose the controller when not needed
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -59,48 +48,39 @@ class _AllTransactionState extends State<AllTransaction>
       ),
       body: Column(
         children: [
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           _buildTimePeriodSelector(transactionController),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           _buildSearchField(transactionController),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Expanded(
             child: StreamBuilder<List<TransactionModel>>(
-              stream: transactionController
-                  .transactionsStream, // Method to fetch transactions
+              stream: transactionController.transactionsStream,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return ListView.builder(
                     itemCount: 10,
-                    itemBuilder: (context, index) =>
-                        FadeTransitionEffect(child: TransactionCardSkeleton()),
+                    itemBuilder: (context, index) => Skeleton(),
                   );
                 } else if (snapshot.hasError) {
                   return Center(child: Text(snapshot.error.toString()));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: FadeTransitionEffect(child: NoTransaction()),
-                  );
+                  return const NoTransaction();
                 } else {
                   List<TransactionModel> transactions = snapshot.data!;
                   List<TransactionModel> filteredTransactions =
                       transactionController.filterTransactions(transactions);
 
                   if (filteredTransactions.isEmpty) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: NoTransaction(),
-                    );
+                    return const NoTransaction();
                   }
-                  _animationController.forward(
-                      from: 0); // Restart animation on update
+                  _animationController.forward(from: 0);
                   return AnimatedSwitcher(
-                    duration: Duration(microseconds: 300),
+                    duration: const Duration(milliseconds: 300),
                     child: FadeTransition(
-                      opacity:
-                          _fadeAnimation, // Use FadeTransition to animate opacity
+                      opacity: _fadeAnimation,
                       child: ListView.builder(
+                        key: ValueKey(filteredTransactions.length),
                         itemCount: filteredTransactions.length,
                         itemBuilder: (context, index) {
                           return Padding(
@@ -152,19 +132,24 @@ class _AllTransactionState extends State<AllTransaction>
           itemBuilder: (context, index) {
             String timePeriod = timePeriods[index];
             return GestureDetector(
-              onTap: () =>
-                  transactionController.selectedTimePeriod = timePeriod,
+              onTap: () {
+                setState(() {
+                  transactionController.selectedTimePeriod = timePeriod;
+                });
+              },
               child: Container(
                 alignment: Alignment.center,
-                margin: EdgeInsets.only(right: 5),
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                margin: const EdgeInsets.only(right: 5),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                 decoration: BoxDecoration(
                   color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(15),
                   border: transactionController.selectedTimePeriod == timePeriod
                       ? Border.all(
                           color: Theme.of(context).colorScheme.secondary,
-                          width: 1)
+                          width: 1,
+                        )
                       : null,
                 ),
                 child: Text(
@@ -183,43 +168,46 @@ class _AllTransactionState extends State<AllTransaction>
   }
 
   Widget _buildSearchField(TransactionController transactionController) {
+    final TextEditingController textController =
+        TextEditingController(text: transactionController.searchQuery);
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Consumer<TransactionController>(
-          builder: (BuildContext context, TransactionController value,
-              Widget? child) {
-            return TextFormField(
-              // onTapAlwaysCalled: (){},
-              onChanged: (val) {
-                setState(() {
-                  value.searchQuery = val;
-                });
-              },
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Theme.of(context)
-                    .colorScheme
-                    .surface, // Change color based on readOnly
-                prefixIcon: Icon(
-                  FontAwesomeIcons.search,
-
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface, // Use theme color for icon
-                ),
-                hintText: "Search transactions...",
-                hintStyle: TextStyle(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withOpacity(0.6)), // Adjust hint text color
-                border: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            );
-          },
-        ));
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: TextField(
+        controller: textController,
+        onChanged: (val) {
+          transactionController
+              .updateSearchQuery(val); // Update the query in the controller
+        },
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Theme.of(context).colorScheme.surface,
+          prefixIcon: Icon(
+            FontAwesomeIcons.search,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+          suffixIcon: transactionController.searchQuery.isNotEmpty
+              ? IconButton(
+                  icon: Icon(
+                    Icons.close,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  onPressed: () {
+                    transactionController
+                        .updateSearchQuery(''); // Clear query in controller
+                    textController.clear(); // Clear the TextField's text
+                  },
+                )
+              : null,
+          hintText: "Search transactions...",
+          hintStyle: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+          ),
+          border: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+            borderSide: BorderSide.none,
+          ),
+        ),
+      ),
+    );
   }
 }

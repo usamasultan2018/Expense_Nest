@@ -14,7 +14,8 @@ import 'package:expense_tracker/view/dashboard/profile/settings/terms_of_service
 import 'package:expense_tracker/view/dashboard/profile/settings/widgets/language_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:provider/provider.dart'; // Import the localization package
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart'; // Import the localization package
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -58,9 +59,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   CustomTile(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                        return PrivacyPolicyScreen();
-                      }));
+                      // Navigator.push(context, MaterialPageRoute(builder: (ctx) {
+                      //   return PrivacyPolicyScreen();
+                      // }));
+                      _launchUrl("https://expensenest.netlify.app/privacy");
                     },
                     title: AppLocalizations.of(context)!.privacy_policy,
                     iconData: Icons.privacy_tip_sharp,
@@ -69,9 +71,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const SizedBox(height: 5),
                   CustomTile(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                        return TermsAndServicesScreen();
-                      }));
+                      _launchUrl("https://expensenest.netlify.app/terms");
+                      // Navigator.push(context, MaterialPageRoute(builder: (ctx) {
+                      //   return TermsAndServicesScreen();
+                      // }));
                     },
                     title: AppLocalizations.of(context)!.terms_of_service,
                     iconData: Icons.terminal_sharp,
@@ -124,5 +127,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _launchUrl(String url) async {
+    if (!await launchUrl(Uri.parse(url))) {
+      throw Exception('Could not launch the URL');
+    } else {
+      print("No Internet");
+    }
   }
 }

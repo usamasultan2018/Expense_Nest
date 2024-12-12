@@ -12,6 +12,7 @@ import 'package:expense_tracker/view%20model/user_controller/user_controller.dar
 import 'package:expense_tracker/view%20model/setting_controller/setting_controller.dart'; // Import the SettingController
 import 'package:expense_tracker/view/splash/splash.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -26,16 +27,16 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
   // Initialize SharedPreferences
-  await HTrackerSharedPreferences.getInit(); // Initializes SharedPreferences
+  await HTrackerSharedPreferences.getInit();
   // await addAllCategoriesToFirestore(categories);
   runApp(const MyApp());
 }
 
 final _transactionRepository = TransactionRepository();
-final _categoryRepository =
-    CategoryRepository(); // Instantiate the CategoryRepository
+final _categoryRepository = CategoryRepository();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

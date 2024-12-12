@@ -1,9 +1,11 @@
-import 'package:expense_tracker/view/dashboard/stats/widgets/pie_chart.dart';
+import 'package:expense_tracker/utils/appColors.dart';
+import 'package:expense_tracker/view/dashboard/stats/widgets/bar_chart_transactions.dart';
+import 'package:expense_tracker/view/dashboard/stats/widgets/pie_chart_transactions.dart';
 import 'package:expense_tracker/view/dashboard/stats/widgets/transaction_filter.dart';
 import 'package:expense_tracker/view/dashboard/stats/widgets/transactiontype.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class StatScreen extends StatefulWidget {
   const StatScreen({super.key});
@@ -13,6 +15,11 @@ class StatScreen extends StatefulWidget {
 }
 
 class _StatScreenState extends State<StatScreen> {
+  List<bool> isSelected = [
+    true,
+    false,
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,23 +32,70 @@ class _StatScreenState extends State<StatScreen> {
               children: [
                 const SizedBox(height: 20),
                 // StatsTransactionType with callback to update transaction type
-                Transactiontype(),
+                const Transactiontype(),
                 const SizedBox(height: 20),
-                // Chart Widget, passing the selected transaction type from provider
+
+                // ToggleButtons for chart types
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppLocalizations.of(context)!.transaction,
+                          style:
+                              Theme.of(context).textTheme.bodyLarge!.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                        const Text("293923"),
+                      ],
+                    ),
+                    ToggleButtons(
+                      selectedColor: Theme.of(context).colorScheme.secondary,
+                      fillColor: AppColors.secondary.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(10),
+                      isSelected: isSelected,
+                      constraints: const BoxConstraints(
+                        minWidth: 40,
+                        minHeight: 40,
+                      ),
+                      onPressed: (int index) {
+                        setState(() {
+                          for (int i = 0; i < isSelected.length; i++) {
+                            isSelected[i] = i == index;
+                          }
+                        });
+                      },
+                      children: [
+                        Icon(Icons.pie_chart),
+                        Icon(Icons.bar_chart),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+
+                if (isSelected[0]) ...[
+                  const PieChartTransaction(),
+                ] else if (isSelected[1]) ...[
+                  const BarChartTransaction(),
+                ],
 
                 const SizedBox(height: 20),
-                PieChartTransaction(),
-                const SizedBox(height: 20),
+
+                // Transaction label
                 Text(
                   AppLocalizations.of(context)!.transaction,
-                  style: Theme.of(context)!.textTheme.bodyLarge!.copyWith(
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
-                TransactionFilter(),
+                const SizedBox(height: 10),
+
+                // Transaction filter widget
+                const TransactionFilter(),
               ],
             ),
           ),

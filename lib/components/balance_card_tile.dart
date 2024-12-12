@@ -35,7 +35,7 @@ class BalanceCardTile extends StatelessWidget {
             ),
           ),
           Text(
-            "\$ ${accountModel.balance}",
+            "\$ ${accountModel.balance.toStringAsFixed(2)}",
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -69,7 +69,7 @@ class BalanceCardTile extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "${accountModel.totalIncome}",
+                        "${accountModel.totalIncome.toStringAsFixed(2)}",
                         style: const TextStyle(
                           fontSize: 14,
                           color: Colors.white,
@@ -104,7 +104,7 @@ class BalanceCardTile extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "${accountModel.totalExpense}",
+                        "${accountModel.totalExpense.toStringAsFixed(2)}",
                         style: const TextStyle(
                           fontSize: 14,
                           color: Colors.white,

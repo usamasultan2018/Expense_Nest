@@ -66,3 +66,9 @@ jobs:
             build/ios/iphoneos/app.ipa  # IPA file location
           tag: v1.0.${{ github.run_number }}
           token: ${{ secrets.TOKEN }}
+
+      # Step 9: Cleanup keystore and key.properties
+      - name: Cleanup sensitive files
+        run: |
+          rm android/app/upload-keystore.jks
+          rm android/key.properties

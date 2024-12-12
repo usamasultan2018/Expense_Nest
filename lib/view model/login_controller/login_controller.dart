@@ -3,7 +3,6 @@ import 'package:expense_tracker/utils/helpers/firebase_exception_handler.dart';
 import 'package:expense_tracker/utils/helpers/snackbar_util.dart';
 import 'package:expense_tracker/view/dashboard/bottom_nav/bottom_navigator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 

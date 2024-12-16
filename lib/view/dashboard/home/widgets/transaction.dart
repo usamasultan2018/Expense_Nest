@@ -4,9 +4,9 @@ import 'package:expense_tracker/components/no_transaction.dart';
 import 'package:expense_tracker/components/transaction_tile.dart';
 import 'package:expense_tracker/models/transaction.dart';
 import 'package:expense_tracker/repository/transaction_repository.dart';
+import 'package:expense_tracker/utils/helpers/shared_preference.dart';
 import 'package:expense_tracker/utils/helpers/skeleton_loading.dart';
 import 'package:expense_tracker/view/dashboard/transactions/edit_transactions.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Transactions extends StatelessWidget {
@@ -14,9 +14,15 @@ class Transactions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var auth = FirebaseAuth.instance;
+    var user = UserPreferences.getUser();
+
+    if (user == null) {
+      return const Center(
+        child: Text("User is not logged in."),
+      );
+    }
     return StreamBuilder<List<TransactionModel>>(
-        stream: TransactionRepository().getTransactions(auth.currentUser!.uid),
+        stream: TransactionRepository().getTransactions(user.id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return ListView.builder(

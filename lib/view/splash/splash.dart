@@ -20,19 +20,20 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkUserLoggedIn() async {
-    // Retrieve the user ID from SharedPreferences
-    String? userId = await HTrackerSharedPreferences.getString('userId');
+    // Check if the user is saved in preferences
+    bool hasUser = UserPreferences.hasUser();
 
     // Set up a delay before navigating
     Future.delayed(const Duration(seconds: 2), () {
-      if (userId != null && userId.isNotEmpty) {
-        // If userId exists, navigate to the Home screen
+      if (hasUser) {
+        // If user is logged in, navigate to the Home screen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => BottomNavigatorWidget()),
+          MaterialPageRoute(
+              builder: (context) => const BottomNavigatorWidget()),
         );
       } else {
-        // If no userId, navigate to the Introduction screen
+        // If no user is logged in, navigate to the Introduction screen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const Introduction()),

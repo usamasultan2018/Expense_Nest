@@ -4,6 +4,7 @@ import 'package:expense_tracker/utils/helpers/constant.dart';
 import 'package:expense_tracker/utils/helpers/date.dart';
 import 'package:expense_tracker/utils/helpers/geticons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TransactionTile extends StatelessWidget {
   final TransactionModel transaction;
@@ -48,7 +49,8 @@ class TransactionTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        transaction.category.toUpperCase(),
+                        AppLocalizations.of(context)!
+                            .transaction_category(transaction.category),
                         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                               fontSize: 14,
                             ),

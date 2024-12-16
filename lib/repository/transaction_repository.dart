@@ -8,9 +8,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:expense_tracker/utils/helpers/constant.dart';
 
 class TransactionRepository implements ITransactionRepository {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseStorage _storage = FirebaseStorage.instance;
-
   final CollectionReference _transactionsCollection =
       FirebaseFirestore.instance.collection('transactions');
   final CollectionReference _accountsCollection =

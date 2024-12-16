@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:expense_tracker/view%20model/transaction_controller/transaction_controller.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

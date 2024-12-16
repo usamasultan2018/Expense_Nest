@@ -1,5 +1,7 @@
+import 'package:expense_tracker/components/no_graph_transaction.dart';
 import 'package:expense_tracker/utils/appColors.dart';
 import 'package:expense_tracker/utils/helpers/constant.dart';
+import 'package:expense_tracker/utils/helpers/shared_preference.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -18,11 +20,17 @@ class MyBarChart extends StatefulWidget {
 class _MyBarChartState extends State<MyBarChart> {
   @override
   Widget build(BuildContext context) {
-    final auth = FirebaseAuth.instance.currentUser!.uid;
+    var user = UserPreferences.getUser();
+
+    if (user == null) {
+      return const Center(
+        child: Text("User is not logged in."),
+      );
+    }
     final transactionRepository = TransactionRepository();
 
     return StreamBuilder<List<TransactionModel>>(
-      stream: transactionRepository.getTransactions(auth),
+      stream: transactionRepository.getTransactions(user.id),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -31,7 +39,7 @@ class _MyBarChartState extends State<MyBarChart> {
           return Center(child: Text('Error: ${snapshot.error}'));
         }
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No transactions available'));
+          return const NoGraphTransaction();
         }
 
         List<TransactionModel> transactions = snapshot.data!
@@ -39,7 +47,7 @@ class _MyBarChartState extends State<MyBarChart> {
             .toList();
 
         if (transactions.isEmpty) {
-          return const Center(child: Text('No transactions for this type'));
+          return const NoGraphTransaction();
         }
 
         return Padding(
@@ -73,8 +81,7 @@ class _MyBarChartState extends State<MyBarChart> {
         show: false,
         border: Border.all(color: const Color(0xff37434d)),
       ),
-      maxY: maxAmount +
-          10, // Set maxY based on the data to give extra space for the chart
+      maxY: maxAmount * 1.8,
       barGroups: _getBarChartGroups(transactions),
     );
   }
@@ -109,7 +116,7 @@ class _MyBarChartState extends State<MyBarChart> {
       ),
       leftTitles: AxisTitles(
         sideTitles: SideTitles(
-          showTitles: true,
+          showTitles: false,
         ),
       ),
       topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),

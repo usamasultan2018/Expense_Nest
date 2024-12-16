@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:expense_tracker/view%20model/transaction_controller/transaction_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -24,8 +22,8 @@ class AddPictureField extends StatelessWidget {
                     },
                     child: Container(
                       alignment: Alignment.center,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 15),
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(15),
@@ -36,8 +34,8 @@ class AddPictureField extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(FontAwesomeIcons.camera),
-                          SizedBox(
+                          const Icon(FontAwesomeIcons.camera),
+                          const SizedBox(
                             width: 10,
                           ),
                           Text(
@@ -63,8 +61,8 @@ class AddPictureField extends StatelessWidget {
                     },
                     child: Container(
                       alignment: Alignment.center,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 15),
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(15),
@@ -75,8 +73,8 @@ class AddPictureField extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(FontAwesomeIcons.photoFilm),
-                          SizedBox(
+                          const Icon(FontAwesomeIcons.photoFilm),
+                          const SizedBox(
                             width: 10,
                           ),
                           Text(
@@ -94,7 +92,7 @@ class AddPictureField extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             (value.imageUrlTrasaction.isNotEmpty || value.images != null)
@@ -111,7 +109,8 @@ class AddPictureField extends StatelessWidget {
                             : value.imageUrlTrasaction.isNotEmpty
                                 ? NetworkImage(value
                                     .imageUrlTrasaction) // Network image if URL is not empty
-                                : AssetImage('assets/placeholder_image.png')
+                                : const AssetImage(
+                                        'assets/placeholder_image.png')
                                     as ImageProvider, // Placeholder image if no image is found
                       ),
                     ),
@@ -121,11 +120,11 @@ class AddPictureField extends StatelessWidget {
                         onPressed: () {
                           value.removeImage(); // Remove image on button press
                         },
-                        icon: Icon(Icons.close, color: Colors.red),
+                        icon: const Icon(Icons.close, color: Colors.red),
                       ),
                     ),
                   )
-                : SizedBox(),
+                : const SizedBox(),
           ],
         );
       },

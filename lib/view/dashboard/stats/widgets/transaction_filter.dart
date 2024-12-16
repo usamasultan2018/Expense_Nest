@@ -24,15 +24,14 @@ class TransactionFilter extends StatelessWidget {
               return Center(child: Text('Error: ${snapshot.error}'));
             }
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return NoTransaction();
+              return const NoTransaction();
             }
 
             final transactions = snapshot.data!;
 
             return ListView.builder(
               physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap:
-                  true, // Ensures the list is scrollable within its container
+              shrinkWrap: true,
               itemCount: transactions.length,
               itemBuilder: (context, index) {
                 final transaction = transactions[index];

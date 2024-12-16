@@ -122,8 +122,7 @@ class UserController extends ChangeNotifier {
       onConfirm: () async {
         setLoading(true);
         try {
-          await HTrackerSharedPreferences.removeKey(
-              "userId"); // Clears session data
+          await UserPreferences.removeUser();
           SnackbarUtil.showSuccessSnackbar(
               context, AppLocalizations.of(context)!.logged_out_successfully);
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) {

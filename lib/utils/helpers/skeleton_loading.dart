@@ -171,7 +171,7 @@ class TileSkeleton extends StatelessWidget {
       padding: const EdgeInsets.all(16 / 2),
       decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
-          borderRadius: const BorderRadius.all(Radius.circular(16))),
+          borderRadius: const BorderRadius.all(Radius.circular(8))),
     );
   }
 }

@@ -5,7 +5,6 @@ import 'package:expense_tracker/view/dashboard/stats/widgets/transaction_filter.
 import 'package:expense_tracker/view/dashboard/stats/widgets/transactiontype.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class StatScreen extends StatefulWidget {
   const StatScreen({super.key});
@@ -31,49 +30,31 @@ class _StatScreenState extends State<StatScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
-                // StatsTransactionType with callback to update transaction type
                 const Transactiontype(),
                 const SizedBox(height: 20),
-
-                // ToggleButtons for chart types
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          AppLocalizations.of(context)!.transaction,
-                          style:
-                              Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                        ),
-                        const Text("293923"),
-                      ],
+                Align(
+                  alignment: Alignment.topRight,
+                  child: ToggleButtons(
+                    selectedColor: Theme.of(context).colorScheme.secondary,
+                    fillColor: AppColors.secondary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10),
+                    isSelected: isSelected,
+                    constraints: const BoxConstraints(
+                      minWidth: 40,
+                      minHeight: 40,
                     ),
-                    ToggleButtons(
-                      selectedColor: Theme.of(context).colorScheme.secondary,
-                      fillColor: AppColors.secondary.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(10),
-                      isSelected: isSelected,
-                      constraints: const BoxConstraints(
-                        minWidth: 40,
-                        minHeight: 40,
-                      ),
-                      onPressed: (int index) {
-                        setState(() {
-                          for (int i = 0; i < isSelected.length; i++) {
-                            isSelected[i] = i == index;
-                          }
-                        });
-                      },
-                      children: [
-                        Icon(Icons.pie_chart),
-                        Icon(Icons.bar_chart),
-                      ],
-                    ),
-                  ],
+                    onPressed: (int index) {
+                      setState(() {
+                        for (int i = 0; i < isSelected.length; i++) {
+                          isSelected[i] = i == index;
+                        }
+                      });
+                    },
+                    children: const [
+                      Icon(Icons.pie_chart),
+                      Icon(Icons.bar_chart),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 20),
 

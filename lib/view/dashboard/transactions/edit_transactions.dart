@@ -99,7 +99,7 @@ class _EditTransactionState extends State<EditTransaction> {
                 const SizedBox(height: 20),
                 const PaymentField(),
                 SizedBox(height: 20),
-                AddPictureField(),
+                const AddPictureField(),
                 const SizedBox(height: 40),
                 Consumer<TransactionController>(
                   builder: (context, transactionController, child) {

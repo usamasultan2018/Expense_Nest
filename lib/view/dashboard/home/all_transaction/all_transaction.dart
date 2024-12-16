@@ -1,5 +1,8 @@
+import 'package:expense_tracker/components/fade_effect.dart';
 import 'package:expense_tracker/models/transaction.dart';
 import 'package:expense_tracker/utils/helpers/skeleton_loading.dart';
+import 'package:expense_tracker/view/dashboard/home/all_transaction/widget/search_field.dart';
+import 'package:expense_tracker/view/dashboard/home/all_transaction/widget/time_period_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -15,29 +18,7 @@ class AllTransaction extends StatefulWidget {
   _AllTransactionState createState() => _AllTransactionState();
 }
 
-class _AllTransactionState extends State<AllTransaction>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-    _fadeAnimation =
-        Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
-    _animationController.forward();
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
+class _AllTransactionState extends State<AllTransaction> {
   @override
   Widget build(BuildContext context) {
     final transactionController = Provider.of<TransactionController>(context);
@@ -49,9 +30,9 @@ class _AllTransactionState extends State<AllTransaction>
       body: Column(
         children: [
           const SizedBox(height: 10),
-          _buildTimePeriodSelector(transactionController),
+          TimePeriodSelector(),
           const SizedBox(height: 20),
-          _buildSearchField(transactionController),
+          SearchField(),
           const SizedBox(height: 10),
           Expanded(
             child: StreamBuilder<List<TransactionModel>>(
@@ -60,25 +41,31 @@ class _AllTransactionState extends State<AllTransaction>
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return ListView.builder(
                     itemCount: 10,
-                    itemBuilder: (context, index) => const TileSkeleton(),
+                    itemBuilder: (context, index) => const Padding(
+                      padding: EdgeInsets.all(10),
+                      child: FadeTransitionEffect(
+                        child: TileSkeleton(
+                          height: 50,
+                        ),
+                      ),
+                    ),
                   );
                 } else if (snapshot.hasError) {
                   return Center(child: Text(snapshot.error.toString()));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const NoTransaction();
+                  return const FadeTransitionEffect(child: NoTransaction());
                 } else {
                   List<TransactionModel> transactions = snapshot.data!;
                   List<TransactionModel> filteredTransactions =
                       transactionController.filterTransactions(transactions);
 
                   if (filteredTransactions.isEmpty) {
-                    return const NoTransaction();
+                    return const FadeTransitionEffect(child: NoTransaction());
                   }
-                  _animationController.forward(from: 0);
+
                   return AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
-                    child: FadeTransition(
-                      opacity: _fadeAnimation,
+                    child: FadeTransitionEffect(
                       child: ListView.builder(
                         key: ValueKey(filteredTransactions.length),
                         itemCount: filteredTransactions.length,
@@ -108,105 +95,6 @@ class _AllTransactionState extends State<AllTransaction>
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildTimePeriodSelector(TransactionController transactionController) {
-    final List<String> timePeriods = [
-      'All Time',
-      'This Year',
-      'This Month',
-      'This Week',
-      'Yesterday',
-      'Today',
-    ];
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: SizedBox(
-        height: 35,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: timePeriods.length,
-          itemBuilder: (context, index) {
-            String timePeriod = timePeriods[index];
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  transactionController.selectedTimePeriod = timePeriod;
-                });
-              },
-              child: Container(
-                alignment: Alignment.center,
-                margin: const EdgeInsets.only(right: 5),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(15),
-                  border: transactionController.selectedTimePeriod == timePeriod
-                      ? Border.all(
-                          color: Theme.of(context).colorScheme.secondary,
-                          width: 1,
-                        )
-                      : null,
-                ),
-                child: Text(
-                  timePeriod,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSearchField(TransactionController transactionController) {
-    final TextEditingController textController =
-        TextEditingController(text: transactionController.searchQuery);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: TextField(
-        controller: textController,
-        onChanged: (val) {
-          transactionController
-              .updateSearchQuery(val); // Update the query in the controller
-        },
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: Theme.of(context).colorScheme.surface,
-          prefixIcon: Icon(
-            FontAwesomeIcons.search,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-          suffixIcon: transactionController.searchQuery.isNotEmpty
-              ? IconButton(
-                  icon: Icon(
-                    Icons.close,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  onPressed: () {
-                    transactionController
-                        .updateSearchQuery(''); // Clear query in controller
-                    textController.clear(); // Clear the TextField's text
-                  },
-                )
-              : null,
-          hintText: "Search transactions...",
-          hintStyle: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-          ),
-          border: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-            borderSide: BorderSide.none,
-          ),
-        ),
       ),
     );
   }

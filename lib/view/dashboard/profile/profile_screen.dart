@@ -4,10 +4,10 @@ import 'package:expense_tracker/components/loading_widget.dart';
 import 'package:expense_tracker/models/user.dart';
 import 'package:expense_tracker/repository/user_repositpory.dart';
 import 'package:expense_tracker/utils/appColors.dart';
+import 'package:expense_tracker/utils/helpers/shared_preference.dart';
 import 'package:expense_tracker/view/dashboard/profile/my_account/my_account_screen.dart';
 import 'package:expense_tracker/view/dashboard/profile/settings/setting_screens.dart';
 import 'package:expense_tracker/view/dashboard/profile/appearance/appearance_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -17,11 +17,12 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var auth = FirebaseAuth.instance;
-    final currentUser = auth.currentUser;
+    var user = UserPreferences.getUser();
 
-    if (currentUser == null) {
-      return const Center(child: Text("No user is currently logged in."));
+    if (user == null) {
+      return const Center(
+        child: Text("User is not logged in."),
+      );
     }
     return Scaffold(
       appBar: AppBar(
@@ -31,7 +32,7 @@ class ProfileScreen extends StatelessWidget {
             child: InkWell(
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                  return SettingsScreen();
+                  return const SettingsScreen();
                 }));
               },
               child: Container(
@@ -48,7 +49,7 @@ class ProfileScreen extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           child: StreamBuilder<UserModel?>(
-              stream: UserRepository().streamUserData(currentUser.uid),
+              stream: UserRepository().streamUserData(user.id),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const LoadingWidget();
@@ -87,7 +88,7 @@ class ProfileScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         Text(
@@ -99,37 +100,34 @@ class ProfileScreen extends StatelessWidget {
                                   ),
                         ),
                         Text(userModel.email),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         CustomTile(
                           onTap: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (ctx) {
-                              return MyAccountScreen();
+                              return const MyAccountScreen();
                             }));
                           },
                           title: AppLocalizations.of(context)!.my_account,
                           iconData: Icons.person,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         CustomTile(
                           onTap: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (ctx) {
-                              return AppearanceScreen();
+                              return const AppearanceScreen();
                             }));
                           },
                           title: AppLocalizations.of(context)!.appearance,
                           iconData: FontAwesomeIcons.paintRoller,
                           bckColor: AppColors.yellow,
                         ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         CustomTile(

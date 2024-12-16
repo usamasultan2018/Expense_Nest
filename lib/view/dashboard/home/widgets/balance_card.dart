@@ -2,9 +2,8 @@ import 'package:expense_tracker/components/balance_card_tile.dart';
 import 'package:expense_tracker/components/fade_effect.dart';
 import 'package:expense_tracker/models/account.dart';
 import 'package:expense_tracker/repository/user_repositpory.dart';
+import 'package:expense_tracker/utils/helpers/shared_preference.dart';
 import 'package:expense_tracker/utils/helpers/skeleton_loading.dart';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -13,17 +12,16 @@ class BalanceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var auth = FirebaseAuth.instance;
+    var user = UserPreferences.getUser();
 
-    if (auth.currentUser == null) {
-      // Optionally, navigate to login or show a message
-      return Center(
+    if (user == null) {
+      return const Center(
         child: Text("User is not logged in."),
       );
     }
 
     return StreamBuilder<AccountModel?>(
-      stream: UserRepository().streamAccount(auth.currentUser!.uid),
+      stream: UserRepository().streamAccount(user.id),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const FadeTransitionEffect(child: BalanceCardTileSkeleton());

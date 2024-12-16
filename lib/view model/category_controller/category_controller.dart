@@ -52,9 +52,8 @@ class CategoryController extends ChangeNotifier {
     }
   }
 
-  // Method to set the selected category and notify listeners
   void setCategory(String category) {
-    _selectedCategory = category; // Update selected category
+    _selectedCategory = category;
     notifyListeners(); // Notify listeners to update UI
   }
 }

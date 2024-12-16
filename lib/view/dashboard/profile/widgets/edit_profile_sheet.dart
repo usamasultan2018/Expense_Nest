@@ -61,7 +61,7 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
                             Align(
                               alignment: Alignment.topRight,
                               child: Container(
-                                padding: EdgeInsets.all(0),
+                                padding: const EdgeInsets.all(0),
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).colorScheme.surface,
                                   shape: BoxShape.circle,
@@ -100,7 +100,7 @@ class _EditProfileSheetState extends State<EditProfileSheet> {
                                                 ? NetworkImage(widget.userModel
                                                         .profilePicture)
                                                     as ImageProvider
-                                                : AssetImage(
+                                                : const AssetImage(
                                                     'assets/images/boy.png'), // Replace with your asset image path
                                       ),
                                     );

@@ -1,16 +1,9 @@
-import 'package:expense_tracker/components/custom_button.dart';
 import 'package:expense_tracker/components/custom_tile.dart';
 import 'package:expense_tracker/components/fade_effect.dart';
-import 'package:expense_tracker/repository/user_repositpory.dart';
 import 'package:expense_tracker/utils/appColors.dart';
-import 'package:expense_tracker/utils/helpers/dialog.dart';
-import 'package:expense_tracker/utils/helpers/snackbar_util.dart';
 import 'package:expense_tracker/view%20model/user_controller/user_controller.dart';
-import 'package:expense_tracker/view/auth/login/login.dart';
 import 'package:expense_tracker/view/dashboard/profile/settings/delete_account_screen.dart';
 import 'package:expense_tracker/view/dashboard/profile/settings/feedback_screen.dart';
-import 'package:expense_tracker/view/dashboard/profile/settings/privacy_policy_screen.dart';
-import 'package:expense_tracker/view/dashboard/profile/settings/terms_of_services_screen.dart';
 import 'package:expense_tracker/view/dashboard/profile/settings/widgets/language_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -48,7 +41,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                   ),
                   const SizedBox(height: 5),
-                  LanguageTile(),
+                  const LanguageTile(),
                   const SizedBox(height: 10),
                   Text(
                     AppLocalizations.of(context)!.info,
@@ -59,9 +52,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   CustomTile(
                     onTap: () {
-                      // Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                      //   return PrivacyPolicyScreen();
-                      // }));
                       _launchUrl("https://expensenest.netlify.app/privacy");
                     },
                     title: AppLocalizations.of(context)!.privacy_policy,
@@ -72,9 +62,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   CustomTile(
                     onTap: () {
                       _launchUrl("https://expensenest.netlify.app/terms");
-                      // Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                      //   return TermsAndServicesScreen();
-                      // }));
                     },
                     title: AppLocalizations.of(context)!.terms_of_service,
                     iconData: Icons.terminal_sharp,
@@ -84,7 +71,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   CustomTile(
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                        return FeedBackScreen();
+                        return const FeedBackScreen();
                       }));
                     },
                     title: AppLocalizations.of(context)!.contact,
@@ -113,7 +100,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   CustomTile(
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                        return DeleteAccountScreen();
+                        return const DeleteAccountScreen();
                       }));
                     },
                     title: AppLocalizations.of(context)!.delete_account,

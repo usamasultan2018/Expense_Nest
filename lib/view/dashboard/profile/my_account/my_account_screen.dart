@@ -5,6 +5,7 @@ import 'package:expense_tracker/repository/user_repositpory.dart';
 import 'package:expense_tracker/utils/appColors.dart';
 
 import 'package:expense_tracker/utils/helpers/date.dart';
+import 'package:expense_tracker/utils/helpers/shared_preference.dart';
 import 'package:expense_tracker/view/dashboard/profile/widgets/edit_profile_sheet.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -41,18 +42,19 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var auth = FirebaseAuth.instance;
-    final currentUser = auth.currentUser;
+    var user = UserPreferences.getUser();
 
-    if (currentUser == null) {
-      return const Center(child: Text("No user is currently logged in."));
+    if (user == null) {
+      return const Center(
+        child: Text("User is not logged in."),
+      );
     }
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.myAccount), // Localized text
       ),
       body: StreamBuilder<UserModel?>(
-        stream: UserRepository().streamUserData(currentUser.uid),
+        stream: UserRepository().streamUserData(user.id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const LoadingWidget();

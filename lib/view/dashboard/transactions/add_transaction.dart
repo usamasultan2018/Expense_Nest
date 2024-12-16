@@ -29,14 +29,18 @@ class _AddTransactionState extends State<AddTransaction> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) =>
-          TransactionController(transactionRepository: TransactionRepository(), categoryController: CategoryController(categoryRepository: CategoryRepository(), transactionRepository:TransactionRepository()),),
+      create: (_) => TransactionController(
+        transactionRepository: TransactionRepository(),
+        categoryController: CategoryController(
+            categoryRepository: CategoryRepository(),
+            transactionRepository: TransactionRepository()),
+      ),
       child: Scaffold(
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.addTransaction),
         ),
         resizeToAvoidBottomInset: true,
-        body: Padding(
+        body: const Padding(
           padding: EdgeInsets.symmetric(horizontal: 20),
           child: SingleChildScrollView(
             child: FadeTransitionEffect(

@@ -30,8 +30,7 @@ void main() async {
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
   // Initialize SharedPreferences
-  await HTrackerSharedPreferences.getInit();
-  // await addAllCategoriesToFirestore(categories);
+  await UserPreferences.initialize();
   runApp(const MyApp());
 }
 
@@ -77,7 +76,6 @@ class MyApp extends StatelessWidget {
             supportedLocales: [
               Locale("en"),
               Locale("es"),
-              Locale("ur"),
             ],
             themeMode: settingController.currentThemeMode,
             theme: AppTheme.lightTheme,
@@ -95,7 +93,6 @@ Future<void> addAllCategoriesToFirestore(List<CategoryModel> categories) async {
   CollectionReference categoriesCollection =
       FirebaseFirestore.instance.collection('categories');
 
-  // Loop through the categories and add them to Firestore
   for (var category in categories) {
     try {
       await categoriesCollection.add(category.toMap());

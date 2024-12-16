@@ -32,7 +32,14 @@ class AuthRepository implements IAuthRepository {
       User? user = userCredential.user;
 
       if (user != null) {
-        await HTrackerSharedPreferences.setString('userId', user.uid);
+        // Save user data in SharedPreferences
+        await UserPreferences.saveUser(UserModel(
+          id: user.uid,
+          username: user.displayName ?? '',
+          email: user.email ?? '',
+          profilePicture: user.photoURL ?? '',
+          createdAt: DateTime.now(),
+        ));
 
         await _initializeUserInFirestore(user);
       }
@@ -76,7 +83,15 @@ class AuthRepository implements IAuthRepository {
       User? user = userCredential.user;
 
       if (user != null) {
-        await HTrackerSharedPreferences.setString('userId', user.uid);
+        // Save user data in SharedPreferences
+        await UserPreferences.saveUser(UserModel(
+          id: user.uid,
+          username: user.displayName ?? '',
+          email: user.email ?? '',
+          profilePicture: user.photoURL ?? '',
+          createdAt: DateTime.now(),
+        ));
+
         print('User ID ${user.uid} saved in SharedPreferences');
       }
       return user;
@@ -90,7 +105,7 @@ class AuthRepository implements IAuthRepository {
   @override
   Future<void> signOut() async {
     await _auth.signOut();
-    await HTrackerSharedPreferences.removeKey('userId');
+    await UserPreferences.removeUser();
     print("User signed out and preferences cleared.");
   }
 
@@ -126,8 +141,8 @@ class AuthRepository implements IAuthRepository {
         await user.reauthenticateWithCredential(credential);
       }
 
-      // Remove user ID from shared preferences
-      await HTrackerSharedPreferences.removeKey('userId');
+      // Remove user ID from SharedPreferences
+      await UserPreferences.removeUser();
 
       // Delete user data from Firestore
       await _firestore.collection('users').doc(user.uid).delete();
@@ -156,15 +171,12 @@ class AuthRepository implements IAuthRepository {
       print("User account deleted and preferences cleared.");
     } catch (e) {
       print('Error deleting account: $e');
-
-      // Show error message or feedback
       SnackbarUtil.showErrorSnackbar(context, e.toString());
-
       throw e; // Optionally rethrow the error
     }
   }
 
-// Helper function for Google reauthentication
+  // Helper function for Google reauthentication
   Future<void> _reauthenticateWithGoogle() async {
     GoogleSignIn googleSignIn = GoogleSignIn();
     GoogleSignInAccount? googleUser = await googleSignIn.signIn();
@@ -225,8 +237,6 @@ class AuthRepository implements IAuthRepository {
   // Add user and account to Firestore
   Future<void> _initializeUserInFirestore(User user,
       {String username = ''}) async {
-    await HTrackerSharedPreferences.setString('userId', user.uid);
-
     // Check if user document already exists
     final userDoc = await _firestore.collection('users').doc(user.uid).get();
     if (!userDoc.exists) {

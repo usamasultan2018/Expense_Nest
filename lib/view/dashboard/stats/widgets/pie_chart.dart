@@ -1,7 +1,9 @@
 import 'package:expense_tracker/components/fade_effect.dart';
+import 'package:expense_tracker/components/no_graph_transaction.dart';
 import 'package:expense_tracker/components/no_transaction.dart';
 import 'package:expense_tracker/utils/helpers/constant.dart';
 import 'package:expense_tracker/utils/helpers/geticons.dart';
+import 'package:expense_tracker/utils/helpers/shared_preference.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -15,11 +17,17 @@ class MyPieChartWithLegend extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final auth = FirebaseAuth.instance.currentUser!.uid;
+    var user = UserPreferences.getUser();
+
+    if (user == null) {
+      return const Center(
+        child: Text("User is not logged in."),
+      );
+    }
     final transactionRepository = TransactionRepository();
 
     return StreamBuilder<List<TransactionModel>>(
-      stream: transactionRepository.getTransactions(auth),
+      stream: transactionRepository.getTransactions(user.id),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -28,18 +36,17 @@ class MyPieChartWithLegend extends StatelessWidget {
           return Center(child: Text('Error: ${snapshot.error}'));
         }
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No transactions available'));
+          return const NoGraphTransaction();
         }
 
         List<TransactionModel> transactions = snapshot.data!;
 
-        // Filter transactions based on the selected type
         transactions = transactions
             .where((transaction) => transaction.type == transactionType)
             .toList();
 
         if (transactions.isEmpty) {
-          return const NoTransaction();
+          return const NoGraphTransaction();
         }
 
         return Column(

@@ -1,4 +1,3 @@
-import 'package:expense_tracker/models/transaction.dart';
 import 'package:expense_tracker/utils/helpers/constant.dart';
 import 'package:expense_tracker/view%20model/transaction_controller/transaction_controller.dart';
 import 'package:expense_tracker/view/dashboard/stats/widgets/stats_type.dart';
@@ -14,7 +13,7 @@ class Transactiontype extends StatelessWidget {
       builder: (context, provider, child) {
         return StatsTransactionType(
           onTransactionTypeChanged: (TransactionType type) {
-            provider.setType(type); // Updates the provider
+            provider.setType(type);
           },
         );
       },

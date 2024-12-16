@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:expense_tracker/utils/appColors.dart';
 import 'package:flutter/material.dart';
 
@@ -44,11 +45,10 @@ class CustomTile extends StatelessWidget {
                 SizedBox(
                   width: 10,
                 ),
-                Text(
+                AutoSizeText(
                   title,
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        fontSize: 18,
-                      ),
+                  maxLines: 1,
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(),
                 ),
               ],
             ),

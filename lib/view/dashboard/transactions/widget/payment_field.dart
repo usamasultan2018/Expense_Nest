@@ -1,5 +1,4 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
-import 'package:expense_tracker/models/transaction.dart';
 import 'package:expense_tracker/utils/helpers/constant.dart';
 import 'package:expense_tracker/view%20model/transaction_controller/transaction_controller.dart';
 import 'package:flutter/material.dart';
@@ -14,15 +13,13 @@ class PaymentField extends StatelessWidget {
       builder: (context, transactionController, child) {
         return CustomDropdown<String>(
           hintText: 'Select Payment Method',
-          // Map PayMethod values to their display names
           items: PayMethod.values.map((method) => method.displayName).toList(),
           initialItem:
               transactionController.selectedPaymentMethod?.displayName ?? null,
           onChanged: (value) {
-            // Map the selected string back to the PayMethod enum
             final selectedMethod = PayMethod.values.firstWhere(
               (method) => method.displayName == value,
-              orElse: () => PayMethod.cash, // Default to cash if no match
+              orElse: () => PayMethod.cash,
             );
             transactionController.updatePaymentMethod(selectedMethod);
           },

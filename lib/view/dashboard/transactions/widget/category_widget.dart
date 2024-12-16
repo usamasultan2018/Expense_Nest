@@ -2,7 +2,6 @@ import 'package:expense_tracker/components/category_tile.dart';
 import 'package:expense_tracker/components/fade_effect.dart';
 import 'package:expense_tracker/models/category.dart';
 import 'package:expense_tracker/utils/helpers/constant.dart';
-import 'package:expense_tracker/utils/helpers/geticons.dart';
 import 'package:expense_tracker/view model/transaction_controller/transaction_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -49,7 +48,7 @@ class CategoryWidget extends StatelessWidget {
 
   Widget _buildCategorySelectionContent(
       BuildContext context, TransactionController controller) {
-    String searchQuery = ''; // Maintain search state across builds
+// Maintain search state across builds
     List<CategoryModel> filteredCategories =
         controller.selectedType == TransactionType.expense
             ? controller.expenseCategories
@@ -60,7 +59,6 @@ class CategoryWidget extends StatelessWidget {
         // Function to update filtered categories
         void updateSearchQuery(String query) {
           setState(() {
-            searchQuery = query;
             filteredCategories = (controller.selectedType ==
                         TransactionType.expense
                     ? controller.expenseCategories

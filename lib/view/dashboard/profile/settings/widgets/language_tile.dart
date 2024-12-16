@@ -50,8 +50,6 @@ class LanguageTile extends StatelessWidget {
                     languageProvider.setLanguage('en');
                   } else if (value == 'Spanish') {
                     languageProvider.setLanguage('es');
-                  } else if (value == 'Urdu') {
-                    languageProvider.setLanguage('ur');
                   }
                 },
                 itemBuilder: (BuildContext context) => [
@@ -64,10 +62,6 @@ class LanguageTile extends StatelessWidget {
                     value: 'Spanish',
                     child: Text(AppLocalizations.of(context)!
                         .spanish), // Correct usage of localization for "Spanish"
-                  ),
-                  PopupMenuItem(
-                    value: 'Urdu',
-                    child: Text(AppLocalizations.of(context)!.urdu),
                   ),
                 ],
                 icon: const Icon(Icons.arrow_forward_ios),

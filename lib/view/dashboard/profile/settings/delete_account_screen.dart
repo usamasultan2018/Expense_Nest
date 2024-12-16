@@ -1,15 +1,23 @@
 import 'package:expense_tracker/components/custom_button.dart';
+import 'package:expense_tracker/utils/helpers/shared_preference.dart';
 import 'package:expense_tracker/view%20model/user_controller/user_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DeleteAccountScreen extends StatelessWidget {
   const DeleteAccountScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final auth = FirebaseAuth.instance;
+    var user = UserPreferences.getUser();
+
+    if (user == null) {
+      return const Center(
+        child: Text("User is not logged in."),
+      );
+    }
     return Scaffold(
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -17,7 +25,7 @@ class DeleteAccountScreen extends StatelessWidget {
             (BuildContext context, UserController value, Widget? child) {
           return RoundButton(
               loading: value.isLoading,
-              title: "Delete Account",
+              title: AppLocalizations.of(context)!.delete_account,
               onPress: () async {
                 await value.deleteAccount(
                   context,
@@ -26,19 +34,21 @@ class DeleteAccountScreen extends StatelessWidget {
         }),
       ),
       appBar: AppBar(
-        title: Text("Delete Account"),
+        title: Text(
+          AppLocalizations.of(context)!.delete_account,
+        ),
       ),
       body: Column(
         children: [
           SizedBox(
             height: 30,
           ),
-          Text("${auth.currentUser!.displayName}"),
+          Text("${user.username}"),
           SizedBox(
             height: 5,
           ),
           Text(
-            "Are you sure you want to delete your account?",
+            AppLocalizations.of(context)!.delete_account_details,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                   fontSize: 20,
@@ -49,7 +59,7 @@ class DeleteAccountScreen extends StatelessWidget {
             height: 20,
           ),
           Text(
-            "Deleting account is permanent process!",
+            AppLocalizations.of(context)!.delete_account_warning,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   fontSize: 16,
@@ -60,7 +70,7 @@ class DeleteAccountScreen extends StatelessWidget {
             height: 30,
           ),
           Text(
-            "By deleting your account your profile, your transaction will be permantly deleted. Be aware of that! ",
+            AppLocalizations.of(context)!.delete_account_details,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodySmall!.copyWith(
                   fontSize: 14,

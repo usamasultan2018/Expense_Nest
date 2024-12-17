@@ -1,5 +1,4 @@
 import 'package:expense_tracker/components/fade_effect.dart';
-import 'package:expense_tracker/components/google_button.dart';
 import 'package:expense_tracker/view/auth/login/widgets/dont_have_accout.dart';
 import 'package:expense_tracker/view/auth/login/widgets/google_signin.dart';
 import 'package:expense_tracker/view/auth/login/widgets/login_button.dart';
@@ -7,8 +6,6 @@ import 'package:expense_tracker/view/auth/login/widgets/login_emailTextfield.dar
 import 'package:expense_tracker/view/auth/login/widgets/login_password_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -95,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                GoogleSigninButton(),
+                const GoogleSigninButton(),
                 const DontHaveAccount(),
               ],
             ),

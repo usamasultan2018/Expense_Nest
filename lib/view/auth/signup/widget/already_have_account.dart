@@ -1,6 +1,6 @@
-import 'package:expense_tracker/view/auth/login/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 
 class AlreadyHaveAccount extends StatelessWidget {
   const AlreadyHaveAccount({super.key});
@@ -21,9 +21,7 @@ class AlreadyHaveAccount extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-              return LoginScreen();
-            }));
+            context.go('/login'); // Navigates to '/login' path
           },
           child: Text(
             AppLocalizations.of(context)!.loginButton,

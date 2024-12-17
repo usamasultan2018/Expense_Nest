@@ -1,6 +1,6 @@
 import 'package:expense_tracker/view/dashboard/stats/stats_screen.dart';
 import 'package:expense_tracker/view/dashboard/transactions/add_transaction.dart';
-import 'package:expense_tracker/view/dashboard/home/home.dart';
+import 'package:expense_tracker/view/dashboard/home/home_screen.dart';
 import 'package:expense_tracker/utils/appColors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +17,7 @@ class BottomNavigatorWidget extends StatefulWidget {
 class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
   int _currentIndex = 0;
   final List<Widget> _screens = [
-    const HomeView(),
+    const HomeScreen(),
     StatScreen(),
   ];
 

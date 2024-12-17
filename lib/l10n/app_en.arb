@@ -135,7 +135,9 @@
   "delete_account_confirmation": "Are you sure you want to delete your account?",
   "delete_account_warning": "Deleting your account is a permanent process!",
   "delete_account_details": "By deleting your account your profile and transactions will be permanently deleted. Be aware of that!",
-  "delete_account_button_title": "Delete Account"
+  "delete_account_button_title": "Delete Account",
+  "transaction_deleted_successfully": "Transaction deleted successfully"
+
 
 }
 

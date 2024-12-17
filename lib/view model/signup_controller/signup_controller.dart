@@ -1,11 +1,12 @@
 import 'package:expense_tracker/repository/auth_repository.dart';
 import 'package:expense_tracker/utils/helpers/firebase_exception_handler.dart';
 import 'package:expense_tracker/utils/helpers/snackbar_util.dart';
-import 'package:expense_tracker/view/auth/login/login.dart';
+import 'package:expense_tracker/view/auth/login/login_screen.dart';
 import 'package:expense_tracker/view/dashboard/bottom_nav/bottom_navigator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 
 class SignupController extends ChangeNotifier {
   final AuthRepository _authRepository = AuthRepository();
@@ -56,12 +57,14 @@ class SignupController extends ChangeNotifier {
         SnackbarUtil.showSuccessSnackbar(
             context, AppLocalizations.of(context)!.checkEmail);
 
-        // Navigate to the login screen without popping the registration screen
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (ctx) => const LoginScreen()),
-          (route) => false,
-        );
+        // Ensure that context is still valid before navigating
+        if (context.mounted) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (ctx) => const LoginScreen()),
+            (route) => false,
+          );
+        }
       }
     } on FirebaseAuthException catch (e) {
       String errorMessage = FirebaseExceptionHandler.handleException(e);
@@ -81,17 +84,12 @@ class SignupController extends ChangeNotifier {
       User? user = await _authRepository.signUpWithGoogle();
 
       if (user != null) {
+        // Ensure that context is still valid before navigating
+        if (context.mounted) {
+          context.go('/bottom-nav');
+        }
         SnackbarUtil.showSuccessSnackbar(
             context, AppLocalizations.of(context)!.googleLoginSuccessful);
-
-        // Navigate to the login screen or home screen after successful sign-up
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (ctx) => const BottomNavigatorWidget(),
-          ),
-          (route) => false,
-        );
       }
     } catch (e) {
       SnackbarUtil.showErrorSnackbar(context, e.toString());

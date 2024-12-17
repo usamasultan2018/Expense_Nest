@@ -4,9 +4,10 @@ import 'package:expense_tracker/models/account.dart';
 import 'package:expense_tracker/repository/base/i_auth_repository.dart';
 import 'package:expense_tracker/utils/helpers/shared_preference.dart';
 import 'package:expense_tracker/utils/helpers/snackbar_util.dart';
-import 'package:expense_tracker/view/introduction/introduction.dart';
+import 'package:expense_tracker/view/introduction/introduction_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthRepository implements IAuthRepository {
@@ -164,9 +165,7 @@ class AuthRepository implements IAuthRepository {
       await user.delete();
 
       // Navigate to login screen
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-        return Introduction();
-      }));
+      (context).go("/introduction");
 
       print("User account deleted and preferences cleared.");
     } catch (e) {

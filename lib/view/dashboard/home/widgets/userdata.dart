@@ -1,4 +1,5 @@
 import 'package:expense_tracker/components/fade_effect.dart';
+import 'package:expense_tracker/repository/auth_repository.dart';
 import 'package:expense_tracker/repository/user_repositpory.dart';
 import 'package:expense_tracker/utils/appColors.dart';
 import 'package:expense_tracker/utils/helpers/shared_preference.dart';
@@ -7,6 +8,7 @@ import 'package:expense_tracker/view/dashboard/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/models/user.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 
 class UserData extends StatelessWidget {
   const UserData({super.key});
@@ -39,9 +41,7 @@ class UserData extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                      return const ProfileScreen();
-                    }));
+                    (context).push("/profile");
                   },
                   child: Container(
                     decoration: BoxDecoration(

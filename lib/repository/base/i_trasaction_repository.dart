@@ -2,7 +2,7 @@ import 'package:expense_tracker/models/transaction.dart';
 
 abstract class ITransactionRepository {
   // Fetch transaction counts by type
-  Future<Map<String, int>> getTransactionCounts();
+  Future<Map<String, int>> getTransactionCounts(String userId);
 
   // Add a new transaction
   Future<void> addTransaction(TransactionModel transaction);

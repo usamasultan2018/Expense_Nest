@@ -4,14 +4,14 @@ import 'package:expense_tracker/view/dashboard/home/widgets/userdata.dart';
 import 'package:expense_tracker/view/dashboard/home/widgets/view_all.dart';
 import 'package:flutter/material.dart';
 
-class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class _HomeScreenState extends State<HomeScreen> {
   @override
   @override
   Widget build(BuildContext context) {

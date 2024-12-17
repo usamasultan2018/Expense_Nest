@@ -130,7 +130,9 @@
   "delete_account_confirmation": "¿Estás seguro de que deseas eliminar tu cuenta?",
   "delete_account_warning": "¡Eliminar tu cuenta es un proceso permanente!",
   "delete_account_details": "Al eliminar tu cuenta, tu perfil y transacciones se eliminarán permanentemente. ¡Ten en cuenta esto!",
-  "delete_account_button_title": "Eliminar Cuenta"
+  "delete_account_button_title": "Eliminar Cuenta",
+  "transaction_deleted_successfully": "Transacción eliminada con éxito"
+
   
 
 }

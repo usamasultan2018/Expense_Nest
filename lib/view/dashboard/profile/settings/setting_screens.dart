@@ -1,5 +1,6 @@
 import 'package:expense_tracker/components/custom_tile.dart';
 import 'package:expense_tracker/components/fade_effect.dart';
+import 'package:expense_tracker/repository/auth_repository.dart';
 import 'package:expense_tracker/utils/appColors.dart';
 import 'package:expense_tracker/view%20model/user_controller/user_controller.dart';
 import 'package:expense_tracker/view/dashboard/profile/settings/delete_account_screen.dart';
@@ -7,8 +8,9 @@ import 'package:expense_tracker/view/dashboard/profile/settings/feedback_screen.
 import 'package:expense_tracker/view/dashboard/profile/settings/widgets/language_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart'; // Import the localization package
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -70,9 +72,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const SizedBox(height: 5),
                   CustomTile(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                        return const FeedBackScreen();
-                      }));
+                      (context).push("/contact");
                     },
                     title: AppLocalizations.of(context)!.contact,
                     iconData: Icons.feedback,
@@ -99,9 +99,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const SizedBox(height: 5),
                   CustomTile(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                        return const DeleteAccountScreen();
-                      }));
+                      (context).push("/delete-account");
                     },
                     title: AppLocalizations.of(context)!.delete_account,
                     iconData: Icons.delete,

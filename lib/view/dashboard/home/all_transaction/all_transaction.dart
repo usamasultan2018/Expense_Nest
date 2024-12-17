@@ -4,6 +4,7 @@ import 'package:expense_tracker/utils/helpers/skeleton_loading.dart';
 import 'package:expense_tracker/view/dashboard/home/all_transaction/widget/search_field.dart';
 import 'package:expense_tracker/view/dashboard/home/all_transaction/widget/time_period_selector.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:expense_tracker/view/dashboard/transactions/edit_transactions.dart';
@@ -76,11 +77,8 @@ class _AllTransactionState extends State<AllTransaction> {
                               onPressed: () {
                                 transactionController.loadTransactionForEditing(
                                     filteredTransactions[index]);
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (ctx) {
-                                  return EditTransaction(
-                                      transaction: filteredTransactions[index]);
-                                }));
+                                (context).push("/edit-transaction",
+                                    extra: transactions[index]);
                               },
                               transaction: filteredTransactions[index],
                               iconData: filteredTransactions[index].category,

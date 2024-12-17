@@ -38,21 +38,18 @@ class _EditTransactionState extends State<EditTransaction> {
   }
 
   Future<void> _deleteTransaction(BuildContext context) async {
-    // Show confirmation dialog using the utility
-    final confirmDelete = await showDeleteConfirmationDialog(
-      context,
-      AppLocalizations.of(context)!.deleteTransactionTitle,
-      AppLocalizations.of(context)!.deleteTransactionMessage,
+    ConfirmationDialogUtil.show(
+      context: context,
+      title: AppLocalizations.of(context)!.deleteTransactionTitle,
+      message: AppLocalizations.of(context)!.deleteTransactionMessage,
+      onConfirm: () async {
+        await TransactionRepository().deleteTransaction(widget.transaction);
+
+        Navigator.pop(context); // Go back after deletion
+        SnackbarUtil.showSuccessSnackbar(context,
+            AppLocalizations.of(context)!.transaction_deleted_successfully);
+      },
     );
-
-    // Proceed with deletion if confirmed
-    if (confirmDelete == true) {
-      await TransactionRepository().deleteTransaction(widget.transaction);
-
-      Navigator.pop(context); // Go back after deletion
-      SnackbarUtil.showSuccessSnackbar(
-          context, "Transaction Deleted Successfully");
-    }
   }
 
   @override

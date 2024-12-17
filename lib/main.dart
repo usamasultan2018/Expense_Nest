@@ -5,6 +5,7 @@ import 'package:expense_tracker/repository/category_repository.dart';
 import 'package:expense_tracker/repository/transaction_repository.dart';
 import 'package:expense_tracker/utils/app_theme.dart';
 import 'package:expense_tracker/utils/helpers/shared_preference.dart';
+import 'package:expense_tracker/utils/routes/app_router.dart';
 import 'package:expense_tracker/view%20model/transaction_controller/transaction_controller.dart';
 import 'package:expense_tracker/view%20model/login_controller/login_controller.dart';
 import 'package:expense_tracker/view%20model/signup_controller/signup_controller.dart';
@@ -63,7 +64,7 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer<SettingController>(
         builder: (context, settingController, child) {
-          return MaterialApp(
+          return MaterialApp.router(
             title: 'ExpenseNest',
             debugShowCheckedModeBanner: false,
             locale: settingController.locale,
@@ -80,7 +81,7 @@ class MyApp extends StatelessWidget {
             themeMode: settingController.currentThemeMode,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
-            home: SplashScreen(),
+            routerConfig: AppRouter.router,
           );
         },
       ),

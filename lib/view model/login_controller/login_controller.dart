@@ -1,10 +1,10 @@
 import 'package:expense_tracker/repository/auth_repository.dart';
 import 'package:expense_tracker/utils/helpers/firebase_exception_handler.dart';
 import 'package:expense_tracker/utils/helpers/snackbar_util.dart';
-import 'package:expense_tracker/view/dashboard/bottom_nav/bottom_navigator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart'; // Add go_router
 
 class LoginController extends ChangeNotifier {
   final AuthRepository _authRepository = AuthRepository();
@@ -31,7 +31,6 @@ class LoginController extends ChangeNotifier {
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
       SnackbarUtil.showErrorSnackbar(
           context, AppLocalizations.of(context)!.pleaseFillAllFields);
-
       return;
     }
 
@@ -43,19 +42,22 @@ class LoginController extends ChangeNotifier {
         passwordController.text,
       );
 
-      if (!user!.emailVerified) {
+      // If user is null, don't proceed further
+      if (user == null) {
         SnackbarUtil.showErrorSnackbar(
-            context, AppLocalizations.of(context)!.verifyEmail);
+            context, AppLocalizations.of(context)!.unexpectedError);
+        return;
       }
 
-      if (user != null && user.emailVerified) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (ctx) {
-            return const BottomNavigatorWidget();
-          }),
-          (route) => false,
-        );
+      if (!user.emailVerified) {
+        SnackbarUtil.showErrorSnackbar(
+            context, AppLocalizations.of(context)!.verifyEmail);
+        return;
+      }
+
+      // Navigate to the home screen (Ensure this doesn't call itself)
+      if (context.mounted) {
+        context.go('/bottom-nav');
         SnackbarUtil.showSuccessSnackbar(
             context, AppLocalizations.of(context)!.loginSuccessful);
       }
@@ -76,19 +78,18 @@ class LoginController extends ChangeNotifier {
     try {
       User? user = await _authRepository.signUpWithGoogle();
 
-      if (user != null) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (ctx) {
-            return const BottomNavigatorWidget();
-          }),
-          (route) => false,
-        );
-        SnackbarUtil.showSuccessSnackbar(
-            context, AppLocalizations.of(context)!.googleLoginSuccessful);
-      } else {
+      // If user is null, don't proceed further
+      if (user == null) {
         SnackbarUtil.showErrorSnackbar(
             context, AppLocalizations.of(context)!.loginCanceled);
+        return;
+      }
+
+      // Navigate to the home screen (Ensure this doesn't call itself)
+      if (context.mounted) {
+        context.go('/home');
+        SnackbarUtil.showSuccessSnackbar(
+            context, AppLocalizations.of(context)!.googleLoginSuccessful);
       }
     } on FirebaseAuthException catch (e) {
       String errorMessage = FirebaseExceptionHandler.handleException(e);

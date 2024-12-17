@@ -1,6 +1,7 @@
 import 'package:expense_tracker/view/dashboard/home/all_transaction/all_transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 
 class ViewAll extends StatelessWidget {
   const ViewAll({super.key});
@@ -18,9 +19,7 @@ class ViewAll extends StatelessWidget {
         ),
         GestureDetector(
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-              return const AllTransaction();
-            }));
+            (context).push("/view-all");
           },
           child: Text(
             AppLocalizations.of(context)!.viewAll,

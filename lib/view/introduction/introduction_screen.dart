@@ -2,25 +2,25 @@ import 'package:animate_do/animate_do.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:expense_tracker/components/custom_button.dart';
 import 'package:expense_tracker/utils/appColors.dart';
-import 'package:expense_tracker/view/auth/login/login.dart';
+import 'package:expense_tracker/view/auth/login/login_screen.dart';
 import 'package:expense_tracker/view/auth/signup/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 
-class Introduction extends StatefulWidget {
-  const Introduction({super.key});
+class IntroductionScreen extends StatefulWidget {
+  const IntroductionScreen({super.key});
 
   @override
-  State<Introduction> createState() => _IntroductionState();
+  State<IntroductionScreen> createState() => _IntroductionScreenState();
 }
 
-class _IntroductionState extends State<Introduction> {
+class _IntroductionScreenState extends State<IntroductionScreen> {
   PageController pageController = PageController(initialPage: 0);
   int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    // Define onboardingData inside build to access localization context
     List<Onboarding> onboardingData = [
       Onboarding(
         title1: AppLocalizations.of(context)!.onboardingTitle1,
@@ -68,19 +68,14 @@ class _IntroductionState extends State<Introduction> {
               CustomIndicator(position: currentIndex),
               const SizedBox(height: 20),
               RoundButton(
-                title: AppLocalizations.of(context)!.signupButton,
-                onPress: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                    return const SignupScreen();
-                  }));
-                },
-              ),
+                  title: AppLocalizations.of(context)!.signupButton,
+                  onPress: () {
+                    context.push('/signup');
+                  }),
               const SizedBox(height: 10),
               TextButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                    return const LoginScreen();
-                  }));
+                  context.push('/login');
                 },
                 child: Text(
                   AppLocalizations.of(context)!.alreadyHaveAccount,

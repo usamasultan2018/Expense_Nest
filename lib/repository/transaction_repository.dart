@@ -14,10 +14,10 @@ class TransactionRepository implements ITransactionRepository {
       FirebaseFirestore.instance.collection('accounts');
 
   @override
-  Future<Map<String, int>> getTransactionCounts() async {
+  Future<Map<String, int>> getTransactionCounts(String userId) async {
     try {
-      final incomeCount = await _countTransactionsByType('income');
-      final expenseCount = await _countTransactionsByType('expense');
+      final incomeCount = await _countTransactionsByType('income', userId);
+      final expenseCount = await _countTransactionsByType('expense', userId);
       return {'income': incomeCount, 'expense': expenseCount};
     } catch (e) {
       print("Error fetching transaction counts: $e");
@@ -25,9 +25,11 @@ class TransactionRepository implements ITransactionRepository {
     }
   }
 
-  Future<int> _countTransactionsByType(String type) async {
-    final snapshot =
-        await _transactionsCollection.where('type', isEqualTo: type).get();
+  Future<int> _countTransactionsByType(String type, String userId) async {
+    final snapshot = await _transactionsCollection
+        .where('type', isEqualTo: type) // Filter by type (income or expense)
+        .where('userId', isEqualTo: userId) // Filter by userId
+        .get();
     return snapshot.docs.length;
   }
 

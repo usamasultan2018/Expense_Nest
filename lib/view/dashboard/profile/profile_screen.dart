@@ -2,6 +2,7 @@ import 'package:expense_tracker/components/custom_tile.dart';
 import 'package:expense_tracker/components/fade_effect.dart';
 import 'package:expense_tracker/components/loading_widget.dart';
 import 'package:expense_tracker/models/user.dart';
+import 'package:expense_tracker/repository/auth_repository.dart';
 import 'package:expense_tracker/repository/user_repositpory.dart';
 import 'package:expense_tracker/utils/appColors.dart';
 import 'package:expense_tracker/utils/helpers/shared_preference.dart';
@@ -11,6 +12,7 @@ import 'package:expense_tracker/view/dashboard/profile/appearance/appearance_scr
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -54,15 +56,12 @@ class ProfileScreen extends StatelessWidget {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const LoadingWidget();
                 }
-
                 if (snapshot.hasError) {
                   return Center(child: Text("Error: ${snapshot.error}"));
                 }
-
                 if (!snapshot.hasData) {
                   return const Center(child: Text("No user data available."));
                 }
-
                 final UserModel userModel = snapshot.data!;
 
                 return Padding(
@@ -105,10 +104,7 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         CustomTile(
                           onTap: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (ctx) {
-                              return const MyAccountScreen();
-                            }));
+                            (context).push("/my-account");
                           },
                           title: AppLocalizations.of(context)!.my_account,
                           iconData: Icons.person,
@@ -118,10 +114,7 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         CustomTile(
                           onTap: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (ctx) {
-                              return const AppearanceScreen();
-                            }));
+                            (context).push("/appearance");
                           },
                           title: AppLocalizations.of(context)!.appearance,
                           iconData: FontAwesomeIcons.paintRoller,

@@ -3,11 +3,13 @@ import 'package:expense_tracker/components/fade_effect.dart';
 import 'package:expense_tracker/components/no_transaction.dart';
 import 'package:expense_tracker/components/transaction_tile.dart';
 import 'package:expense_tracker/models/transaction.dart';
+import 'package:expense_tracker/repository/auth_repository.dart';
 import 'package:expense_tracker/repository/transaction_repository.dart';
 import 'package:expense_tracker/utils/helpers/shared_preference.dart';
 import 'package:expense_tracker/utils/helpers/skeleton_loading.dart';
 import 'package:expense_tracker/view/dashboard/transactions/edit_transactions.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class Transactions extends StatelessWidget {
   const Transactions({super.key});
@@ -48,10 +50,8 @@ class Transactions extends StatelessWidget {
                 return FadeTransitionEffect(
                   child: TransactionTile(
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (ctx) {
-                        return EditTransaction(
-                            transaction: transactions[index]);
-                      }));
+                      (context).push("/edit-transaction",
+                          extra: transactions[index]);
                     },
                     transaction: transactions[index],
                     iconData: transactions[index].category,

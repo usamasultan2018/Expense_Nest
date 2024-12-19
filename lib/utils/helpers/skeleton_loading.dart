@@ -68,7 +68,12 @@ class WelcomeSkeleton extends StatelessWidget {
       padding: EdgeInsets.all(10.0),
       child: Row(
         children: [
-          CircleSkeleton(),
+          CircleSkeleton(
+            size: 60,
+          ),
+          SizedBox(
+            width: 5,
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -99,61 +104,10 @@ class BalanceCardTileSkeleton extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
       width: double.infinity,
+      height: 150,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: const Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TileSkeleton(
-              width: 100, height: 20), // Placeholder for "Total Balance" text
-          SizedBox(height: 10),
-          TileSkeleton(
-              width: 150, height: 40), // Placeholder for balance amount
-          SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  CircleSkeleton(size: 28), // Placeholder for icon
-                  SizedBox(width: 8),
-                  Column(
-                    children: [
-                      TileSkeleton(
-                          width: 50,
-                          height: 14), // Placeholder for "Income" label
-                      SizedBox(height: 4),
-                      TileSkeleton(
-                          width: 60,
-                          height: 14), // Placeholder for income amount
-                    ],
-                  ),
-                ],
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  CircleSkeleton(size: 28), // Placeholder for icon
-                  SizedBox(width: 8),
-                  Column(
-                    children: [
-                      TileSkeleton(
-                          width: 50,
-                          height: 14), // Placeholder for "Expense" label
-                      SizedBox(height: 4),
-                      TileSkeleton(
-                          width: 60,
-                          height: 14), // Placeholder for expense amount
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
+          color: Theme.of(context).cardColor,
+          borderRadius: const BorderRadius.all(Radius.circular(8))),
     );
   }
 }
@@ -187,7 +141,7 @@ class CircleSkeleton extends StatelessWidget {
       height: size,
       width: size,
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withOpacity(0.04),
+        color: Theme.of(context).cardColor,
         shape: BoxShape.circle,
       ),
     );

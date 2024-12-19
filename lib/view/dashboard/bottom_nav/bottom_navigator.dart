@@ -38,7 +38,7 @@ class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
         destinations: [
           NavigationDestination(
             icon: _currentIndex == 0
-                ? Icon(FontAwesomeIcons.home,
+                ? const Icon(FontAwesomeIcons.home,
                     color: AppColors
                         .secondary) // Enlarged and colored when selected
                 : Icon(
@@ -70,7 +70,7 @@ class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
         child: Container(
           width: 60,
           height: 60,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             shape: BoxShape.circle,
             gradient: AppColors.primaryGradient,
           ),

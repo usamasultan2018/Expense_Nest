@@ -1,3 +1,4 @@
+import 'package:expense_tracker/components/fade_effect.dart';
 import 'package:expense_tracker/components/loading_widget.dart';
 import 'package:expense_tracker/models/user.dart';
 import 'package:expense_tracker/repository/transaction_repository.dart';
@@ -73,186 +74,194 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
 
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  Text(
-                    AppLocalizations.of(context)!
-                        .loginInformation, // Localized text
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                  const SizedBox(height: 15),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 15),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          AppLocalizations.of(context)!
-                              .nickname, // Localized text
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        width: 1,
-                                        color: AppColors.primary,
-                                      )),
-                                  child: CircleAvatar(
-                                    radius: 20,
-                                    backgroundImage: userModel
-                                            .profilePicture.isNotEmpty
-                                        ? NetworkImage(userModel.profilePicture)
-                                        : const AssetImage(
-                                                'assets/images/boy.png')
-                                            as ImageProvider<Object>,
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Text(userModel.username,
-                                    style: const TextStyle(fontSize: 16)),
-                              ],
-                            ),
-                            EditProfileSheet(userModel: userModel),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          AppLocalizations.of(context)!
-                              .connectedAccount, // Localized text
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        Row(
-                          children: [
-                            const Icon(Icons.email, size: 20),
-                            const SizedBox(width: 10),
-                            Text(userModel.email,
-                                style: const TextStyle(fontSize: 16)),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          AppLocalizations.of(context)!
-                              .registeredOn, // Localized text
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        Row(
-                          children: [
-                            const Icon(Icons.calendar_month_outlined, size: 20),
-                            const SizedBox(width: 10),
-                            Text(
-                              DateTimeUtils.formatDateMonthDayYear(
-                                  userModel.createdAt),
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    AppLocalizations.of(context)!
-                        .myTransactions, // Localized text
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                  const SizedBox(height: 15),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 20),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).cardColor,
-                            borderRadius: BorderRadius.circular(15),
+              child: FadeTransitionEffect(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20),
+                    Text(
+                      AppLocalizations.of(context)!
+                          .loginInformation, // Localized text
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
-                          child: Column(
+                    ),
+                    const SizedBox(height: 15),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 15),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!
+                                .nickname, // Localized text
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                AppLocalizations.of(context)!
-                                    .recordedIncomes, // Localized text
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18),
-                              ),
-                              const SizedBox(height: 5),
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    incomeCount.toString(),
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          width: 1,
+                                          color: AppColors.primary,
+                                        )),
+                                    child: CircleAvatar(
+                                      radius: 20,
+                                      backgroundImage:
+                                          userModel.profilePicture.isNotEmpty
+                                              ? NetworkImage(
+                                                  userModel.profilePicture)
+                                              : const AssetImage(
+                                                      'assets/images/boy.png')
+                                                  as ImageProvider<Object>,
                                     ),
                                   ),
-                                  const Icon(Icons.done_all_sharp),
+                                  const SizedBox(width: 10),
+                                  Text(userModel.username,
+                                      style: const TextStyle(fontSize: 16)),
                                 ],
+                              ),
+                              EditProfileSheet(userModel: userModel),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            AppLocalizations.of(context)!
+                                .connectedAccount, // Localized text
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          Row(
+                            children: [
+                              const Icon(Icons.email, size: 20),
+                              const SizedBox(width: 10),
+                              Text(userModel.email,
+                                  style: const TextStyle(fontSize: 16)),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            AppLocalizations.of(context)!
+                                .registeredOn, // Localized text
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          Row(
+                            children: [
+                              const Icon(Icons.calendar_month_outlined,
+                                  size: 20),
+                              const SizedBox(width: 10),
+                              Text(
+                                DateTimeUtils.formatDateMonthDayYear(
+                                    userModel.createdAt),
+                                style: const TextStyle(fontSize: 16),
                               ),
                             ],
                           ),
-                        ),
+                        ],
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 20),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).cardColor,
-                            borderRadius: BorderRadius.circular(15),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      AppLocalizations.of(context)!
+                          .myTransactions, // Localized text
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
-                          child: Column(
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!
-                                    .recordedExpenses, // Localized text
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18),
+                    ),
+                    const SizedBox(height: 15),
+                    FadeTransitionEffect(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 20),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).cardColor,
+                                borderRadius: BorderRadius.circular(15),
                               ),
-                              const SizedBox(height: 5),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                              child: Column(
                                 children: [
                                   Text(
-                                    expenseCount.toString(),
+                                    AppLocalizations.of(context)!
+                                        .recordedIncomes, // Localized text
                                     style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                    ),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18),
                                   ),
-                                  const Icon(Icons.done_all_sharp),
+                                  const SizedBox(height: 5),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        incomeCount.toString(),
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                      const Icon(Icons.done_all_sharp),
+                                    ],
+                                  ),
                                 ],
                               ),
-                            ],
+                            ),
                           ),
-                        ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 20),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).cardColor,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    AppLocalizations.of(context)!
+                                        .recordedExpenses, // Localized text
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        expenseCount.toString(),
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                      const Icon(Icons.done_all_sharp),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                ],
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
             );
           },

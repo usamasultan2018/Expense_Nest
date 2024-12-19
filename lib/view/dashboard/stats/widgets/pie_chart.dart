@@ -36,7 +36,7 @@ class MyPieChartWithLegend extends StatelessWidget {
           return Center(child: Text('Error: ${snapshot.error}'));
         }
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const NoGraphTransaction();
+          return FadeTransitionEffect(child: const NoGraphTransaction());
         }
 
         List<TransactionModel> transactions = snapshot.data!;
@@ -46,7 +46,7 @@ class MyPieChartWithLegend extends StatelessWidget {
             .toList();
 
         if (transactions.isEmpty) {
-          return const NoGraphTransaction();
+          return FadeTransitionEffect(child: const NoGraphTransaction());
         }
 
         return Column(
@@ -93,7 +93,7 @@ class MyPieChartWithLegend extends StatelessWidget {
         value: entry.value,
         title: '$percentage%',
         color: getColorsForTile(entry.key).withOpacity(0.7),
-        radius: 60,
+        radius: 50,
         titleStyle: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,

@@ -1,3 +1,4 @@
+import 'package:expense_tracker/components/fade_effect.dart';
 import 'package:expense_tracker/components/no_graph_transaction.dart';
 import 'package:expense_tracker/utils/appColors.dart';
 import 'package:expense_tracker/utils/helpers/constant.dart';
@@ -52,8 +53,10 @@ class _MyBarChartState extends State<MyBarChart> {
 
         return Padding(
           padding: const EdgeInsets.all(10),
-          child: BarChart(
-            _mainData(transactions),
+          child: FadeTransitionEffect(
+            child: BarChart(
+              _mainData(transactions),
+            ),
           ),
         );
       },
@@ -81,7 +84,7 @@ class _MyBarChartState extends State<MyBarChart> {
         show: false,
         border: Border.all(color: const Color(0xff37434d)),
       ),
-      maxY: maxAmount * 1.8,
+      maxY: maxAmount * 1.5,
       barGroups: _getBarChartGroups(transactions),
     );
   }
@@ -117,6 +120,18 @@ class _MyBarChartState extends State<MyBarChart> {
       leftTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: false,
+          interval: 1000,
+          reservedSize: 40,
+          getTitlesWidget: (value, meta) {
+            return Text(
+              value.toStringAsFixed(0),
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.left,
+            );
+          },
         ),
       ),
       topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),

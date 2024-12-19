@@ -1,9 +1,8 @@
+import 'package:expense_tracker/components/fade_effect.dart';
 import 'package:expense_tracker/components/no_transaction.dart';
 import 'package:expense_tracker/components/transaction_tile.dart';
 import 'package:expense_tracker/models/transaction.dart';
-import 'package:expense_tracker/utils/helpers/geticons.dart';
 import 'package:expense_tracker/view%20model/transaction_controller/transaction_controller.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -24,7 +23,9 @@ class TransactionFilter extends StatelessWidget {
               return Center(child: Text('Error: ${snapshot.error}'));
             }
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const NoTransaction();
+              return const FadeTransitionEffect(
+                child: NoTransaction(),
+              );
             }
 
             final transactions = snapshot.data!;
@@ -35,9 +36,11 @@ class TransactionFilter extends StatelessWidget {
               itemCount: transactions.length,
               itemBuilder: (context, index) {
                 final transaction = transactions[index];
-                return TransactionTile(
-                  transaction: transaction,
-                  iconData: transactions[index].category,
+                return FadeTransitionEffect(
+                  child: TransactionTile(
+                    transaction: transaction,
+                    iconData: transactions[index].category,
+                  ),
                 );
               },
             );

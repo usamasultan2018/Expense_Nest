@@ -1,4 +1,5 @@
 import 'package:expense_tracker/components/custom_button.dart';
+import 'package:expense_tracker/components/fade_effect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -49,53 +50,55 @@ class _FeedBackScreenState extends State<FeedBackScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              Text(
-                AppLocalizations.of(context)!.feedbackPrompt,
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodyLarge!.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: feedbackController,
-                keyboardType: TextInputType.text,
-                maxLines: 6,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: theme.colorScheme.surface,
-                  hintText: AppLocalizations.of(context)!.feedbackHint,
-                  hintStyle: TextStyle(
-                    fontSize: 14,
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
+        child: FadeTransitionEffect(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                Text(
+                  AppLocalizations.of(context)!.feedbackPrompt,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyLarge!.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              RoundButton(
-                title: AppLocalizations.of(context)!.sendFeedbackButton,
-                onPress: () {
-                  if (feedbackController.text.isNotEmpty) {
-                    sendFeedback();
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                          content: Text(AppLocalizations.of(context)!
-                              .feedbackEmptyWarning)),
-                    );
-                  }
-                },
-              ),
-            ],
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: feedbackController,
+                  keyboardType: TextInputType.text,
+                  maxLines: 6,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: theme.colorScheme.surface,
+                    hintText: AppLocalizations.of(context)!.feedbackHint,
+                    hintStyle: TextStyle(
+                      fontSize: 14,
+                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                RoundButton(
+                  title: AppLocalizations.of(context)!.sendFeedbackButton,
+                  onPress: () {
+                    if (feedbackController.text.isNotEmpty) {
+                      sendFeedback();
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text(AppLocalizations.of(context)!
+                                .feedbackEmptyWarning)),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

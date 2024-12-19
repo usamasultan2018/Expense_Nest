@@ -517,6 +517,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "10.7.0"
+  glob:
+    dependency: transitive
+    description:
+      name: glob
+      sha256: "0e7014b3b7d4dac1ca4d6114f82bf1782ee86745b9b42a92c9289c23d8a0ab63"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.2"
   go_router:
     dependency: "direct main"
     description:
@@ -1138,6 +1146,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.2"
+  unused_import_remover:
+    dependency: "direct dev"
+    description:
+      name: unused_import_remover
+      sha256: dd2e7e37e704a35461a8092489f4579ee02f8f5aae0632525a9020b2a080419f
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   url_launcher:
     dependency: "direct main"
     description:

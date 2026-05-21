@@ -1,0 +1,161 @@
+import 'package:expense_tracker/core/theme/appColors.dart';
+import 'package:expense_tracker/features/settings/controller/setting_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+class ThemeTile extends StatelessWidget {
+  const ThemeTile({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<SettingController>(
+      builder: (context, settingController, child) {
+        final currentTheme = settingController.themeModeOption;
+
+        return Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              /// Leading Icon
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.blue,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.palette_outlined,
+                  color: Colors.white,
+                ),
+              ),
+
+              const SizedBox(width: 14),
+
+              /// Title + Subtitle
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Theme",
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+
+              /// Popup Menu
+              PopupMenuButton<ThemeModeOption>(
+                tooltip: "Change Theme",
+                onSelected: (ThemeModeOption value) {
+                  settingController.setThemeMode(value);
+                },
+                itemBuilder: (BuildContext context) => [
+                  PopupMenuItem(
+                    value: ThemeModeOption.light,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.light_mode),
+                        const SizedBox(width: 10),
+                        const Text("Light"),
+                        const Spacer(),
+                        if (currentTheme == ThemeModeOption.light)
+                          const Icon(
+                            Icons.check,
+                            color: Colors.green,
+                          ),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: ThemeModeOption.dark,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.dark_mode),
+                        const SizedBox(width: 10),
+                        const Text("Dark"),
+                        const Spacer(),
+                        if (currentTheme == ThemeModeOption.dark)
+                          const Icon(
+                            Icons.check,
+                            color: Colors.green,
+                          ),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: ThemeModeOption.system,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.phone_android),
+                        const SizedBox(width: 10),
+                        const Text("System"),
+                        const Spacer(),
+                        if (currentTheme == ThemeModeOption.system)
+                          const Icon(
+                            Icons.check,
+                            color: Colors.green,
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        _getThemeLabel(currentTheme),
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      const SizedBox(width: 6),
+                      const Icon(
+                        Icons.keyboard_arrow_down,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  static String _getThemeLabel(
+    ThemeModeOption themeMode,
+  ) {
+    switch (themeMode) {
+      case ThemeModeOption.light:
+        return "Light";
+
+      case ThemeModeOption.dark:
+        return "Dark";
+
+      case ThemeModeOption.system:
+        return "System";
+    }
+  }
+}

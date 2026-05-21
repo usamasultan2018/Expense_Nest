@@ -14,6 +14,94 @@
       },
       "oauth_client": [
         {
+          "client_id": "942125477468-dcklc00sr3ahif46r428no97pk3n741b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.expensenest.app",
+            "certificate_hash": "0b91cbdb71f7fc2152471bcb96e33ea016a5fd9a"
+          }
+        },
+        {
+          "client_id": "942125477468-r5cukqcum2knlet215ql0am5ifi7hj9e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.expensenest.app",
+            "certificate_hash": "4eddcd76bcaf661854e1e75198e90e5c88784442"
+          }
+        },
+        {
+          "client_id": "942125477468-vbj931f76j0131n06am6fr4cs2ploucn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAllT9aRY5a7Fip3YbsdjI2DkeCqIREeBg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "942125477468-vbj931f76j0131n06am6fr4cs2ploucn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "942125477468-dnsk1mg88eme0qkgjo7dbrm9ks0t3m8u.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.expenseTracker"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:942125477468:android:00ff0d924621d763a98099",
+        "android_client_info": {
+          "package_name": "com.expensenest.expense_tracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "942125477468-vbj931f76j0131n06am6fr4cs2ploucn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAllT9aRY5a7Fip3YbsdjI2DkeCqIREeBg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "942125477468-vbj931f76j0131n06am6fr4cs2ploucn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "942125477468-dnsk1mg88eme0qkgjo7dbrm9ks0t3m8u.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.expenseTracker"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:942125477468:android:75be8e25a8287855a98099",
+        "android_client_info": {
+          "package_name": "com.softtures.expensenest"
+        }
+      },
+      "oauth_client": [
+        {
           "client_id": "942125477468-vbj931f76j0131n06am6fr4cs2ploucn.apps.googleusercontent.com",
           "client_type": 3
         }

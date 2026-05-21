@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAllT9aRY5a7Fip3YbsdjI2DkeCqIREeBg',
-    appId: '1:942125477468:android:03035a3a0b34de7ea98099',
+    appId: '1:942125477468:android:00ff0d924621d763a98099',
     messagingSenderId: '942125477468',
     projectId: 'expense-tracker-deb32',
     storageBucket: 'expense-tracker-deb32.appspot.com',
@@ -59,10 +59,13 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBIZtTUvPl258UrnUDsGB3ENd7CqjY9_1k',
-    appId: '1:942125477468:ios:c31cfefe091c4f40a98099',
+    appId: '1:942125477468:ios:2da9c654bde10603a98099',
     messagingSenderId: '942125477468',
     projectId: 'expense-tracker-deb32',
     storageBucket: 'expense-tracker-deb32.appspot.com',
-    iosBundleId: 'com.example.expenseTracker',
+    androidClientId: '942125477468-dcklc00sr3ahif46r428no97pk3n741b.apps.googleusercontent.com',
+    iosClientId: '942125477468-lncsrqgiivcb0r3lhb9v9v2oh4klieeu.apps.googleusercontent.com',
+    iosBundleId: 'com.softtures.expensenest',
   );
+
 }

@@ -6,7 +6,6 @@ import 'package:expense_tracker/core/models/user.dart';
 import 'package:expense_tracker/core/theme/appColors.dart';
 import 'package:expense_tracker/features/user/controller/user_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -162,7 +161,7 @@ class _EditProfileContent extends StatelessWidget {
                 CustomTextField(
                   controller: userController.usernameController,
                   hintText: "Username",
-                  iconData: FontAwesomeIcons.user,
+                  iconData: Icons.person_outline,
                   obscureText: false,
                 ),
 
@@ -173,7 +172,7 @@ class _EditProfileContent extends StatelessWidget {
                   controller: userController.emailController,
                   readOnly: true,
                   hintText: "Email",
-                  iconData: FontAwesomeIcons.envelope,
+                  iconData: Icons.email_outlined,
                   obscureText: false,
                 ),
 

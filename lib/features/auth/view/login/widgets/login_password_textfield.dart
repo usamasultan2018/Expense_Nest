@@ -1,7 +1,6 @@
 import 'package:expense_tracker/core/components/custom_textfield.dart';
 import 'package:expense_tracker/features/auth/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class LoginPasswordTextField extends StatelessWidget {
@@ -22,7 +21,7 @@ class LoginPasswordTextField extends StatelessWidget {
           ),
           controller: value.passwordController,
           hintText: "Password",
-          iconData: FontAwesomeIcons.lock,
+          iconData: Icons.lock_outline,
           obscureText: value.isPasswordVisible,
         );
       },

@@ -4,7 +4,6 @@ import 'package:expense_tracker/features/dashboard/view/home/home_screen.dart';
 import 'package:expense_tracker/core/theme/appColors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class BottomNavigatorWidget extends StatefulWidget {
   const BottomNavigatorWidget({super.key});
@@ -52,7 +51,7 @@ class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
               // Home Icon
               Expanded(
                 child: _buildNavItem(
-                  icon: FontAwesomeIcons.house,
+                  icon: Icons.home,
                   index: 0,
                 ),
               ),
@@ -92,7 +91,7 @@ class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
               // Stats Icon
               Expanded(
                 child: _buildNavItem(
-                  icon: FontAwesomeIcons.chartLine,
+                  icon:Icons.bar_chart,
                   index: 1,
                 ),
               ),

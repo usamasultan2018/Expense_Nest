@@ -1,13 +1,10 @@
-import 'package:expense_tracker/core/components/banner_ad_widget.dart';
 import 'package:expense_tracker/core/components/custom_tile.dart';
-import 'package:expense_tracker/core/components/fade_effect.dart';
 import 'package:expense_tracker/core/components/loading_widget.dart';
 import 'package:expense_tracker/core/components/profile_avatar.dart';
 import 'package:expense_tracker/core/theme/appColors.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/settings/setting_screens.dart';
 import 'package:expense_tracker/features/user/controller/user_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -127,7 +124,7 @@ class ProfileScreen extends StatelessWidget {
                     context.push("/appearance");
                   },
                   title: "Appearance",
-                  iconData: FontAwesomeIcons.paintRoller,
+                  iconData: Icons.palette_outlined,
                   bckColor: AppColors.yellow,
                 ),
 

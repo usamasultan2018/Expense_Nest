@@ -1,10 +1,11 @@
-import 'package:expense_tracker/features/dashboard/view/stats/stats_screen.dart';
-import 'package:expense_tracker/features/dashboard/view/transactions/add_transaction.dart';
-import 'package:expense_tracker/features/dashboard/view/home/home_screen.dart';
-import 'package:expense_tracker/core/theme/appColors.dart';
+import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import '../home/home_screen.dart';
+import '../stats/stats_screen.dart';
+import '../transactions/add_transaction.dart';
 
 class BottomNavigatorWidget extends StatefulWidget {
   const BottomNavigatorWidget({super.key});
@@ -15,14 +16,15 @@ class BottomNavigatorWidget extends StatefulWidget {
 
 class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
   int _currentIndex = 0;
-  final List<Widget> _screens = [
-    const HomeScreen(),
-    const StatScreen(),
+
+  final List<Widget> _screens = const [
+    HomeScreen(),
+    StatScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       extendBody: true,
@@ -30,73 +32,91 @@ class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
         index: _currentIndex,
         children: _screens,
       ),
-      bottomNavigationBar: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        height: 70,
-        decoration: BoxDecoration(
-          color: theme.cardColor,
-          borderRadius: BorderRadius.circular(35),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              blurRadius: 25,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              // Home Icon
-              Expanded(
-                child: _buildNavItem(
-                  icon: FontAwesomeIcons.house,
-                  index: 0,
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(32),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Container(
+              height: 78,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(32),
+                color: colorScheme.surface.withValues(alpha: 0.75),
+                border: Border.all(
+                  color: colorScheme.outline.withValues(alpha: 0.25),
+                  width: 1.5,
                 ),
-              ),
-
-              // Center Floating Action Button
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 10),
-                height: 60,
-                width: 60,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: AppColors.primaryGradient,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.secondary.withOpacity(0.4),
-                      blurRadius: 20,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-                ),
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (ctx) => const AddTransaction()),
-                    );
-                  },
-                  icon: const Icon(
-                    CupertinoIcons.add,
-                    color: Colors.white,
-                    size: 28,
+                boxShadow: [
+                  BoxShadow(
+                    color: colorScheme.shadow.withValues(alpha: 0.12),
+                    blurRadius: 30,
+                    spreadRadius: 2,
+                    offset: const Offset(0, 10),
                   ),
-                ),
+                ],
               ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Navigation Items
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildNavItem(
+                          icon: FontAwesomeIcons.house,
+                          label: "Home",
+                          index: 0,
+                          colorScheme: colorScheme,
+                        ),
+                      ),
+                      const SizedBox(width: 80), // Space for FAB
+                      Expanded(
+                        child: _buildNavItem(
+                          icon: FontAwesomeIcons.chartSimple,
+                          label: "Stats",
+                          index: 1,
+                          colorScheme: colorScheme,
+                        ),
+                      ),
+                    ],
+                  ),
 
-              // Stats Icon
-              Expanded(
-                child: _buildNavItem(
-                  icon: FontAwesomeIcons.chartLine,
-                  index: 1,
-                ),
+                  // Floating Action Button
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AddTransaction(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      height: 55,
+                      width: 55,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: colorScheme.primary,
+                        boxShadow: [
+                          BoxShadow(
+                            color: colorScheme.primary.withValues(alpha: 0.4),
+                            blurRadius: 15,
+                            spreadRadius: 1,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        CupertinoIcons.add,
+                        color: Colors.white,
+                        size: 32,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -104,37 +124,46 @@ class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
   }
 
   Widget _buildNavItem({
-    required IconData icon,
+    required FaIconData icon,
+    required String label,
     required int index,
+    required ColorScheme colorScheme,
   }) {
-    final isSelected = _currentIndex == index;
+    final bool isSelected = _currentIndex == index;
 
     return InkWell(
-      onTap: () {
-        setState(() {
-          _currentIndex = index;
-        });
-      },
-      borderRadius: BorderRadius.circular(25),
+      onTap: () => setState(() => _currentIndex = index),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        margin: isSelected
-            ? const EdgeInsets.symmetric(
-                horizontal: 8,
-              )
-            : const EdgeInsets.all(0),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.secondary.withOpacity(0.2)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Icon(
-          icon,
-          color: isSelected ? AppColors.secondary : Colors.grey.shade500,
-          size: isSelected ? 26 : 24,
+        curve: Curves.easeOutCubic,
+        constraints: const BoxConstraints(minWidth: 0),
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedScale(
+              scale: isSelected ? 1.15 : 1.0,
+              duration: const Duration(milliseconds: 250),
+              child: FaIcon(
+                icon,
+                size: 26,
+                color: isSelected
+                    ? colorScheme.primary
+                    : colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11.5,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected
+                    ? colorScheme.primary
+                    : colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
+            ),
+          ],
         ),
       ),
     );

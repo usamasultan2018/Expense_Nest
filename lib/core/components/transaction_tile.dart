@@ -1,5 +1,4 @@
 import 'package:expense_tracker/core/models/transaction_model.dart';
-import 'package:expense_tracker/core/theme/appColors.dart';
 import 'package:expense_tracker/core/utils/helpers/constant.dart';
 import 'package:expense_tracker/core/utils/helpers/date.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +16,10 @@ class TransactionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     final bool isIncome = transaction.type == TransactionType.income;
+    final transactionColor = isIncome ? colorScheme.primary : colorScheme.error;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -54,12 +55,12 @@ class TransactionTile extends StatelessWidget {
                     gradient: LinearGradient(
                       colors: isIncome
                           ? [
-                              AppColors.green.withOpacity(0.9),
-                              AppColors.green.withOpacity(0.6),
+                              colorScheme.primary.withOpacity(0.9),
+                              colorScheme.primary.withOpacity(0.6),
                             ]
                           : [
-                              AppColors.red.withOpacity(0.9),
-                              AppColors.red.withOpacity(0.6),
+                              colorScheme.error.withOpacity(0.9),
+                              colorScheme.error.withOpacity(0.6),
                             ],
                     ),
                   ),
@@ -123,7 +124,7 @@ class TransactionTile extends StatelessWidget {
                     Text(
                       "${isIncome ? '+' : '-'} PKR ${formatLargeNumber(transaction.amount)}",
                       style: TextStyle(
-                        color: isIncome ? AppColors.green : AppColors.red,
+                        color: transactionColor,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),

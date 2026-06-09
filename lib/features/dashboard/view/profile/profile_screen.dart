@@ -3,7 +3,6 @@ import 'package:expense_tracker/core/components/custom_tile.dart';
 import 'package:expense_tracker/core/components/fade_effect.dart';
 import 'package:expense_tracker/core/components/loading_widget.dart';
 import 'package:expense_tracker/core/components/profile_avatar.dart';
-import 'package:expense_tracker/core/theme/appColors.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/settings/setting_screens.dart';
 import 'package:expense_tracker/features/user/controller/user_controller.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +15,9 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Profile"),
@@ -36,7 +38,7 @@ class ProfileScreen extends StatelessWidget {
               icon: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
+                  color: theme.cardColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(Icons.settings),
@@ -91,10 +93,10 @@ class ProfileScreen extends StatelessWidget {
                 Text(
                   userModel.username,
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
 
                 const SizedBox(height: 6),
@@ -103,9 +105,9 @@ class ProfileScreen extends StatelessWidget {
                 Text(
                   userModel.email,
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey,
-                      ),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                 ),
 
                 const SizedBox(height: 20),
@@ -117,6 +119,7 @@ class ProfileScreen extends StatelessWidget {
                   },
                   title: "My Account",
                   iconData: Icons.person_outline,
+                  bckColor: Colors.blueAccent,
                 ),
 
                 const SizedBox(height: 10),
@@ -127,8 +130,8 @@ class ProfileScreen extends StatelessWidget {
                     context.push("/appearance");
                   },
                   title: "Appearance",
-                  iconData: FontAwesomeIcons.paintRoller,
-                  bckColor: AppColors.yellow,
+                  iconData: Icons.color_lens_outlined,
+                  bckColor: Colors.purpleAccent,
                 ),
 
                 const SizedBox(height: 10),
@@ -140,7 +143,7 @@ class ProfileScreen extends StatelessWidget {
                   },
                   title: "Rate App",
                   iconData: Icons.star_rate_rounded,
-                  bckColor: AppColors.green,
+                  bckColor: Colors.amber,
                 ),
 
                 const SizedBox(height: 30),

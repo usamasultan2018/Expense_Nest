@@ -1,4 +1,3 @@
-import 'package:expense_tracker/core/components/banner_ad_widget.dart';
 import 'package:expense_tracker/features/dashboard/view/home/widgets/balance_overview.dart';
 import 'package:expense_tracker/features/dashboard/view/home/widgets/recent_transactions.dart';
 import 'package:expense_tracker/features/dashboard/view/home/widgets/user_greeting.dart';

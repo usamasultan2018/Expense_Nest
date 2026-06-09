@@ -14,7 +14,7 @@ class LoginEmailTextField extends StatelessWidget {
         return CustomTextField(
             controller: value.emailController,
             hintText: "Email",
-            iconData: FontAwesomeIcons.envelope,
+            iconData: Icons.email_outlined,
             obscureText: false);
       },
     );

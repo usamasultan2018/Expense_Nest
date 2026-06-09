@@ -14,7 +14,7 @@ class SignupEmail extends StatelessWidget {
         return CustomTextField(
           hintText: "Email",
           controller: value.emailController,
-          iconData: FontAwesomeIcons.envelope,
+          iconData: Icons.email_outlined,
           obscureText: false,
         );
       },

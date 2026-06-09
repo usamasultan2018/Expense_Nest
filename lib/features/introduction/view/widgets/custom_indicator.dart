@@ -1,5 +1,4 @@
 import 'package:dots_indicator/dots_indicator.dart';
-import 'package:expense_tracker/core/theme/appColors.dart';
 import 'package:flutter/material.dart';
 
 class CustomIndicator extends StatelessWidget {
@@ -14,17 +13,19 @@ class CustomIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return DotsIndicator(
       dotsCount: dotsCount,
       position: position,
       decorator: DotsDecorator(
-        color: Colors.grey.withOpacity(0.5),
+        color: colorScheme.onSurfaceVariant.withOpacity(0.4),
         size: const Size.square(8.0),
         activeSize: const Size(20.0, 8.0),
         activeShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5),
         ),
-        activeColor: AppColors.secondary,
+        activeColor: colorScheme.primary,
       ),
     );
   }

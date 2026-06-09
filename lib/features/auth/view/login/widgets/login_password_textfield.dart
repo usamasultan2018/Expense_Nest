@@ -22,7 +22,7 @@ class LoginPasswordTextField extends StatelessWidget {
           ),
           controller: value.passwordController,
           hintText: "Password",
-          iconData: FontAwesomeIcons.lock,
+          iconData:Icons.lock_outline,
           obscureText: value.isPasswordVisible,
         );
       },

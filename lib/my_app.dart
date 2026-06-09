@@ -29,8 +29,8 @@ class MyApp extends StatelessWidget {
             title: 'ExpenseNest',
             debugShowCheckedModeBanner: false,
             themeMode: settingController.currentThemeMode,
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
+            theme: AppTheme.light,
+            darkTheme: AppTheme.dark,
             routerConfig: AppRouter.router,
           );
         },

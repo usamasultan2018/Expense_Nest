@@ -3,7 +3,6 @@ import 'package:expense_tracker/core/components/custom_button.dart';
 import 'package:expense_tracker/core/components/custom_textfield.dart';
 import 'package:expense_tracker/core/components/profile_avatar.dart';
 import 'package:expense_tracker/core/models/user.dart';
-import 'package:expense_tracker/core/theme/appColors.dart';
 import 'package:expense_tracker/features/user/controller/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -61,6 +60,8 @@ class _EditProfileContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final userController = context.watch<UserController>();
 
     return DraggableScrollableSheet(
@@ -77,7 +78,7 @@ class _EditProfileContent extends StatelessWidget {
             bottom: MediaQuery.of(context).viewInsets.bottom + 24,
           ),
           decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
+            color: theme.scaffoldBackgroundColor,
             borderRadius: const BorderRadius.vertical(
               top: Radius.circular(28),
             ),
@@ -91,7 +92,7 @@ class _EditProfileContent extends StatelessWidget {
                   width: 50,
                   height: 5,
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade400,
+                    color: theme.dividerColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
@@ -104,9 +105,9 @@ class _EditProfileContent extends StatelessWidget {
                   children: [
                     Text(
                       "Edit Profile",
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     IconButton(
                       onPressed: () {
@@ -144,11 +145,16 @@ class _EditProfileContent extends StatelessWidget {
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          gradient: AppColors.primaryGradient,
+                          gradient: LinearGradient(
+                            colors: [
+                              colorScheme.primary,
+                              colorScheme.secondary,
+                            ],
+                          ),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.camera_alt_rounded,
-                          color: Colors.white,
+                          color: colorScheme.onPrimary,
                           size: 20,
                         ),
                       ),
@@ -162,7 +168,7 @@ class _EditProfileContent extends StatelessWidget {
                 CustomTextField(
                   controller: userController.usernameController,
                   hintText: "Username",
-                  iconData: FontAwesomeIcons.user,
+                  iconData: Icons.person_outline,
                   obscureText: false,
                 ),
 
@@ -173,7 +179,7 @@ class _EditProfileContent extends StatelessWidget {
                   controller: userController.emailController,
                   readOnly: true,
                   hintText: "Email",
-                  iconData: FontAwesomeIcons.envelope,
+                  iconData: Icons.email_outlined,
                   obscureText: false,
                 ),
 

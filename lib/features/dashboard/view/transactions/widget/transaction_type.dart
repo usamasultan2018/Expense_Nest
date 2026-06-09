@@ -1,4 +1,3 @@
-import 'package:expense_tracker/core/theme/appColors.dart';
 import 'package:expense_tracker/core/utils/helpers/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,13 +11,15 @@ class TransactionToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Consumer<TransactionController>(
       builder: (context, controller, _) {
         final isIncome = controller.selectedType == TransactionType.income;
 
         return Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
+            color: theme.cardColor,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -54,6 +55,9 @@ class _ToggleSegment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
@@ -62,7 +66,14 @@ class _ToggleSegment extends StatelessWidget {
           curve: Curves.easeInToLinear,
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            gradient: isSelected ? AppColors.primaryGradient : null,
+            gradient: isSelected
+                ? LinearGradient(
+                    colors: [
+                      colorScheme.primary,
+                      colorScheme.secondary,
+                    ],
+                  )
+                : null,
             borderRadius: BorderRadius.circular(6),
           ),
           alignment: Alignment.center,
@@ -71,8 +82,8 @@ class _ToggleSegment extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: isSelected
-                  ? Colors.white
-                  : Theme.of(context).textTheme.bodyLarge!.color,
+                  ? colorScheme.onPrimary
+                  : theme.textTheme.bodyLarge?.color,
             ),
           ),
         ),

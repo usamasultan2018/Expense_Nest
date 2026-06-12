@@ -5,6 +5,7 @@ import 'package:expense_tracker/features/auth/view/signup/signup_screen.dart';
 import 'package:expense_tracker/features/auth/view/auth_wrapper.dart';
 import 'package:expense_tracker/features/dashboard/view/bottom_nav/bottom_navigator.dart';
 import 'package:expense_tracker/features/dashboard/view/home/home_screen.dart';
+import 'package:expense_tracker/features/dashboard/view/notications/view/notication_screen.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/appearance/appearance_screen.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/my_account/my_account_screen.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/profile_screen.dart';
@@ -129,6 +130,11 @@ class AppRouter {
           return EditTransaction(transaction: transaction);
         },
       ),
+      GoRoute(
+        path: RouteName.notifications,
+        name: RouteName.notifications,
+        builder: (context, state) => const NotificationScreen(),
+      )
     ],
 
     // Error Route

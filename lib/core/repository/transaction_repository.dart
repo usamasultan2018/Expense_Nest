@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracker/core/models/transaction_model.dart';
 import 'package:expense_tracker/core/repository/base/i_trasaction_repository.dart';
+import 'package:expense_tracker/core/utils/constant.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-import 'package:expense_tracker/core/utils/helpers/constant.dart';
 
 class TransactionRepository implements ITransactionRepository {
   final CollectionReference _transactionsCollection =

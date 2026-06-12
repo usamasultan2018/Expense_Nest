@@ -9,48 +9,62 @@ class NoteField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<TransactionController>(
       builder: (context, controller, child) {
-        return Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 18,
-            vertical: 4,
-          ),
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: Theme.of(context).dividerColor.withOpacity(0.15),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Note',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
             ),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 14),
-                child: Icon(
-                  Icons.notes_rounded,
-                  size: 20,
-                  color: Theme.of(context).hintColor,
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 18,
+                vertical: 4,
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: Theme.of(context).dividerColor.withValues(alpha: 0.15),
                 ),
               ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: TextFormField(
-                  controller: controller.noteController,
-                  minLines: 1,
-                  maxLines: 4,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(
-                    hintText: 'Add a note...',
-                    border: InputBorder.none,
-                    hintStyle: TextStyle(
-                      color: Theme.of(context).hintColor.withOpacity(0.6),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 14),
+                    child: Icon(
+                      Icons.notes_rounded,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: TextFormField(
+                      controller: controller.noteController,
+                      minLines: 1,
+                      maxLines: 4,
+                      textCapitalization: TextCapitalization.sentences,
+                      decoration: InputDecoration(
+                        hintText: 'Add a note...',
+                        filled: false,
+                        border: InputBorder.none,
+                        hintStyle: TextStyle(
+                          color: Theme.of(context)
+                              .hintColor
+                              .withValues(alpha: 0.5),
+                        ),
+                      ),
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );

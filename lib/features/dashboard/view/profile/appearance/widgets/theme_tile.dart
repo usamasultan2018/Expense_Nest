@@ -1,5 +1,4 @@
-import 'package:expense_tracker/core/theme/appColors.dart';
-import 'package:expense_tracker/features/settings/controller/setting_controller.dart';
+import 'package:expense_tracker/features/dashboard/view/profile/settings/controller/setting_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,16 +9,18 @@ class ThemeTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<SettingController>(
       builder: (context, settingController, child) {
+        final theme = Theme.of(context);
+        final colorScheme = theme.colorScheme;
         final currentTheme = settingController.themeModeOption;
 
         return Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
+            color: theme.cardColor,
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: colorScheme.primary.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -31,12 +32,12 @@ class ThemeTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.blue,
+                  color: Colors.deepOrange,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
-                  Icons.palette_outlined,
-                  color: Colors.white,
+                child: Icon(
+                  Icons.light_mode,
+                  color: colorScheme.onPrimaryContainer,
                 ),
               ),
 
@@ -49,9 +50,9 @@ class ThemeTile extends StatelessWidget {
                   children: [
                     Text(
                       "Theme",
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -73,9 +74,9 @@ class ThemeTile extends StatelessWidget {
                         const Text("Light"),
                         const Spacer(),
                         if (currentTheme == ThemeModeOption.light)
-                          const Icon(
+                          Icon(
                             Icons.check,
-                            color: Colors.green,
+                            color: colorScheme.primary,
                           ),
                       ],
                     ),
@@ -89,9 +90,9 @@ class ThemeTile extends StatelessWidget {
                         const Text("Dark"),
                         const Spacer(),
                         if (currentTheme == ThemeModeOption.dark)
-                          const Icon(
+                          Icon(
                             Icons.check,
-                            color: Colors.green,
+                            color: colorScheme.primary,
                           ),
                       ],
                     ),
@@ -105,9 +106,9 @@ class ThemeTile extends StatelessWidget {
                         const Text("System"),
                         const Spacer(),
                         if (currentTheme == ThemeModeOption.system)
-                          const Icon(
+                          Icon(
                             Icons.check,
-                            color: Colors.green,
+                            color: colorScheme.primary,
                           ),
                       ],
                     ),
@@ -120,7 +121,7 @@ class ThemeTile extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    color: Theme.of(context).scaffoldBackgroundColor,
+                    color: theme.scaffoldBackgroundColor,
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/core/components/loading_widget.dart';
-import 'package:expense_tracker/core/theme/appColors.dart';
 
 class RoundButton extends StatelessWidget {
   final String title;
@@ -22,6 +21,8 @@ class RoundButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final bool isDisabled = loading || onPressed == null;
 
     return Semantics(
@@ -38,24 +39,19 @@ class RoundButton extends StatelessWidget {
             width: width,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(borderRadius),
-              gradient: isDisabled
-                  ? LinearGradient(
-                      colors: [
-                        Colors.grey.shade400,
-                        Colors.grey.shade500,
-                      ],
-                    )
-                  : AppColors.primaryGradient,
+              color: isDisabled
+                  ? colorScheme.primary.withValues(alpha: 0.6)
+                  : colorScheme.primary,
             ),
             child: Center(
               child: loading
                   ? const LoadingWidget()
                   : Text(
                       title,
-                      style: const TextStyle(
+                      style: theme.textTheme.labelLarge?.copyWith(
                         fontSize: 16,
-                        color: Colors.white,
                         fontWeight: FontWeight.bold,
+                        color: colorScheme.onPrimary,
                       ),
                     ),
             ),

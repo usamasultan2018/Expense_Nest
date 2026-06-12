@@ -2,8 +2,8 @@ import 'package:expense_tracker/core/repository/transaction_repository.dart';
 import 'package:expense_tracker/core/theme/app_theme.dart';
 import 'package:expense_tracker/app/routes/app_router.dart';
 import 'package:expense_tracker/features/dashboard/controller/transaction_controller.dart';
-import 'package:expense_tracker/features/user/controller/user_controller.dart';
-import 'package:expense_tracker/features/settings/controller/setting_controller.dart';
+import 'package:expense_tracker/features/dashboard/view/profile/controller/user_controller.dart';
+import 'package:expense_tracker/features/dashboard/view/profile/settings/controller/setting_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
           create: (_) => TransactionController(
               transactionRepository: _transactionRepository),
         ),
-        ChangeNotifierProvider(create: (_) => SettingController()),
+        ChangeNotifierProvider(create: (_) => SettingController()..init()),
       ],
       child: Consumer<SettingController>(
         builder: (context, settingController, child) {
@@ -29,8 +29,12 @@ class MyApp extends StatelessWidget {
             title: 'ExpenseNest',
             debugShowCheckedModeBanner: false,
             themeMode: settingController.currentThemeMode,
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
+          theme: AppTheme.light(
+              settingController.currentScheme,
+            ),
+            darkTheme: AppTheme.dark(
+              settingController.currentScheme,
+            ),
             routerConfig: AppRouter.router,
           );
         },

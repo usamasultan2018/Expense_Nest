@@ -1,7 +1,7 @@
 import 'package:expense_tracker/core/components/balance_card_tile.dart';
 import 'package:expense_tracker/core/models/account.dart' show AccountModel;
 import 'package:expense_tracker/core/repository/user_repositpory.dart';
-import 'package:expense_tracker/core/utils/helpers/skeleton_loading.dart';
+import 'package:expense_tracker/core/utils/skeleton_loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 

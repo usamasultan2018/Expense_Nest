@@ -1,4 +1,3 @@
-import 'package:expense_tracker/core/theme/appColors.dart';
 import 'package:flutter/material.dart';
 
 class NoGraphTransaction extends StatelessWidget {
@@ -6,6 +5,9 @@ class NoGraphTransaction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -13,13 +15,13 @@ class NoGraphTransaction extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
           ),
-          child: const Padding(
+          child: Padding(
             padding: EdgeInsets.all(10.0),
             child: Column(
               children: [
                 Icon(
                   Icons.pie_chart,
-                  color: AppColors.grey,
+                  color: colorScheme.onSurfaceVariant,
                   size: 40,
                 ),
                 SizedBox(
@@ -27,7 +29,7 @@ class NoGraphTransaction extends StatelessWidget {
                 ),
                 Text(
                   "No transactions",
-                  style: TextStyle(
+                  style: theme.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),

@@ -1,63 +1,48 @@
-// utils/app_theme.dart
-import 'package:expense_tracker/core/theme/appColors.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class AppTheme {
-  // Light Theme
-  static ThemeData lightTheme = ThemeData(
-    brightness: Brightness.light,
-    primaryColor: AppColors.primary,
-    scaffoldBackgroundColor: AppColors.surface,
-    cardColor: Colors.white, // Set tile color for light theme
-    appBarTheme: const AppBarTheme(
-      backgroundColor: AppColors.surface,
-      iconTheme: IconThemeData(color: AppColors.onSurface),
-    ),
-    colorScheme: const ColorScheme.light(
-      primary: AppColors.primary,
-      secondary: AppColors.secondary,
-      tertiary: AppColors.tertiary,
-      surface: Colors.white,
-      onPrimary: AppColors.white,
-      onSecondary: AppColors.white,
-      onSurface: AppColors.onSurface,
-      onError: AppColors.white,
-      error: AppColors.red,
-    ),
-    textTheme: const TextTheme(
-      bodyLarge: TextStyle(color: AppColors.onSurface),
-      bodyMedium: TextStyle(color: AppColors.grey),
-      bodySmall: TextStyle(color: AppColors.grey),
-    ),
-  );
+abstract final class AppTheme {
+  static ThemeData light(
+    FlexScheme scheme,
+  ) {
+    return FlexThemeData.light(
+      scheme: scheme,
+      subThemesData: const FlexSubThemesData(
+        interactionEffects: true,
+        tintedDisabledControls: true,
+        useM2StyleDividerInM3: true,
+        inputDecoratorIsFilled: true,
+        inputDecoratorBorderType: FlexInputBorderType.outline,
+        alignedDropdown: true,
+        navigationRailUseIndicator: true,
+      ),
+      visualDensity: FlexColorScheme.comfortablePlatformDensity,
+      cupertinoOverrideTheme: const CupertinoThemeData(
+        applyThemeToAll: true,
+      ),
+    );
+  }
 
-  // Dark Theme
-  static ThemeData darkTheme = ThemeData(
-    brightness: Brightness.dark,
-    primaryColor: AppColors.primary,
-    scaffoldBackgroundColor: const Color(0xff0c0c0c),
-    cardColor: const Color(0xff222224), // Set tile color for dark theme
-    appBarTheme: const AppBarTheme(
-      foregroundColor: Colors.white,
-      backgroundColor: Color(0xff0c0c0c),
-      iconTheme: IconThemeData(color: AppColors.white),
-    ),
-    colorScheme: const ColorScheme.dark(
-      primary: AppColors.primary,
-      secondary: AppColors.secondary,
-      tertiary: AppColors.tertiary,
-      surface: AppColors.darkGrey,
-      onPrimary: AppColors.white,
-      onSecondary: AppColors.white,
-      onSurface: AppColors.white,
-      onError: AppColors.white,
-      error: AppColors.red,
-    ),
-    textTheme: const TextTheme(
-      bodyLarge: TextStyle(color: AppColors.white),
-      bodyMedium: TextStyle(color: AppColors.grey),
-      bodySmall: TextStyle(color: AppColors.grey),
-      // Add more text styles as needed
-    ),
-  );
+  static ThemeData dark(
+    FlexScheme scheme,
+  ) {
+    return FlexThemeData.dark(
+      scheme: scheme,
+      subThemesData: const FlexSubThemesData(
+        interactionEffects: true,
+        tintedDisabledControls: true,
+        blendOnColors: true,
+        useM2StyleDividerInM3: true,
+        inputDecoratorIsFilled: true,
+        inputDecoratorBorderType: FlexInputBorderType.outline,
+        alignedDropdown: true,
+        navigationRailUseIndicator: true,
+      ),
+      visualDensity: FlexColorScheme.comfortablePlatformDensity,
+      cupertinoOverrideTheme: const CupertinoThemeData(
+        applyThemeToAll: true,
+      ),
+    );
+  }
 }

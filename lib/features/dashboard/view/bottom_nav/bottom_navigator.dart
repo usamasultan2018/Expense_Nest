@@ -1,7 +1,4 @@
-import 'package:expense_tracker/features/dashboard/view/stats/stats_screen.dart';
-import 'package:expense_tracker/features/dashboard/view/transactions/add_transaction.dart';
-import 'package:expense_tracker/features/dashboard/view/home/home_screen.dart';
-import 'package:expense_tracker/core/theme/appColors.dart';
+import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -14,14 +11,15 @@ class BottomNavigatorWidget extends StatefulWidget {
 
 class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
   int _currentIndex = 0;
-  final List<Widget> _screens = [
-    const HomeScreen(),
-    const StatScreen(),
+
+  final List<Widget> _screens = const [
+    HomeScreen(),
+    StatScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       extendBody: true,
@@ -29,20 +27,7 @@ class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
         index: _currentIndex,
         children: _screens,
       ),
-      bottomNavigationBar: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        height: 70,
-        decoration: BoxDecoration(
-          color: theme.cardColor,
-          borderRadius: BorderRadius.circular(35),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              blurRadius: 25,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
+      bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           child: Row(
@@ -62,31 +47,46 @@ class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
                 height: 60,
                 width: 60,
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: AppColors.primaryGradient,
+                  borderRadius: BorderRadius.circular(32),
+                  color: colorScheme.surface.withValues(alpha: 0.75),
+                  border: Border.all(
+                    color: colorScheme.outline.withValues(alpha: 0.25),
+                    width: 1.5,
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.secondary.withOpacity(0.4),
-                      blurRadius: 20,
-                      offset: const Offset(0, 5),
+                      color: colorScheme.shadow.withValues(alpha: 0.12),
+                      blurRadius: 30,
+                      spreadRadius: 2,
+                      offset: const Offset(0, 10),
                     ),
                   ],
                 ),
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (ctx) => const AddTransaction()),
-                    );
-                  },
-                  icon: const Icon(
-                    CupertinoIcons.add,
-                    color: Colors.white,
-                    size: 28,
-                  ),
-                ),
-              ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Navigation Items
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildNavItem(
+                            icon: Icons.home_rounded,
+                            label: "Home",
+                            index: 0,
+                            colorScheme: colorScheme,
+                          ),
+                        ),
+                        const SizedBox(width: 80), // Space for FAB
+                        Expanded(
+                          child: _buildNavItem(
+                            icon: Icons.bar_chart_rounded,
+                            label: "Stats",
+                            index: 1,
+                            colorScheme: colorScheme,
+                          ),
+                        ),
+                      ],
+                    ),
 
               // Stats Icon
               Expanded(
@@ -95,7 +95,7 @@ class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
                   index: 1,
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -104,36 +104,45 @@ class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
 
   Widget _buildNavItem({
     required IconData icon,
+    required String label,
     required int index,
+    required ColorScheme colorScheme,
   }) {
-    final isSelected = _currentIndex == index;
+    final bool isSelected = _currentIndex == index;
 
     return InkWell(
-      onTap: () {
-        setState(() {
-          _currentIndex = index;
-        });
-      },
-      borderRadius: BorderRadius.circular(25),
+      onTap: () => setState(() => _currentIndex = index),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        margin: isSelected
-            ? const EdgeInsets.symmetric(
-                horizontal: 8,
-              )
-            : const EdgeInsets.all(0),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.secondary.withOpacity(0.2)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Icon(
-          icon,
-          color: isSelected ? AppColors.secondary : Colors.grey.shade500,
-          size: isSelected ? 26 : 24,
+        curve: Curves.easeOutCubic,
+        constraints: const BoxConstraints(minWidth: 0),
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedScale(
+              scale: isSelected ? 1.15 : 1.0,
+              duration: const Duration(milliseconds: 250),
+              child: Icon(
+                icon,
+                size: 26,
+                color: isSelected
+                    ? colorScheme.primary
+                    : colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11.5,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected
+                    ? colorScheme.primary
+                    : colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
+            ),
+          ],
         ),
       ),
     );

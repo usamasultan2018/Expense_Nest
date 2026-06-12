@@ -1,3 +1,4 @@
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -8,13 +9,13 @@ enum ThemeModeOption {
 }
 
 class SettingController extends ChangeNotifier {
-  /// Private Theme State
   ThemeMode _currentThemeMode = ThemeMode.system;
+  FlexScheme _currentScheme = FlexScheme.blueM3;
 
-  /// Getter
   ThemeMode get currentThemeMode => _currentThemeMode;
 
-  /// Current Theme Option
+  FlexScheme get currentScheme => _currentScheme;
+
   ThemeModeOption get themeModeOption {
     switch (_currentThemeMode) {
       case ThemeMode.light:
@@ -28,11 +29,12 @@ class SettingController extends ChangeNotifier {
     }
   }
 
-  /// Initialize Theme
   Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();
 
-    final savedTheme = prefs.getString('theme_mode') ?? 'system';
+    /// Theme Mode
+    final savedTheme =
+        prefs.getString('theme_mode') ?? ThemeModeOption.system.name;
 
     switch (savedTheme) {
       case 'light':
@@ -47,10 +49,18 @@ class SettingController extends ChangeNotifier {
         _currentThemeMode = ThemeMode.system;
     }
 
+    /// Color Scheme
+    final savedScheme =
+        prefs.getString('theme_scheme') ?? FlexScheme.blueM3.name;
+
+    _currentScheme = FlexScheme.values.firstWhere(
+      (e) => e.name == savedScheme,
+      orElse: () => FlexScheme.blueM3,
+    );
+
     notifyListeners();
   }
 
-  /// Set Theme
   Future<void> setThemeMode(
     ThemeModeOption option,
   ) async {
@@ -78,16 +88,18 @@ class SettingController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Toggle Theme
-  Future<void> toggleTheme() async {
-    if (_currentThemeMode == ThemeMode.dark) {
-      await setThemeMode(
-        ThemeModeOption.light,
-      );
-    } else {
-      await setThemeMode(
-        ThemeModeOption.dark,
-      );
-    }
+  Future<void> setColorScheme(
+    FlexScheme scheme,
+  ) async {
+    _currentScheme = scheme;
+
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString(
+      'theme_scheme',
+      scheme.name,
+    );
+
+    notifyListeners();
   }
 }

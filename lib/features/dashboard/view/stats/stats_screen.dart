@@ -1,4 +1,3 @@
-import 'package:expense_tracker/core/theme/appColors.dart';
 import 'package:flutter/material.dart';
 
 class StatScreen extends StatelessWidget {
@@ -6,6 +5,9 @@ class StatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -17,18 +19,18 @@ class StatScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.construction_rounded,
                   size: 80,
-                  color: AppColors.secondary,
+                  color: colorScheme.primary,
                 ),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   "Coming Soon",
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.secondary,
+                    color: colorScheme.primary,
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -37,7 +39,7 @@ class StatScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.grey.shade600,
+                    color: colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],

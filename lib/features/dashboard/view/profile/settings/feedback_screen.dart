@@ -76,7 +76,7 @@ class _FeedBackScreenState extends State<FeedBackScreen> {
                     hintText: "Feedback hint",
                     hintStyle: TextStyle(
                       fontSize: 14,
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),

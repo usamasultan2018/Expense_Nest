@@ -1,7 +1,6 @@
 import 'package:expense_tracker/core/components/custom_button.dart';
-import 'package:expense_tracker/core/components/fade_effect.dart';
 import 'package:expense_tracker/core/models/transaction_model.dart';
-import 'package:expense_tracker/core/utils/helpers/dialog.dart';
+import 'package:expense_tracker/core/utils/dialog.dart';
 import 'package:expense_tracker/features/dashboard/controller/transaction_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/amount_field.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/date_field.dart';
@@ -81,43 +80,36 @@ class _EditTransactionState extends State<EditTransaction> {
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(
-              right: 12,
-            ),
-            child: transactionController.isDeleting
-                ? const Center(
-                    child: SizedBox(
-                      height: 22,
-                      width: 22,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                      ),
-                    ),
-                  )
-                : InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () => _deleteTransaction(
-                      context,
-                    ),
-                    child: Container(
-                      padding: const EdgeInsets.all(
-                        10,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(
-                          12,
+              padding: const EdgeInsets.only(
+                right: 12,
+              ),
+              child: transactionController.isDeleting
+                  ? const Center(
+                      child: SizedBox(
+                        height: 22,
+                        width: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
                         ),
-                        color: Theme.of(
-                          context,
-                        ).cardColor,
                       ),
-                      child: const Icon(
-                        Icons.delete_outline,
-                        color: Colors.red,
+                    )
+                  : InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () => _deleteTransaction(context),
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
+                        ),
+                        child: Icon(
+                          Icons.delete_outline,
+                          color: Theme.of(context).colorScheme.error,
+                        ),
                       ),
-                    ),
-                  ),
-          ),
+                    )),
         ],
       ),
       body: SafeArea(

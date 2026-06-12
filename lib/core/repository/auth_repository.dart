@@ -6,8 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-/// Implementation of [IAuthRepository] using Firebase Authentication
-/// Handles user authentication and Firestore initialization
 class AuthRepository implements IAuthRepository {
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
@@ -60,7 +58,7 @@ class AuthRepository implements IAuthRepository {
         );
 
         // Fetch complete user data from Firestore
-        final UserModel userModel = await _fetchUserFromFirestore(user.uid);
+        await _fetchUserFromFirestore(user.uid);
 
         // Save to local storage
 
@@ -98,7 +96,7 @@ class AuthRepository implements IAuthRepository {
         await _initializeUserInFirestore(user, username: username);
 
         // Fetch complete user data from Firestore
-        final UserModel userModel = await _fetchUserFromFirestore(user.uid);
+       await _fetchUserFromFirestore(user.uid);
 
         debugPrint('✅ Email sign-up successful for user: ${user.uid}');
       }
@@ -130,7 +128,7 @@ class AuthRepository implements IAuthRepository {
 
       if (user != null) {
         // Fetch complete user data from Firestore
-        final UserModel userModel = await _fetchUserFromFirestore(user.uid);
+        await _fetchUserFromFirestore(user.uid);
 
         // Save to local storage
 

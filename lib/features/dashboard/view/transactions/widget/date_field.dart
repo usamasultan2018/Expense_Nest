@@ -9,48 +9,60 @@ class DateField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<TransactionController>(
       builder: (context, controller, child) {
-        return InkWell(
-          borderRadius: BorderRadius.circular(20),
-          onTap: () {
-            controller.selectDate(context);
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 18,
-              vertical: 18,
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Date',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
             ),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
+            const SizedBox(height: 8),
+            InkWell(
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Theme.of(context).dividerColor.withOpacity(0.15),
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.calendar_today_rounded,
-                  size: 20,
-                  color: Theme.of(context).colorScheme.primary,
+              onTap: () {
+                controller.selectDate(context);
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 18,
                 ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Text(
-                    controller.dateEditingController.text.isEmpty
-                        ? 'Select Date'
-                        : controller.dateEditingController.text,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color:
+                        Theme.of(context).dividerColor.withValues(alpha: 0.15),
                   ),
                 ),
-                Icon(
-                  Icons.keyboard_arrow_down_rounded,
-                  color: Theme.of(context).hintColor,
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.calendar_today_rounded,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Text(
+                        controller.dateEditingController.text.isEmpty
+                            ? 'Select Date'
+                            : controller.dateEditingController.text,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.w500,
+                            ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: Theme.of(context).hintColor.withValues(alpha: 0.5),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         );
       },
     );

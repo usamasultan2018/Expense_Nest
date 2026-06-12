@@ -129,7 +129,7 @@ class ProfileScreen extends StatelessWidget {
                   },
                   title: "Appearance",
                   iconData: Icons.palette_outlined,
-                  bckColor: AppColors.yellow,
+                  bckColor: Colors.yellow,
                 ),
 
                 const SizedBox(height: 10),

@@ -1,6 +1,8 @@
-import 'dart:ui';
-import 'package:flutter/cupertino.dart';
+import 'package:expense_tracker/app/routes/route_name.dart';
+import 'package:expense_tracker/features/dashboard/view/home/home_screen.dart';
+import 'package:expense_tracker/features/dashboard/view/stats/stats_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class BottomNavigatorWidget extends StatefulWidget {
   const BottomNavigatorWidget({super.key});
@@ -29,73 +31,58 @@ class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 10,
+          ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              // Home Icon
               Expanded(
                 child: _buildNavItem(
-                  icon: Icons.home,
+                  icon: Icons.home_rounded,
+                  label: "Home",
                   index: 0,
+                  colorScheme: colorScheme,
                 ),
               ),
 
-              // Center Floating Action Button
+              // Center FAB-style button
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 10),
+                margin: const EdgeInsets.symmetric(horizontal: 12),
                 height: 60,
                 width: 60,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(32),
-                  color: colorScheme.surface.withValues(alpha: 0.75),
-                  border: Border.all(
-                    color: colorScheme.outline.withValues(alpha: 0.25),
-                    width: 1.5,
-                  ),
+                  borderRadius: BorderRadius.circular(30),
+                  color: colorScheme.primary,
                   boxShadow: [
                     BoxShadow(
                       color: colorScheme.shadow.withValues(alpha: 0.12),
-                      blurRadius: 30,
-                      spreadRadius: 2,
-                      offset: const Offset(0, 10),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
                     ),
                   ],
                 ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    // Navigation Items
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildNavItem(
-                            icon: Icons.home_rounded,
-                            label: "Home",
-                            index: 0,
-                            colorScheme: colorScheme,
-                          ),
-                        ),
-                        const SizedBox(width: 80), // Space for FAB
-                        Expanded(
-                          child: _buildNavItem(
-                            icon: Icons.bar_chart_rounded,
-                            label: "Stats",
-                            index: 1,
-                            colorScheme: colorScheme,
-                          ),
-                        ),
-                      ],
-                    ),
-
-              // Stats Icon
-              Expanded(
-                child: _buildNavItem(
-                  icon:Icons.bar_chart,
-                  index: 1,
+                child: IconButton(
+                  onPressed: () {
+                    // TODO: Implement add expense action
+                    context.push(RouteName.addTransaction);
+                  },
+                  icon: Icon(
+                    Icons.add,
+                    color: colorScheme.onPrimary,
+                  ),
                 ),
               ),
-            ),
+
+              Expanded(
+                child: _buildNavItem(
+                  icon: Icons.bar_chart_rounded,
+                  label: "Stats",
+                  index: 1,
+                  colorScheme: colorScheme,
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -112,10 +99,10 @@ class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
 
     return InkWell(
       onTap: () => setState(() => _currentIndex = index),
+      borderRadius: BorderRadius.circular(16),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOutCubic,
-        constraints: const BoxConstraints(minWidth: 0),
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Column(
           mainAxisSize: MainAxisSize.min,

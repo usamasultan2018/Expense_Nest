@@ -55,10 +55,11 @@ class _FeedBackScreenState extends State<FeedBackScreen> {
         child: FadeTransitionEffect(
           child: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
                 Text(
-                  "Feedback prompt",
+                  "Feedback",
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyLarge!.copyWith(
                     fontWeight: FontWeight.bold,
@@ -73,7 +74,8 @@ class _FeedBackScreenState extends State<FeedBackScreen> {
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: theme.colorScheme.surface,
-                    hintText: "Feedback hint",
+                    hintText:
+                        "Assist us in improving the app by sharing your feedback, suggestions, or any issues you encountered.",
                     hintStyle: TextStyle(
                       fontSize: 14,
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -86,7 +88,7 @@ class _FeedBackScreenState extends State<FeedBackScreen> {
                 ),
                 const SizedBox(height: 20),
                 RoundButton(
-                  title: "Send feedback button",
+                  title: "Send Feedback",
                   onPressed: () {
                     if (feedbackController.text.isNotEmpty) {
                       sendFeedback();

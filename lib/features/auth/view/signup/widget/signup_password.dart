@@ -13,7 +13,7 @@ class SignupPassword extends StatelessWidget {
         return CustomTextField(
           hintText: "Password",
           controller: value.passwordController,
-          iconData:Icons.lock_outline,
+          iconData: Icons.lock_outline,
           obscureText: value.isPasswordVisible,
           suffixIcon: IconButton(
             icon: Icon(

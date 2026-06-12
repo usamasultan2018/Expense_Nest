@@ -156,24 +156,24 @@ class _EditProfileContent extends StatelessWidget {
 
             const SizedBox(height: 30),
 
-            /// Username
-            CustomTextField(
-              controller: userController.usernameController,
-              hintText: "Username",
-              iconData: Icons.person_outline,
-              obscureText: false,
-            ),
+                /// Username
+                CustomTextField(
+                  controller: userController.usernameController,
+                  hintText: "Username",
+                  iconData: Icons.person_outline,
+                  obscureText: false,
+                ),
 
             const SizedBox(height: 16),
 
-            /// Email
-            CustomTextField(
-              controller: userController.emailController,
-              readOnly: true,
-              hintText: "Email",
-              iconData: Icons.email_outlined,
-              obscureText: false,
-            ),
+                /// Email
+                CustomTextField(
+                  controller: userController.emailController,
+                  readOnly: true,
+                  hintText: "Email",
+                  iconData: Icons.email_outlined,
+                  obscureText: false,
+                ),
 
             const SizedBox(height: 30),
 

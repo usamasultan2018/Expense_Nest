@@ -2,10 +2,6 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../home/home_screen.dart';
-import '../stats/stats_screen.dart';
-import '../transactions/add_transaction.dart';
-
 class BottomNavigatorWidget extends StatefulWidget {
   const BottomNavigatorWidget({super.key});
 
@@ -33,13 +29,23 @@ class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(32),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-              child: Container(
-                height: 78,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              // Home Icon
+              Expanded(
+                child: _buildNavItem(
+                  icon: Icons.home,
+                  index: 0,
+                ),
+              ),
+
+              // Center Floating Action Button
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 10),
+                height: 60,
+                width: 60,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(32),
                   color: colorScheme.surface.withValues(alpha: 0.75),
@@ -82,39 +88,11 @@ class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
                       ],
                     ),
 
-                    // Floating Action Button
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const AddTransaction(),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        height: 55,
-                        width: 55,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: colorScheme.primary,
-                          boxShadow: [
-                            BoxShadow(
-                              color: colorScheme.primary.withValues(alpha: 0.4),
-                              blurRadius: 15,
-                              spreadRadius: 1,
-                              offset: const Offset(0, 5),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          CupertinoIcons.add,
-                          color: Colors.white,
-                          size: 32,
-                        ),
-                      ),
-                    ),
-                  ],
+              // Stats Icon
+              Expanded(
+                child: _buildNavItem(
+                  icon:Icons.bar_chart,
+                  index: 1,
                 ),
               ),
             ),

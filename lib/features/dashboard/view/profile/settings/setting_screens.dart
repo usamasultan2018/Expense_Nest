@@ -1,6 +1,6 @@
 import 'package:expense_tracker/core/components/custom_tile.dart';
 import 'package:expense_tracker/core/components/fade_effect.dart';
-import 'package:expense_tracker/features/user/controller/user_controller.dart';
+import 'package:expense_tracker/features/dashboard/view/profile/controller/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -11,9 +11,6 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Settings"),
@@ -110,7 +107,16 @@ class SettingsScreen extends StatelessWidget {
 
               CustomTile(
                 onTap: () async {
-                  context.push("/delete-account");
+                  final shouldDelete = await _showConfirmationDialog(
+                    context,
+                    title: "Delete Account",
+                    content: "This action cannot be undone. Are you sure?",
+                    confirmText: "Delete",
+                    isDanger: true,
+                  );
+                  if (shouldDelete == true) {
+                    context.push("/delete-account");
+                  }
                 },
                 title: "Delete Account",
                 iconData: Icons.delete_outline,
@@ -168,27 +174,48 @@ class SettingsScreen extends StatelessWidget {
     return showDialog<bool>(
       context: context,
       builder: (dialogContext) {
-        final colorScheme = Theme.of(dialogContext).colorScheme;
+        final theme = Theme.of(dialogContext);
+        final colorScheme = theme.colorScheme;
 
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          title: Text(title),
-          content: Text(content),
+          backgroundColor: colorScheme.surface,
+          title: Text(
+            title,
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            content,
+            style: theme.textTheme.bodyMedium,
+          ),
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context, false);
+                Navigator.pop(dialogContext, false);
               },
-              child: const Text("Cancel"),
+              child: Text(
+                "Cancel",
+                style: TextStyle(
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: isDanger ? colorScheme.error : null,
+                backgroundColor:
+                    isDanger ? colorScheme.error : colorScheme.primary,
+                foregroundColor:
+                    isDanger ? colorScheme.onError : colorScheme.onPrimary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               onPressed: () {
-                Navigator.pop(context, true);
+                Navigator.pop(dialogContext, true);
               },
               child: Text(confirmText),
             ),

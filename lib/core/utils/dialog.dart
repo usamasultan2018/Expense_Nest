@@ -9,55 +9,63 @@ class ConfirmationDialogUtil {
     required VoidCallback onConfirm,
     String? cancelText,
     String? confirmText,
+    bool isDanger = false,
   }) async {
     return showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (dialogContext) {
+        final theme = Theme.of(dialogContext);
+        final colorScheme = theme.colorScheme;
+
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(16),
           ),
-          backgroundColor: Theme.of(context).cardColor,
-          title: Text(title,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  )),
-          content: Text(message,
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    fontWeight: FontWeight.bold,
-                  )),
+          backgroundColor: colorScheme.surface,
+          title: Text(
+            title,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            message,
+            style: theme.textTheme.bodyMedium,
+          ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
               child: Text(
                 cancelText ?? "Cancel",
                 style: TextStyle(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withOpacity(0.6), // Muted grey for cancel
-                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(dialogContext).pop();
                 onConfirm();
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor:
-                    Theme.of(context).colorScheme.secondary, // Primary color
+                    isDanger ? colorScheme.error : colorScheme.primary,
+                foregroundColor:
+                    isDanger ? colorScheme.onError : colorScheme.onPrimary,
+                elevation: 0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                foregroundColor: Theme.of(context).colorScheme.onPrimary,
               ),
               child: Text(
                 confirmText ?? "Confirm",
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],

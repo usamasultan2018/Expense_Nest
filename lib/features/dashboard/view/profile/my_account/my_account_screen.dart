@@ -1,7 +1,7 @@
 import 'package:expense_tracker/core/components/loading_widget.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/my_account/widgets/transaction_count.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/my_account/widgets/user_info_section.dart';
-import 'package:expense_tracker/features/user/controller/user_controller.dart';
+import 'package:expense_tracker/features/dashboard/view/profile/controller/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

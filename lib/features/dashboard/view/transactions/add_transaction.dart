@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'package:expense_tracker/core/components/fade_effect.dart';
-
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/amount_field.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/date_field.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/note_textfield.dart';

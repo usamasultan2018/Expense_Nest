@@ -1,4 +1,4 @@
-import 'package:expense_tracker/features/settings/controller/setting_controller.dart';
+import 'package:expense_tracker/features/dashboard/view/profile/settings/controller/setting_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,7 +20,7 @@ class ThemeTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
-                color: colorScheme.primary.withOpacity(0.06),
+                color: colorScheme.primary.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -32,11 +32,11 @@ class ThemeTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: colorScheme.primaryContainer,
+                  color: Colors.deepOrange,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
-                  Icons.palette_outlined,
+                  Icons.light_mode,
                   color: colorScheme.onPrimaryContainer,
                 ),
               ),

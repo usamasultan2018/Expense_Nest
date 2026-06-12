@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 class CustomTile extends StatelessWidget {
@@ -67,10 +66,9 @@ class CustomTile extends StatelessWidget {
 
               // TITLE
               Expanded(
-                child: AutoSizeText(
+                child: Text(
                   title,
                   maxLines: 1,
-                  minFontSize: 14,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,

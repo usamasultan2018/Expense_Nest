@@ -1,4 +1,3 @@
-import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 
 class CustomIndicator extends StatelessWidget {
@@ -6,26 +5,35 @@ class CustomIndicator extends StatelessWidget {
   final int dotsCount;
 
   const CustomIndicator({
+    super.key,
     required this.position,
     required this.dotsCount,
-    super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return DotsIndicator(
-      dotsCount: dotsCount,
-      position: position,
-      decorator: DotsDecorator(
-        color: colorScheme.onSurfaceVariant.withOpacity(0.4),
-        size: const Size.square(8.0),
-        activeSize: const Size(20.0, 8.0),
-        activeShape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
-        ),
-        activeColor: colorScheme.primary,
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(
+        dotsCount,
+        (index) {
+          final isActive = index == position;
+
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            width: isActive ? 20 : 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: isActive
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(5),
+            ),
+          );
+        },
       ),
     );
   }

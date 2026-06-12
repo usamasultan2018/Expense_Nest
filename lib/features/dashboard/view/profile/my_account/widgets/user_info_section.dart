@@ -1,7 +1,7 @@
 import 'package:expense_tracker/core/components/fade_effect.dart';
 import 'package:expense_tracker/core/components/profile_avatar.dart';
 import 'package:expense_tracker/core/models/user.dart';
-import 'package:expense_tracker/core/utils/helpers/date.dart';
+import 'package:expense_tracker/core/utils/date.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/my_account/widgets/edit_profile_sheet.dart';
 import 'package:flutter/material.dart';
 
@@ -44,9 +44,7 @@ class UserInfoSection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(18),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(
-                      0.04,
-                    ),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),

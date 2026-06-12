@@ -1,6 +1,6 @@
 import 'package:expense_tracker/core/models/transaction_model.dart';
-import 'package:expense_tracker/core/utils/helpers/constant.dart';
-import 'package:expense_tracker/core/utils/helpers/date.dart';
+import 'package:expense_tracker/core/utils/constant.dart';
+import 'package:expense_tracker/core/utils/date.dart';
 import 'package:flutter/material.dart';
 
 class TransactionTile extends StatelessWidget {
@@ -34,11 +34,11 @@ class TransactionTile extends StatelessWidget {
               color: theme.cardColor,
               borderRadius: BorderRadius.circular(22),
               border: Border.all(
-                color: theme.dividerColor.withOpacity(0.08),
+                color: theme.dividerColor.withValues(alpha: 0.15),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.03),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -55,12 +55,12 @@ class TransactionTile extends StatelessWidget {
                     gradient: LinearGradient(
                       colors: isIncome
                           ? [
-                              colorScheme.primary.withOpacity(0.9),
-                              colorScheme.primary.withOpacity(0.6),
+                              colorScheme.primary.withValues(alpha: 0.9),
+                              colorScheme.primary.withValues(alpha: 0.6),
                             ]
                           : [
-                              colorScheme.error.withOpacity(0.9),
-                              colorScheme.error.withOpacity(0.6),
+                              colorScheme.error.withValues(alpha: 0.9),
+                              colorScheme.error.withValues(alpha: 0.6),
                             ],
                     ),
                   ),

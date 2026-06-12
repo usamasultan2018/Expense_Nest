@@ -1,9 +1,7 @@
-import 'dart:math';
-
 import 'package:expense_tracker/core/components/fade_effect.dart';
 import 'package:expense_tracker/core/components/no_transaction.dart';
 import 'package:expense_tracker/core/components/transaction_tile.dart';
-import 'package:expense_tracker/core/utils/helpers/skeleton_loading.dart';
+import 'package:expense_tracker/core/utils/skeleton_loading.dart';
 import 'package:expense_tracker/features/dashboard/controller/transaction_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -47,35 +45,27 @@ class RecentTransactions extends StatelessWidget {
 
         final transactions = controller.allTransactions;
 
-        // Empty State
         if (transactions.isEmpty) {
-          return const Center(
+          return const SizedBox(
+            height: 250,
             child: NoTransaction(),
           );
         }
 
-        return RefreshIndicator(
-          onRefresh: controller.loadTransactions,
-          child: ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: transactions.length,
-            itemBuilder: (context, index) {
-              final transaction = transactions[index];
-
-              return FadeTransitionEffect(
-                child: TransactionTile(
-                  transaction: transaction,
-                  onPressed: () {
-                    context.push(
-                      '/edit-transaction',
-                      extra: transaction,
-                    );
-                  },
-                ),
-              );
-            },
-          ),
+        return Column(
+          children: transactions.map((transaction) {
+            return FadeTransitionEffect(
+              child: TransactionTile(
+                transaction: transaction,
+                onPressed: () {
+                  context.push(
+                    '/edit-transaction',
+                    extra: transaction,
+                  );
+                },
+              ),
+            );
+          }).toList(),
         );
       },
     );

@@ -1,14 +1,12 @@
-import 'package:expense_tracker/core/components/banner_ad_widget.dart';
 import 'package:expense_tracker/core/components/custom_tile.dart';
-import 'package:expense_tracker/core/components/fade_effect.dart';
 import 'package:expense_tracker/core/components/loading_widget.dart';
 import 'package:expense_tracker/core/components/profile_avatar.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/settings/setting_screens.dart';
-import 'package:expense_tracker/features/user/controller/user_controller.dart';
+import 'package:expense_tracker/features/dashboard/view/profile/controller/user_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -157,6 +155,9 @@ class ProfileScreen extends StatelessWidget {
 
   /// Rate App Dialog
   static void _showRateAppDialog(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     showDialog(
       context: context,
       builder: (_) {
@@ -164,24 +165,51 @@ class ProfileScreen extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          title: const Text("Enjoying the app?"),
-          content: const Text(
+          backgroundColor: colorScheme.surface,
+          title: Text(
+            "Enjoying the app?",
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
             "Please take a moment to rate the app.",
+            style: theme.textTheme.bodyMedium,
           ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text("Later"),
+              child: Text(
+                "Later",
+                style: TextStyle(
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 Navigator.pop(context);
 
-                /// TODO:
-                /// Add Play Store / App Store launch
+                final Uri url = Uri.parse(
+                  'https://play.google.com/store/apps/details?id=com.softtures.expensenest',
+                );
+
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(
+                    url,
+                    mode: LaunchMode.externalApplication,
+                  );
+                }
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: colorScheme.primary,
+                foregroundColor: colorScheme.onPrimary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
               child: const Text("Rate Now"),
             ),
           ],

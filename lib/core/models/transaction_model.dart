@@ -1,4 +1,4 @@
-import 'package:expense_tracker/core/utils/helpers/constant.dart';
+import 'package:expense_tracker/core/utils/constant.dart';
 
 class TransactionModel {
   final String id;

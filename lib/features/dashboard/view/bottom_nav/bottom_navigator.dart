@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../home/home_screen.dart';
 import '../stats/stats_screen.dart';
@@ -32,89 +31,91 @@ class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
         index: _currentIndex,
         children: _screens,
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(32),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-            child: Container(
-              height: 78,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(32),
-                color: colorScheme.surface.withValues(alpha: 0.75),
-                border: Border.all(
-                  color: colorScheme.outline.withValues(alpha: 0.25),
-                  width: 1.5,
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(32),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              child: Container(
+                height: 78,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(32),
+                  color: colorScheme.surface.withValues(alpha: 0.75),
+                  border: Border.all(
+                    color: colorScheme.outline.withValues(alpha: 0.25),
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorScheme.shadow.withValues(alpha: 0.12),
+                      blurRadius: 30,
+                      spreadRadius: 2,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: colorScheme.shadow.withValues(alpha: 0.12),
-                    blurRadius: 30,
-                    spreadRadius: 2,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
-              ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Navigation Items
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildNavItem(
-                          icon: FontAwesomeIcons.house,
-                          label: "Home",
-                          index: 0,
-                          colorScheme: colorScheme,
-                        ),
-                      ),
-                      const SizedBox(width: 80), // Space for FAB
-                      Expanded(
-                        child: _buildNavItem(
-                          icon: FontAwesomeIcons.chartSimple,
-                          label: "Stats",
-                          index: 1,
-                          colorScheme: colorScheme,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  // Floating Action Button
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const AddTransaction(),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      height: 55,
-                      width: 55,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: colorScheme.primary,
-                        boxShadow: [
-                          BoxShadow(
-                            color: colorScheme.primary.withValues(alpha: 0.4),
-                            blurRadius: 15,
-                            spreadRadius: 1,
-                            offset: const Offset(0, 5),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Navigation Items
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildNavItem(
+                            icon: Icons.home_rounded,
+                            label: "Home",
+                            index: 0,
+                            colorScheme: colorScheme,
                           ),
-                        ],
-                      ),
-                      child: const Icon(
-                        CupertinoIcons.add,
-                        color: Colors.white,
-                        size: 32,
+                        ),
+                        const SizedBox(width: 80), // Space for FAB
+                        Expanded(
+                          child: _buildNavItem(
+                            icon: Icons.bar_chart_rounded,
+                            label: "Stats",
+                            index: 1,
+                            colorScheme: colorScheme,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // Floating Action Button
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AddTransaction(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        height: 55,
+                        width: 55,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: colorScheme.primary,
+                          boxShadow: [
+                            BoxShadow(
+                              color: colorScheme.primary.withValues(alpha: 0.4),
+                              blurRadius: 15,
+                              spreadRadius: 1,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          CupertinoIcons.add,
+                          color: Colors.white,
+                          size: 32,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -124,7 +125,7 @@ class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
   }
 
   Widget _buildNavItem({
-    required FaIconData icon,
+    required IconData icon,
     required String label,
     required int index,
     required ColorScheme colorScheme,
@@ -144,7 +145,7 @@ class _BottomNavigatorWidgetState extends State<BottomNavigatorWidget> {
             AnimatedScale(
               scale: isSelected ? 1.15 : 1.0,
               duration: const Duration(milliseconds: 250),
-              child: FaIcon(
+              child: Icon(
                 icon,
                 size: 26,
                 color: isSelected

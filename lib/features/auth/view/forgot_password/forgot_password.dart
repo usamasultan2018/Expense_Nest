@@ -1,7 +1,7 @@
 import 'package:expense_tracker/core/components/custom_button.dart';
 import 'package:expense_tracker/core/components/custom_textfield.dart';
-import 'package:expense_tracker/core/utils/helpers/snackbar_util.dart';
 import 'package:expense_tracker/app/routes/route_name.dart';
+import 'package:expense_tracker/core/utils/snackbar_util.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

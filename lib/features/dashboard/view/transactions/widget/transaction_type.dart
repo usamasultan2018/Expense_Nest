@@ -1,4 +1,4 @@
-import 'package:expense_tracker/core/utils/helpers/constant.dart';
+import 'package:expense_tracker/core/utils/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:expense_tracker/features/dashboard/controller/transaction_controller.dart';
@@ -66,15 +66,8 @@ class _ToggleSegment extends StatelessWidget {
           curve: Curves.easeInToLinear,
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            gradient: isSelected
-                ? LinearGradient(
-                    colors: [
-                      colorScheme.primary,
-                      colorScheme.secondary,
-                    ],
-                  )
-                : null,
-            borderRadius: BorderRadius.circular(6),
+            color: isSelected ? colorScheme.primary : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
           ),
           alignment: Alignment.center,
           child: Text(

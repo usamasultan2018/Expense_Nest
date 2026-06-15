@@ -1,7 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:expense_tracker/core/components/update_dialog.dart';
 import 'package:expense_tracker/core/service/update_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:expense_tracker/app/routes/route_name.dart';
@@ -23,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen>
     _checkUserLoggedIn();
   }
 
-Future<void> _checkUserLoggedIn() async {
+  Future<void> _checkUserLoggedIn() async {
     await Future.delayed(_navigationDelay);
 
     if (!mounted) return;
@@ -47,7 +46,11 @@ Future<void> _checkUserLoggedIn() async {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -59,11 +62,11 @@ Future<void> _checkUserLoggedIn() async {
                 child: Container(
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.08),
+                    color: colorScheme.primary.withOpacity(0.12),
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.18),
+                        color: colorScheme.shadow.withOpacity(0.15),
                         blurRadius: 24,
                         offset: const Offset(0, 12),
                       ),
@@ -81,11 +84,11 @@ Future<void> _checkUserLoggedIn() async {
                 duration: const Duration(milliseconds: 700),
                 child: Text(
                   'ExpenseNest',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 0.8,
-                      ),
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.8,
+                  ),
                 ),
               ),
             ],

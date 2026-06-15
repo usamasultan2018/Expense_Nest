@@ -1,4 +1,6 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:expense_tracker/core/components/update_dialog.dart';
+import 'package:expense_tracker/core/service/update_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -21,12 +23,26 @@ class _SplashScreenState extends State<SplashScreen>
     _checkUserLoggedIn();
   }
 
-  Future<void> _checkUserLoggedIn() async {
+Future<void> _checkUserLoggedIn() async {
     await Future.delayed(_navigationDelay);
 
     if (!mounted) return;
 
-    context.goNamed(RouteName.authWrapper); // Navigate to AuthWrapper logic
+    final updateAvailable = await UpdateService.isUpdateAvailable();
+
+    if (!mounted) return;
+
+    if (updateAvailable) {
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const UpdateDialog(),
+      );
+    }
+
+    if (!mounted) return;
+
+    context.goNamed(RouteName.authWrapper);
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'package:expense_tracker/core/utils/google_fonts_helper.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,14 +8,16 @@ enum ThemeModeOption {
   dark,
   system,
 }
-
 class SettingController extends ChangeNotifier {
   ThemeMode _currentThemeMode = ThemeMode.system;
   FlexScheme _currentScheme = FlexScheme.blueM3;
+  FontOption _currentFont = FontOption.poppins;
 
   ThemeMode get currentThemeMode => _currentThemeMode;
 
   FlexScheme get currentScheme => _currentScheme;
+
+  FontOption get currentFont => _currentFont;
 
   ThemeModeOption get themeModeOption {
     switch (_currentThemeMode) {
@@ -58,6 +61,14 @@ class SettingController extends ChangeNotifier {
       orElse: () => FlexScheme.blueM3,
     );
 
+    /// Font
+    final savedFont = prefs.getString('app_font') ?? FontOption.poppins.name;
+
+    _currentFont = FontOption.values.firstWhere(
+      (e) => e.name == savedFont,
+      orElse: () => FontOption.poppins,
+    );
+
     notifyListeners();
   }
 
@@ -98,6 +109,21 @@ class SettingController extends ChangeNotifier {
     await prefs.setString(
       'theme_scheme',
       scheme.name,
+    );
+
+    notifyListeners();
+  }
+
+  Future<void> setFont(
+    FontOption font,
+  ) async {
+    _currentFont = font;
+
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString(
+      'app_font',
+      font.name,
     );
 
     notifyListeners();

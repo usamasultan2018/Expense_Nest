@@ -29,11 +29,13 @@ class MyApp extends StatelessWidget {
             title: 'ExpenseNest',
             debugShowCheckedModeBanner: false,
             themeMode: settingController.currentThemeMode,
-          theme: AppTheme.light(
+    theme: AppTheme.light(
               settingController.currentScheme,
+              settingController.currentFont,
             ),
             darkTheme: AppTheme.dark(
               settingController.currentScheme,
+              settingController.currentFont,
             ),
             routerConfig: AppRouter.router,
           );

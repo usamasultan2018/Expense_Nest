@@ -1,3 +1,4 @@
+import 'package:expense_tracker/app/routes/route_name.dart';
 import 'package:expense_tracker/core/components/custom_tile.dart';
 import 'package:expense_tracker/core/components/loading_widget.dart';
 import 'package:expense_tracker/core/components/profile_avatar.dart';
@@ -113,7 +114,7 @@ class ProfileScreen extends StatelessWidget {
                 /// Account Tile
                 CustomTile(
                   onTap: () {
-                    context.push("/my-account");
+                    context.push(RouteName.myAccount);
                   },
                   title: "My Account",
                   iconData: Icons.person_outline,
@@ -121,15 +122,24 @@ class ProfileScreen extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 10),
+                //Categories Tile
+                CustomTile(
+                  onTap: () {
+                    context.push(RouteName.categories);
+                  },
+                  title: "Categories",
+                  iconData: Icons.category_outlined,
+                  bckColor: Colors.green,
+                ),
 
                 /// Appearance Tile
                 CustomTile(
                   onTap: () {
-                    context.push("/appearance");
+                    context.push(RouteName.appearance);
                   },
                   title: "Appearance",
                   iconData: Icons.palette_outlined,
-                  bckColor: Colors.yellow,
+                  bckColor: Colors.orange,
                 ),
 
                 const SizedBox(height: 10),
@@ -142,6 +152,19 @@ class ProfileScreen extends StatelessWidget {
                   title: "Rate App",
                   iconData: Icons.star_rate_rounded,
                   bckColor: Colors.amber,
+                ),
+                // share tile
+                const SizedBox(height: 10),
+                CustomTile(
+                  onTap: () {
+                    final Uri url = Uri.parse(
+                      'https://play.google.com/store/apps/details?id=com.softtures.expensenest',
+                    );
+                    launchUrl(url, mode: LaunchMode.externalApplication);
+                  },
+                  title: "Share App",
+                  iconData: Icons.share_outlined,
+                  bckColor: Colors.purple,
                 ),
 
                 const SizedBox(height: 30),

@@ -1,3 +1,4 @@
+import 'package:expense_tracker/core/components/app_toggle.dart';
 import 'package:expense_tracker/core/utils/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,76 +12,24 @@ class TransactionToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
 
     return Consumer<TransactionController>(
       builder: (context, controller, _) {
-        final isIncome = controller.selectedType == TransactionType.income;
-
-        return Container(
-          decoration: BoxDecoration(
-            color: theme.cardColor,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
-            children: [
-              _ToggleSegment(
-                label: "Income",
-                isSelected: isIncome,
-                onTap: () => controller.setType(TransactionType.income),
-              ),
-              _ToggleSegment(
-                label: "Expense",
-                isSelected: !isIncome,
-                onTap: () => controller.setType(TransactionType.expense),
-              ),
-            ],
-          ),
+        return AppToggle<TransactionType>(
+          selectedValue: controller.selectedType,
+          onChanged: controller.setType,
+          options: const [
+            ToggleOption(
+              label: 'Income',
+              value: TransactionType.income,
+            ),
+            ToggleOption(
+              label: 'Expense',
+              value: TransactionType.expense,
+            ),
+          ],
         );
       },
-    );
-  }
-}
-
-class _ToggleSegment extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _ToggleSegment({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInToLinear,
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: isSelected ? colorScheme.primary : Colors.transparent,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            label,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: isSelected
-                  ? colorScheme.onPrimary
-                  : theme.textTheme.bodyLarge?.color,
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

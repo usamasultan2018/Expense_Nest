@@ -1,7 +1,9 @@
+import 'package:expense_tracker/core/repository/category_repository.dart';
 import 'package:expense_tracker/core/repository/transaction_repository.dart';
 import 'package:expense_tracker/core/theme/app_theme.dart';
 import 'package:expense_tracker/app/routes/app_router.dart';
 import 'package:expense_tracker/features/dashboard/controller/transaction_controller.dart';
+import 'package:expense_tracker/features/dashboard/view/profile/categories/controller/category_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/controller/user_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/settings/controller/setting_controller.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +24,7 @@ class MyApp extends StatelessWidget {
               transactionRepository: _transactionRepository),
         ),
         ChangeNotifierProvider(create: (_) => SettingController()..init()),
+        ChangeNotifierProvider(create: (_) => CategoryController()),
       ],
       child: Consumer<SettingController>(
         builder: (context, settingController, child) {

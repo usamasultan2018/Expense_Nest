@@ -3,6 +3,7 @@ import 'package:expense_tracker/core/models/transaction_model.dart';
 import 'package:expense_tracker/core/utils/dialog.dart';
 import 'package:expense_tracker/features/dashboard/controller/transaction_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/amount_field.dart';
+import 'package:expense_tracker/features/dashboard/view/transactions/widget/category_selector.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/date_field.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/note_textfield.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/payment_field.dart';
@@ -129,6 +130,14 @@ class _EditTransactionState extends State<EditTransaction> {
               const AmountInput(),
               const SizedBox(height: 20),
               const DateField(),
+              const SizedBox(height: 20),
+              CategorySelector(
+                selectedType: transactionController.selectedType,
+                selectedCategory: transactionController.selectedCategory,
+                onCategorySelected: (cat) {
+                  transactionController.selectCategory(cat);
+                },
+              ),
               const SizedBox(height: 20),
               const NoteField(),
               const SizedBox(height: 20),

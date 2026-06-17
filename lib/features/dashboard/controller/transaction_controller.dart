@@ -1,3 +1,4 @@
+import 'package:expense_tracker/core/models/category_model.dart';
 import 'package:expense_tracker/core/models/transaction_model.dart';
 import 'package:expense_tracker/core/repository/transaction_repository.dart';
 import 'package:expense_tracker/core/utils/constant.dart';
@@ -52,6 +53,15 @@ class TransactionController extends ChangeNotifier {
   // =========================
   // Load Transactions
   // =========================
+// Inside CategoryController — add these:
+
+  CategoryModel? _selectedCategory;
+  CategoryModel? get selectedCategory => _selectedCategory;
+
+  void selectCategory(CategoryModel cat) {
+    _selectedCategory = cat;
+    notifyListeners();
+  }
 
   Future<void> loadTransactions() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -127,6 +137,13 @@ class TransactionController extends ChangeNotifier {
       SnackbarUtil.showErrorSnackbar(context, 'User not logged in');
       return;
     }
+    if (_selectedCategory == null) {
+      SnackbarUtil.showErrorSnackbar(
+        context,
+        'Please select a category',
+      );
+      return;
+    }
 
     final amount = double.tryParse(amountController.text.trim());
 
@@ -146,11 +163,12 @@ class TransactionController extends ChangeNotifier {
         note: noteController.text.trim(),
         type: selectedType,
         payMethod: selectedPaymentMethod,
-        dateTime: _selectedDate, // ✅ fixed
+        dateTime: _selectedDate,
+        category: selectedCategory,
       );
 
       await transactionRepository.addTransaction(transaction);
-      _resetForm();
+      resetForm();
       await loadTransactions();
 
       if (context.mounted) {
@@ -196,6 +214,7 @@ class TransactionController extends ChangeNotifier {
         type: selectedType,
         payMethod: selectedPaymentMethod,
         dateTime: _selectedDate,
+        category: _selectedCategory,
       );
 
       await transactionRepository.updateTransaction(updatedTransaction);
@@ -204,7 +223,7 @@ class TransactionController extends ChangeNotifier {
       if (context.mounted) {
         SnackbarUtil.showSuccessSnackbar(
           context,
-          'Transaction added successfully',
+          'Transaction updated successfully',
         );
 
         Navigator.pop(context);
@@ -258,30 +277,37 @@ class TransactionController extends ChangeNotifier {
   // =========================
   // Prepare for Editing
   // =========================
-
   void prepareForEditing(TransactionModel transaction) {
     selectedType = transaction.type;
     selectedPaymentMethod = transaction.payMethod;
     amountController.text = transaction.amount.toString();
     noteController.text = transaction.note;
     _selectedDate = transaction.dateTime;
+
+    _selectedCategory = transaction.category;
+
     dateEditingController.text =
         DateTimeUtils.formatDateMonthDayYear(_selectedDate);
+
     notifyListeners();
   }
-
   // =========================
   // Reset Form
   // =========================
 
-  void _resetForm() {
+  void resetForm() {
     amountController.clear();
     noteController.clear();
+
+    _selectedCategory = null;
+
     selectedType = TransactionType.income;
     selectedPaymentMethod = PayMethod.cash;
     _selectedDate = DateTime.now();
+
     dateEditingController.text =
         DateTimeUtils.formatDateMonthDayYear(_selectedDate);
+
     notifyListeners();
   }
 

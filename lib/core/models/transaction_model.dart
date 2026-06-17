@@ -1,5 +1,7 @@
 import 'package:expense_tracker/core/utils/constant.dart';
 
+import 'package:expense_tracker/core/models/category_model.dart';
+
 class TransactionModel {
   final String id;
   final String userId;
@@ -9,6 +11,8 @@ class TransactionModel {
   final PayMethod payMethod;
   final DateTime dateTime;
 
+  final CategoryModel? category; // NEW
+
   TransactionModel({
     required this.id,
     required this.userId,
@@ -17,8 +21,8 @@ class TransactionModel {
     required this.type,
     required this.payMethod,
     required this.dateTime,
+    this.category,
   });
-
   TransactionModel copyWith({
     String? id,
     String? userId,
@@ -27,6 +31,7 @@ class TransactionModel {
     TransactionType? type,
     PayMethod? payMethod,
     DateTime? dateTime,
+    CategoryModel? category,
   }) {
     return TransactionModel(
       id: id ?? this.id,
@@ -36,6 +41,7 @@ class TransactionModel {
       type: type ?? this.type,
       payMethod: payMethod ?? this.payMethod,
       dateTime: dateTime ?? this.dateTime,
+      category: category ?? this.category,
     );
   }
 
@@ -48,14 +54,15 @@ class TransactionModel {
       'type': type.name,
       'payMethod': payMethod.name,
       'dateTime': dateTime.toIso8601String(),
+      'category': category?.toMap(),
     };
   }
 
   factory TransactionModel.fromJson(Map<String, dynamic> json) {
     return TransactionModel(
-      id: json['id'] as String? ?? '',
-      userId: json['userId'] as String? ?? '',
-      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
+      id: json['id'] ?? '',
+      userId: json['userId'] ?? '',
+      amount: (json['amount'] as num?)?.toDouble() ?? 0,
       note: json['note'] ?? '',
       type: TransactionType.values.firstWhere(
         (e) => e.name == json['type'],
@@ -66,6 +73,11 @@ class TransactionModel {
         orElse: () => PayMethod.cash,
       ),
       dateTime: DateTime.tryParse(json['dateTime'] ?? '') ?? DateTime.now(),
+      category: json['category'] != null
+          ? CategoryModel.fromMap(
+              Map<String, dynamic>.from(json['category']),
+            )
+          : null,
     );
   }
 }

@@ -7,6 +7,8 @@ import 'package:expense_tracker/features/dashboard/view/bottom_nav/bottom_naviga
 import 'package:expense_tracker/features/dashboard/view/home/home_screen.dart';
 import 'package:expense_tracker/features/dashboard/view/notications/view/notication_screen.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/appearance/appearance_screen.dart';
+import 'package:expense_tracker/features/dashboard/view/profile/categories/categories_screen.dart';
+import 'package:expense_tracker/features/dashboard/view/profile/categories/view/add_category/add_category_screen.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/my_account/my_account_screen.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/profile_screen.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/settings/feedback_screen.dart';
@@ -134,7 +136,18 @@ class AppRouter {
         path: RouteName.notifications,
         name: RouteName.notifications,
         builder: (context, state) => const NotificationScreen(),
-      )
+      ),
+      // Categories
+      GoRoute(
+        path: RouteName.categories,
+        name: RouteName.categories,
+        builder: (context, state) => const CategoriesScreen(),
+      ),
+      GoRoute(
+        path: RouteName.addCategory,
+        name: RouteName.addCategory,
+        builder: (context, state) => const AddCategoryScreen(),
+      ),
     ],
 
     // Error Route

@@ -23,6 +23,8 @@ class RouteName {
   static const String appearance = '/appearance';
   static const String deleteAccount = '/delete-account';
   static const String contact = '/contact';
+  static const String categories = '/categories';
+  static const String addCategory = '/add-category';
 
   // Bottom Navigation Screen
   static const String bottomNavBar = '/bottom-nav';

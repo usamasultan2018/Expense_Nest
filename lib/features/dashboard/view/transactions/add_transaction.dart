@@ -1,14 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+// add_transaction.dart
+
+import 'package:expense_tracker/features/dashboard/controller/transaction_controller.dart';
+import 'package:expense_tracker/features/dashboard/view/profile/categories/controller/category_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/amount_field.dart';
+import 'package:expense_tracker/features/dashboard/view/transactions/widget/category_selector.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/date_field.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/note_textfield.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/payment_field.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/save_button.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/transaction_type.dart';
-
-// Import your controller
-import 'package:expense_tracker/features/dashboard/controller/transaction_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AddTransaction extends StatefulWidget {
   const AddTransaction({super.key});
@@ -18,12 +20,18 @@ class AddTransaction extends StatefulWidget {
 }
 
 class _AddTransactionState extends State<AddTransaction> {
-  final _formKey = GlobalKey<FormState>();
 
+  final _formKey = GlobalKey<FormState>();
+   @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<TransactionController>().resetForm();
+    });
+  }
   @override
   Widget build(BuildContext context) {
-    // Watch for changes in the transaction type
-    final transactionController = context.watch<TransactionController>();
 
     return Scaffold(
       appBar: AppBar(
@@ -38,13 +46,28 @@ class _AddTransactionState extends State<AddTransaction> {
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
               const SizedBox(height: 30),
+
               TransactionToggle(
-                initialType: transactionController.selectedType,
+                initialType: context.read<TransactionController>().selectedType,
               ),
+
               const SizedBox(height: 40),
               const AmountInput(),
               const SizedBox(height: 20),
               const DateField(),
+              const SizedBox(height: 20),
+
+
+              CategorySelector(
+                selectedType:
+                    context.watch<TransactionController>().selectedType,
+                selectedCategory:
+                    context.watch<TransactionController>().selectedCategory,
+                onCategorySelected: (cat) {
+                  context.read<TransactionController>().selectCategory(cat);
+                },
+              ),
+
               const SizedBox(height: 20),
               const NoteField(),
               const SizedBox(height: 20),

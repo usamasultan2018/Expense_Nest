@@ -21,6 +21,8 @@ class TransactionTile extends StatelessWidget {
     final bool isIncome = transaction.type == TransactionType.income;
     final transactionColor = isIncome ? colorScheme.primary : colorScheme.error;
 
+    final category = transaction.category;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Material(
@@ -46,36 +48,28 @@ class TransactionTile extends StatelessWidget {
             ),
             child: Row(
               children: [
-                /// LEADING ICON
+                /// CATEGORY ICON
                 Container(
                   height: 56,
                   width: 56,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(18),
-                    gradient: LinearGradient(
-                      colors: isIncome
-                          ? [
-                              colorScheme.primary.withValues(alpha: 0.9),
-                              colorScheme.primary.withValues(alpha: 0.6),
-                            ]
-                          : [
-                              colorScheme.error.withValues(alpha: 0.9),
-                              colorScheme.error.withValues(alpha: 0.6),
-                            ],
-                    ),
+                    color: category?.color.withValues(alpha: 0.15) ??
+                        transactionColor.withValues(alpha: 0.15),
                   ),
                   child: Icon(
-                    isIncome
-                        ? Icons.arrow_downward_rounded
-                        : Icons.arrow_upward_rounded,
-                    color: Colors.white,
+                    category?.icon ??
+                        (isIncome
+                            ? Icons.arrow_downward_rounded
+                            : Icons.arrow_upward_rounded),
+                    color: category?.color ?? transactionColor,
                     size: 28,
                   ),
                 ),
 
                 const SizedBox(width: 14),
 
-                /// TITLE + DATE
+                /// TITLE + DATE + CATEGORY
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,9 +77,8 @@ class TransactionTile extends StatelessWidget {
                       Text(
                         transaction.note.isNotEmpty
                             ? transaction.note
-                            : isIncome
-                                ? "Income"
-                                : "Expense",
+                            : category?.title ??
+                                (isIncome ? "Income" : "Expense"),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.titleMedium?.copyWith(
@@ -113,6 +106,27 @@ class TransactionTile extends StatelessWidget {
                           ),
                         ],
                       ),
+                      if (category != null) ...[
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: category.color.withValues(alpha: .12),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            category.title,
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: category.color,
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),

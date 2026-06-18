@@ -56,7 +56,7 @@ class _CategorySelectorState extends State<CategorySelector> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final categories = widget.selectedType == TransactionType.expense 
+    final categories = widget.selectedType == TransactionType.expense
         ? DefaultCategories.expense
         : DefaultCategories.income;
 
@@ -67,14 +67,15 @@ class _CategorySelectorState extends State<CategorySelector> {
         GestureDetector(
           onTap: _toggle,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 19),
             decoration: BoxDecoration(
               border: Border.all(color: theme.dividerColor),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Icon(Icons.category_outlined, color: theme.colorScheme.primary),
                 _selected == null
                     ? Text(
                         'Select Category',
@@ -98,7 +99,7 @@ class _CategorySelectorState extends State<CategorySelector> {
                   duration: const Duration(milliseconds: 200),
                   child: Icon(
                     Icons.keyboard_arrow_up_rounded,
-                    color: theme.colorScheme.primary,
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
                   ),
                 ),
               ],

@@ -8,21 +8,51 @@ class AppearanceScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Appearance"),
-      ),
-      body: const Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            ThemeTile(),
-            SizedBox(height: 16),
-            ColorSchemeTile(),
-            SizedBox(height: 16),
-            FontTile(),
-          ],
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        centerTitle: false,
+        title: const Text(
+          "Appearance",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
         ),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          Text(
+            "PERSONALIZATION",
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  letterSpacing: 0.8,
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                color: colorScheme.outlineVariant.withValues(alpha: 0.4),
+              ),
+            ),
+            child: const Column(
+              children: [
+                ThemeTile(),
+                Divider(height: 1, indent: 72),
+                ColorSchemeTile(),
+                Divider(height: 1, indent: 72),
+                FontTile(),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

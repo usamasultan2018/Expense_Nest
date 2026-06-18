@@ -7,6 +7,8 @@ import 'package:expense_tracker/features/dashboard/view/transactions/widget/cate
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/date_field.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/note_textfield.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/payment_field.dart';
+import 'package:expense_tracker/features/dashboard/view/transactions/widget/receipt_attachment.dart';
+import 'package:expense_tracker/features/dashboard/view/transactions/widget/recurring_toggle.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/save_button.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/transaction_type.dart';
 import 'package:flutter/material.dart';
@@ -20,9 +22,8 @@ class AddTransaction extends StatefulWidget {
 }
 
 class _AddTransactionState extends State<AddTransaction> {
-
   final _formKey = GlobalKey<FormState>();
-   @override
+  @override
   void initState() {
     super.initState();
 
@@ -30,13 +31,20 @@ class _AddTransactionState extends State<AddTransaction> {
       context.read<TransactionController>().resetForm();
     });
   }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Transaction"),
-        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        centerTitle: false,
+        title: const Text(
+          "Add Transaction",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       body: SafeArea(
         child: Form(
@@ -46,18 +54,14 @@ class _AddTransactionState extends State<AddTransaction> {
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
               const SizedBox(height: 30),
-
               TransactionToggle(
                 initialType: context.read<TransactionController>().selectedType,
               ),
-
               const SizedBox(height: 40),
               const AmountInput(),
               const SizedBox(height: 20),
               const DateField(),
               const SizedBox(height: 20),
-
-
               CategorySelector(
                 selectedType:
                     context.watch<TransactionController>().selectedType,
@@ -67,11 +71,28 @@ class _AddTransactionState extends State<AddTransaction> {
                   context.read<TransactionController>().selectCategory(cat);
                 },
               ),
-
+              const SizedBox(height: 20),
+              RecurringToggle(
+                selected:
+                    context.watch<TransactionController>().recurringInterval,
+                onChanged: (v) => context
+                    .read<TransactionController>()
+                    .setRecurringInterval(v),
+              ),
               const SizedBox(height: 20),
               const NoteField(),
               const SizedBox(height: 20),
               const PaymentField(),
+              const SizedBox(height: 20),
+              ReceiptAttachment(
+                imageFile: context.watch<TransactionController>().receiptFile,
+                imageUrl: context.watch<TransactionController>().receiptUrl,
+                onImagePicked: (file) =>
+                    context.read<TransactionController>().setReceipt(file),
+                onRemove: () =>
+                    context.read<TransactionController>().removeReceipt(),
+              ),
+              const SizedBox(height: 20),
               const SizedBox(height: 40),
               const RoundSaveButton(),
               const SizedBox(height: 30),

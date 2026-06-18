@@ -3,6 +3,7 @@ import 'package:expense_tracker/core/models/user.dart';
 import 'package:expense_tracker/core/models/account.dart';
 import 'package:expense_tracker/core/repository/base/i_auth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -22,45 +23,54 @@ class AuthRepository implements IAuthRepository {
   @override
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
+  // ── FCM Token ─────────────────────────────────────────────────────────────
+
+  /// Fetches the current FCM token and saves it to Firestore for the given user.
+  /// Call this on login/signup and whenever the token refreshes.
+  Future<void> saveDeviceToken(String userId) async {
+    try {
+      final token = await FirebaseMessaging.instance.getToken();
+      if (token == null) return;
+
+      await _firestore.collection('users').doc(userId).update({
+        'deviceToken': token,
+      });
+
+      debugPrint('✅ FCM token saved for user: $userId');
+    } catch (e) {
+      debugPrint('⚠️ Could not save FCM token: $e');
+      // Non-fatal — don't rethrow
+    }
+  }
+
   @override
   Future<User?> signUpWithGoogle() async {
     try {
-      // signout
       _googleSignIn.signOut();
-      // Trigger Google Sign-In flow
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-
-      // User cancelled the sign-in
       if (googleUser == null) return null;
 
-      // Obtain authentication details
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
 
-      // Create Firebase credential
       final OAuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      // Sign in to Firebase with Google credential
       final UserCredential userCredential =
           await _auth.signInWithCredential(credential);
       final User? user = userCredential.user;
 
       if (user != null) {
-        const String fcmToken = "";
+        // Get real FCM token
+        final String? fcmToken = await FirebaseMessaging.instance.getToken();
 
-        // Initialize user in Firestore (creates user doc if new)
-        await _initializeUserInFirestore(
-          user,
-          fcmToken: fcmToken,
-        );
-
-        // Fetch complete user data from Firestore
+        await _initializeUserInFirestore(user, fcmToken: fcmToken);
         await _fetchUserFromFirestore(user.uid);
 
-        // Save to local storage
+        // Keep token fresh on every login
+        await saveDeviceToken(user.uid);
 
         debugPrint('✅ Google sign-in successful for user: ${user.uid}');
       }
@@ -82,7 +92,6 @@ class AuthRepository implements IAuthRepository {
     required String username,
   }) async {
     try {
-      // Create user with email and password
       final UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -92,11 +101,12 @@ class AuthRepository implements IAuthRepository {
       final User? user = userCredential.user;
 
       if (user != null) {
-        // Initialize user in Firestore
-        await _initializeUserInFirestore(user, username: username);
+        // Get real FCM token
+        final String? fcmToken = await FirebaseMessaging.instance.getToken();
 
-        // Fetch complete user data from Firestore
-       await _fetchUserFromFirestore(user.uid);
+        await _initializeUserInFirestore(user,
+            username: username, fcmToken: fcmToken);
+        await _fetchUserFromFirestore(user.uid);
 
         debugPrint('✅ Email sign-up successful for user: ${user.uid}');
       }
@@ -117,7 +127,6 @@ class AuthRepository implements IAuthRepository {
     required String password,
   }) async {
     try {
-      // Sign in with email and password
       final UserCredential userCredential =
           await _auth.signInWithEmailAndPassword(
         email: email,
@@ -127,10 +136,10 @@ class AuthRepository implements IAuthRepository {
       final User? user = userCredential.user;
 
       if (user != null) {
-        // Fetch complete user data from Firestore
         await _fetchUserFromFirestore(user.uid);
 
-        // Save to local storage
+        // Refresh FCM token on every login (token can rotate)
+        await saveDeviceToken(user.uid);
 
         debugPrint('✅ Sign-in successful for user: ${user.uid}');
       }
@@ -148,12 +157,8 @@ class AuthRepository implements IAuthRepository {
   @override
   Future<void> signOut() async {
     try {
-      // Sign out from Google
       await _googleSignIn.signOut();
-
-      // Sign out from Firebase
       await _auth.signOut();
-
       debugPrint('✅ User signed out successfully');
     } catch (e) {
       debugPrint('❌ Error signing out: $e');
@@ -190,14 +195,8 @@ class AuthRepository implements IAuthRepository {
   }
 
   @override
-  User? getCurrentUser() {
-    return _auth.currentUser;
-  }
+  User? getCurrentUser() => _auth.currentUser;
 
-  /// Fetch user data from Firestore
-  /// [userId] User's unique identifier
-  /// Returns [UserModel] with complete user data
-  /// Throws [Exception] if user document doesn't exist
   Future<UserModel> _fetchUserFromFirestore(String userId) async {
     try {
       final DocumentSnapshot userDoc =
@@ -210,7 +209,6 @@ class AuthRepository implements IAuthRepository {
       final Map<String, dynamic> userData =
           userDoc.data() as Map<String, dynamic>;
 
-      // Handle both Timestamp and String formats for backwards compatibility
       DateTime createdAtDate;
       final createdAtValue = userData['createdAt'];
       if (createdAtValue is Timestamp) {
@@ -235,34 +233,26 @@ class AuthRepository implements IAuthRepository {
     }
   }
 
-  /// Initialize user and account documents in Firestore
-  /// Only creates documents if they don't already exist
-  /// [user] Firebase user object
-  /// [username] Optional username (defaults to display name)
-  /// [fcmToken] Optional FCM device token
   Future<void> _initializeUserInFirestore(
     User user, {
     String username = '',
     String? fcmToken,
   }) async {
     try {
-      // Check if user document already exists
       final DocumentSnapshot userDoc =
           await _firestore.collection('users').doc(user.uid).get();
 
-      // Only initialize if user doesn't exist
       if (!userDoc.exists) {
         final String displayName =
             username.isNotEmpty ? username : user.displayName ?? 'User';
 
-        // Create user document
         final UserModel userModel = UserModel(
           id: user.uid,
           username: displayName,
           email: user.email ?? '',
           profilePicture: user.photoURL ?? '',
           createdAt: DateTime.now(),
-          deviceToken: fcmToken,
+          deviceToken: fcmToken, // ← real token saved here
         );
 
         await _firestore
@@ -270,7 +260,6 @@ class AuthRepository implements IAuthRepository {
             .doc(user.uid)
             .set(userModel.toFirestoreMap());
 
-        // Create default account document
         final AccountModel accountModel = AccountModel(
           userId: user.uid,
           accountName: '$displayName\'s Account',

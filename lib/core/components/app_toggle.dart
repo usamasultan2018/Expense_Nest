@@ -17,9 +17,14 @@ class AppToggle<T> extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
+      height: 64,
+      padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: theme.cardColor,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: theme.dividerColor.withValues(alpha: 0.1),
+        ),
       ),
       child: Row(
         children: options.map((option) {
@@ -65,22 +70,33 @@ class _ToggleSegment extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutCubic,
+        margin: const EdgeInsets.all(2),
+        height: double.infinity,
         decoration: BoxDecoration(
           color: isSelected ? colorScheme.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: colorScheme.primary.withValues(alpha: 0.25),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : null,
         ),
         alignment: Alignment.center,
-        child: Text(
-          label,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
+        child: AnimatedDefaultTextStyle(
+          duration: const Duration(milliseconds: 250),
+          style: theme.textTheme.titleSmall!.copyWith(
+            fontWeight: FontWeight.w700,
             color: isSelected
                 ? colorScheme.onPrimary
-                : theme.textTheme.bodyLarge?.color,
+                : colorScheme.onSurfaceVariant,
           ),
+          child: Text(label),
         ),
       ),
     );

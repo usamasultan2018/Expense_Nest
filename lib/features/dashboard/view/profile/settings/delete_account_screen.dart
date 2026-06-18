@@ -50,8 +50,15 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        title: const Text("Delete Account"),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        centerTitle: false,
+        title: const Text(
+          "Delete Account",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(

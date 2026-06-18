@@ -1,6 +1,8 @@
+import 'package:expense_tracker/core/components/custom_group_tiles.dart';
 import 'package:expense_tracker/core/components/custom_tile.dart';
 import 'package:expense_tracker/core/components/fade_effect.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/controller/user_controller.dart';
+import 'package:expense_tracker/features/dashboard/view/profile/settings/controller/app_info_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -13,117 +15,113 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Settings"),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        centerTitle: false,
+        title: const Text(
+          "Settings",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       body: SafeArea(
         child: FadeTransitionEffect(
           child: ListView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 10,
-            ),
+            padding: const EdgeInsets.all(20),
             children: [
-              const SizedBox(height: 10),
-
-              /// Info
               _sectionTitle(context, "Info"),
-
               const SizedBox(height: 10),
-
-              CustomTile(
-                onTap: () => _launchUrl(
-                  "https://expensenest.netlify.app/privacy",
-                ),
-                title: "Privacy Policy",
-                iconData: Icons.privacy_tip_sharp,
-                bckColor: Colors.green,
+              CustomTileGroup(
+                children: [
+                  CustomTile(
+                    title: "Privacy Policy",
+                    subtitle: "Learn how we handle your data",
+                    iconData: Icons.privacy_tip_outlined,
+                    bckColor: Colors.green,
+                    onTap: () => _launchUrl(
+                      "https://expensenest.netlify.app/privacy",
+                    ),
+                  ),
+                  CustomTile(
+                    title: "Terms of Service",
+                    subtitle: "Read the terms and conditions",
+                    iconData: Icons.description_outlined,
+                    bckColor: Colors.blue,
+                    onTap: () => _launchUrl(
+                      "https://expensenest.netlify.app/terms",
+                    ),
+                  ),
+                  CustomTile(
+                    title: "Contact",
+                    subtitle: "Get help or send feedback",
+                    iconData: Icons.feedback_outlined,
+                    bckColor: Colors.orange,
+                    onTap: () => context.push("/contact"),
+                  ),
+                  Consumer<AppInfoController>(
+                    builder: (context, appInfo, _) {
+                      return CustomTile(
+                        title: "Version",
+                        subtitle: appInfo.version.isEmpty
+                            ? "Loading..."
+                            : "App version ${appInfo.version}",
+                        iconData: Icons.info_outline,
+                        bckColor: Colors.grey,
+                        onTap: null,
+                      );
+                    },
+                  ),
+                ],
               ),
-
-              const SizedBox(height: 8),
-
-              CustomTile(
-                onTap: () => _launchUrl(
-                  "https://expensenest.netlify.app/terms",
-                ),
-                title: "Terms of Service",
-                iconData: Icons.description_outlined,
-                bckColor: Colors.blue,
-              ),
-
-              const SizedBox(height: 8),
-
-              CustomTile(
-                onTap: () {
-                  context.push("/contact");
-                },
-                title: "Contact",
-                iconData: Icons.feedback_outlined,
-                bckColor: Colors.orange,
-              ),
-
-              const SizedBox(height: 8),
-
-              CustomTile(
-                onTap: () {},
-                title: "Version 1.0.0",
-                iconData: Icons.info_outline,
-                bckColor: Colors.grey,
-              ),
-
-              const SizedBox(height: 20),
-
-              /// Session
+              const SizedBox(height: 24),
               _sectionTitle(context, "Session"),
-
               const SizedBox(height: 10),
-
-              Consumer<UserController>(
-                builder: (
-                  BuildContext context,
-                  UserController value,
-                  Widget? child,
-                ) {
-                  return CustomTile(
-                    onTap: () async {
-                      final shouldLogout = await _showConfirmationDialog(
-                        context,
+              CustomTileGroup(
+                children: [
+                  Consumer<UserController>(
+                    builder: (context, value, _) {
+                      return CustomTile(
                         title: "Logout",
-                        content: "Are you sure you want to logout?",
-                        confirmText: "Logout",
+                        subtitle: "Sign out from your account",
+                        iconData: Icons.logout_rounded,
+                        bckColor: Colors.brown,
+                        onTap: () async {
+                          final shouldLogout = await _showConfirmationDialog(
+                            context,
+                            title: "Logout",
+                            content: "Are you sure you want to logout?",
+                            confirmText: "Logout",
+                          );
+
+                          if (shouldLogout == true) {
+                            value.logout(context);
+                          }
+                        },
+                      );
+                    },
+                  ),
+                  CustomTile(
+                    title: "Delete Account",
+                    subtitle: "Permanently remove your account",
+                    iconData: Icons.delete_outline,
+                    bckColor: Colors.red,
+                    onTap: () async {
+                      final shouldDelete = await _showConfirmationDialog(
+                        context,
+                        title: "Delete Account",
+                        content: "This action cannot be undone. Are you sure?",
+                        confirmText: "Delete",
+                        isDanger: true,
                       );
 
-                      if (shouldLogout == true) {
-                        value.logout(context);
+                      if (shouldDelete == true) {
+                        context.push("/delete-account");
                       }
                     },
-                    title: "Logout",
-                    iconData: Icons.logout,
-                    bckColor: Colors.brown,
-                  );
-                },
+                  ),
+                ],
               ),
-
-              const SizedBox(height: 8),
-
-              CustomTile(
-                onTap: () async {
-                  final shouldDelete = await _showConfirmationDialog(
-                    context,
-                    title: "Delete Account",
-                    content: "This action cannot be undone. Are you sure?",
-                    confirmText: "Delete",
-                    isDanger: true,
-                  );
-                  if (shouldDelete == true) {
-                    context.push("/delete-account");
-                  }
-                },
-                title: "Delete Account",
-                iconData: Icons.delete_outline,
-                bckColor: Colors.redAccent,
-              ),
-
-              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -137,10 +135,11 @@ class SettingsScreen extends StatelessWidget {
     String title,
   ) {
     return Text(
-      title,
-      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+      title.toUpperCase(),
+      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            letterSpacing: 0.8,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
     );
   }

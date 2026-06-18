@@ -48,7 +48,15 @@ class _FeedBackScreenState extends State<FeedBackScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Feedback screen title"),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        centerTitle: false,
+        title: const Text(
+          "Feedback",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),

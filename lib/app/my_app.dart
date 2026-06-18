@@ -5,6 +5,7 @@ import 'package:expense_tracker/app/routes/app_router.dart';
 import 'package:expense_tracker/features/dashboard/controller/transaction_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/categories/controller/category_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/controller/user_controller.dart';
+import 'package:expense_tracker/features/dashboard/view/profile/settings/controller/app_info_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/settings/controller/setting_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +26,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(create: (_) => SettingController()..init()),
         ChangeNotifierProvider(create: (_) => CategoryController()),
+        ChangeNotifierProvider(
+          create: (_) => AppInfoController()..loadVersion(),
+        ),
       ],
       child: Consumer<SettingController>(
         builder: (context, settingController, child) {

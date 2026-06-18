@@ -6,7 +6,6 @@ import 'package:expense_tracker/core/repository/base/i_trasaction_repository.dar
 import 'package:expense_tracker/core/utils/constant.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-
 class TransactionRepository implements ITransactionRepository {
   final CollectionReference _transactionsCollection =
       FirebaseFirestore.instance.collection('transactions');
@@ -50,6 +49,12 @@ class TransactionRepository implements ITransactionRepository {
   @override
   Future<void> deleteTransaction(TransactionModel transaction) async {
     try {
+      // Delete receipt image from Storage if one exists
+      if (transaction.receiptUrl != null &&
+          transaction.receiptUrl!.isNotEmpty) {
+        await deleteImageFromStorage(transaction.receiptUrl!);
+      }
+
       await _transactionsCollection.doc(transaction.id).delete();
       await _updateAccountBalanceOnDelete(
           transaction.userId, transaction.amount, transaction.type);
@@ -70,6 +75,13 @@ class TransactionRepository implements ITransactionRepository {
 
       TransactionModel oldTransaction = TransactionModel.fromJson(
           oldTransactionSnapshot.data() as Map<String, dynamic>);
+
+      // If receipt was replaced, delete the old image from Storage
+      if (oldTransaction.receiptUrl != null &&
+          oldTransaction.receiptUrl!.isNotEmpty &&
+          oldTransaction.receiptUrl != newTransaction.receiptUrl) {
+        await deleteImageFromStorage(oldTransaction.receiptUrl!);
+      }
 
       await transactionRef.update(newTransaction.toJson());
       await _adjustAccountBalanceOnUpdate(oldTransaction, newTransaction);
@@ -211,6 +223,17 @@ class TransactionRepository implements ITransactionRepository {
       return imageUrl;
     } catch (e) {
       throw Exception('Image upload failed: $e');
+    }
+  }
+
+  /// Deletes an image from Firebase Storage using its download URL.
+  /// Non-fatal — logs the error but does not rethrow.
+  Future<void> deleteImageFromStorage(String imageUrl) async {
+    try {
+      final ref = FirebaseStorage.instance.refFromURL(imageUrl);
+      await ref.delete();
+    } catch (e) {
+      print('Warning: could not delete receipt image: $e');
     }
   }
 }

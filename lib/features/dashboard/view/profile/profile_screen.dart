@@ -1,4 +1,5 @@
 import 'package:expense_tracker/app/routes/route_name.dart';
+import 'package:expense_tracker/core/components/custom_group_tiles.dart';
 import 'package:expense_tracker/core/components/custom_tile.dart';
 import 'package:expense_tracker/core/components/loading_widget.dart';
 import 'package:expense_tracker/core/components/profile_avatar.dart';
@@ -7,6 +8,7 @@ import 'package:expense_tracker/features/dashboard/view/profile/controller/user_
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -19,28 +21,28 @@ class ProfileScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Profile"),
-        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        centerTitle: false,
+        title: const Text(
+          "Profile",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: IconButton(
-              tooltip: "Settings",
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const SettingsScreen(),
-                  ),
-                );
-              },
-              icon: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: theme.cardColor,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(Icons.settings),
+            padding: const EdgeInsets.only(right: 16),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.settings_outlined),
+                onPressed: () {
+                  context.push(RouteName.settings);
+                },
               ),
             ),
           ),
@@ -73,105 +75,109 @@ class ProfileScreen extends StatelessWidget {
                 vertical: 10,
               ),
               children: [
-                const SizedBox(height: 10),
-
-                /// Profile Avatar
-                Center(
-                  child: Hero(
-                    tag: "profile",
-                    child: ProfileAvatar(
-                      networkImageUrl: userModel.profilePicture,
-                      radius: 60,
+                Column(
+                  children: [
+                    Hero(
+                      tag: "profile",
+                      child: ProfileAvatar(
+                        networkImageUrl: userModel.profilePicture,
+                        radius: 55,
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 16),
+                    Text(
+                      userModel.username,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      userModel.email,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
                 ),
-
-                const SizedBox(height: 20),
-
-                /// Username
-                Text(
-                  userModel.username,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                const SizedBox(height: 24),
+                _sectionTitle(context, "Account"),
+                CustomTileGroup(
+                  children: [
+                    CustomTile(
+                      title: "My Account",
+                      subtitle: "View and edit your account details",
+                      iconData: Icons.person_outline,
+                      bckColor: Colors.blueAccent,
+                      onTap: () => context.push(RouteName.myAccount),
+                    ),
+                    CustomTile(
+                      title: "Categories",
+                      subtitle: "Manage your expense categories",
+                      iconData: Icons.category_outlined,
+                      bckColor: Colors.green,
+                      onTap: () => context.push(RouteName.categories),
+                    ),
+                    CustomTile(
+                      title: "Appearance",
+                      subtitle: "Customize the look and feel of the app",
+                      iconData: Icons.palette_outlined,
+                      bckColor: Colors.orange,
+                      onTap: () => context.push(RouteName.appearance),
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 24),
+                _sectionTitle(context, "More"),
+                CustomTileGroup(
+                  children: [
+                    CustomTile(
+                      title: "Rate App",
+                      subtitle: "Enjoying the app? Please rate us!",
+                      iconData: Icons.star_rate_rounded,
+                      bckColor: Colors.amber,
+                      onTap: () => _showRateAppDialog(context),
+                    ),
+                    CustomTile(
+                      title: "Share App",
+                      subtitle: "Tell your friends about ExpenseNest",
+                      iconData: Icons.share_outlined,
+                      bckColor: Colors.purple,
+                      onTap: () async {
+                        await Share.share(
+                          '''
+📊 ExpenseNest
 
-                const SizedBox(height: 6),
+Track expenses, manage budgets, and stay in control of your money.
 
-                /// Email
-                Text(
-                  userModel.email,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                  ),
+Download now:
+https://play.google.com/store/apps/details?id=com.softtures.expensenest
+''',
+                          subject: 'ExpenseNest',
+                        );
+                      },
+                    ),
+                  ],
                 ),
-
-                const SizedBox(height: 20),
-
-                /// Account Tile
-                CustomTile(
-                  onTap: () {
-                    context.push(RouteName.myAccount);
-                  },
-                  title: "My Account",
-                  iconData: Icons.person_outline,
-                  bckColor: Colors.blueAccent,
-                ),
-
-                const SizedBox(height: 10),
-                //Categories Tile
-                CustomTile(
-                  onTap: () {
-                    context.push(RouteName.categories);
-                  },
-                  title: "Categories",
-                  iconData: Icons.category_outlined,
-                  bckColor: Colors.green,
-                ),
-
-                /// Appearance Tile
-                CustomTile(
-                  onTap: () {
-                    context.push(RouteName.appearance);
-                  },
-                  title: "Appearance",
-                  iconData: Icons.palette_outlined,
-                  bckColor: Colors.orange,
-                ),
-
-                const SizedBox(height: 10),
-
-                /// Rate App Tile
-                CustomTile(
-                  onTap: () {
-                    _showRateAppDialog(context);
-                  },
-                  title: "Rate App",
-                  iconData: Icons.star_rate_rounded,
-                  bckColor: Colors.amber,
-                ),
-                // share tile
-                const SizedBox(height: 10),
-                CustomTile(
-                  onTap: () {
-                    final Uri url = Uri.parse(
-                      'https://play.google.com/store/apps/details?id=com.softtures.expensenest',
-                    );
-                    launchUrl(url, mode: LaunchMode.externalApplication);
-                  },
-                  title: "Share App",
-                  iconData: Icons.share_outlined,
-                  bckColor: Colors.purple,
-                ),
-
                 const SizedBox(height: 30),
               ],
             );
           },
         ),
+      ),
+    );
+  }
+
+  Widget _sectionTitle(BuildContext context, String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(
+        title.toUpperCase(),
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              letterSpacing: 0.8,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
       ),
     );
   }

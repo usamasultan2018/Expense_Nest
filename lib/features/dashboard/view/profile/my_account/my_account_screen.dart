@@ -12,8 +12,15 @@ class MyAccountScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("My Account"),
-        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        centerTitle: false,
+        title: const Text(
+          "My Account",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       body: Consumer<UserController>(
         builder: (context, userController, child) {

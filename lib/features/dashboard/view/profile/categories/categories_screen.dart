@@ -13,17 +13,25 @@ class CategoriesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Categories'),
-        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        centerTitle: false,
+        title: const Text(
+          "Categories",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Consumer<CategoryController>(
             builder: (context, controller, _) {
-              final defaultCategories = controller.selectedType == TransactionType.expense
-                  ? DefaultCategories.expense
-                  : DefaultCategories.income;
+              final defaultCategories =
+                  controller.selectedType == TransactionType.expense
+                      ? DefaultCategories.expense
+                      : DefaultCategories.income;
 
               return SingleChildScrollView(
                 child: Column(
@@ -34,8 +42,10 @@ class CategoriesScreen extends StatelessWidget {
                       selectedValue: controller.selectedType,
                       onChanged: (value) => controller.changeType(value),
                       options: const [
-                        ToggleOption(label: 'Income', value: TransactionType.income),
-                        ToggleOption(label: 'Expense', value: TransactionType.expense),
+                        ToggleOption(
+                            label: 'Income', value: TransactionType.income),
+                        ToggleOption(
+                            label: 'Expense', value: TransactionType.expense),
                       ],
                     ),
                     const SizedBox(height: 24),

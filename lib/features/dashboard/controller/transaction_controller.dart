@@ -1,9 +1,14 @@
+// transaction_controller.dart
+
+import 'dart:io';
+
 import 'package:expense_tracker/core/models/category_model.dart';
 import 'package:expense_tracker/core/models/transaction_model.dart';
 import 'package:expense_tracker/core/repository/transaction_repository.dart';
 import 'package:expense_tracker/core/utils/constant.dart';
 import 'package:expense_tracker/core/utils/date.dart';
 import 'package:expense_tracker/core/utils/snackbar_util.dart';
+import 'package:expense_tracker/features/dashboard/view/transactions/widget/recurring_toggle.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -50,10 +55,7 @@ class TransactionController extends ChangeNotifier {
   PayMethod selectedPaymentMethod = PayMethod.cash;
   DateTime _selectedDate = DateTime.now();
 
-  // =========================
-  // Load Transactions
-  // =========================
-// Inside CategoryController — add these:
+  // ── Category ──────────────────────────────────────────────────────────────
 
   CategoryModel? _selectedCategory;
   CategoryModel? get selectedCategory => _selectedCategory;
@@ -62,6 +64,40 @@ class TransactionController extends ChangeNotifier {
     _selectedCategory = cat;
     notifyListeners();
   }
+
+  // ── Receipt ───────────────────────────────────────────────────────────────
+
+  File? _receiptFile;
+  File? get receiptFile => _receiptFile;
+
+  String? _receiptUrl;
+  String? get receiptUrl => _receiptUrl;
+
+  void setReceipt(File file) {
+    _receiptFile = file;
+    _receiptUrl = null;
+    notifyListeners();
+  }
+
+  void removeReceipt() {
+    _receiptFile = null;
+    _receiptUrl = null;
+    notifyListeners();
+  }
+
+  // ── Recurring ─────────────────────────────────────────────────────────────
+
+  RecurringInterval _recurringInterval = RecurringInterval.never;
+  RecurringInterval get recurringInterval => _recurringInterval;
+
+  void setRecurringInterval(RecurringInterval interval) {
+    _recurringInterval = interval;
+    notifyListeners();
+  }
+
+  // =========================
+  // Load Transactions
+  // =========================
 
   Future<void> loadTransactions() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -79,6 +115,7 @@ class TransactionController extends ChangeNotifier {
 
     try {
       _allTransactions = await transactionRepository.getTransactions(uid);
+      await _processRecurringTransactions(uid);
     } catch (e) {
       _error = e.toString();
       _allTransactions = [];
@@ -86,6 +123,42 @@ class TransactionController extends ChangeNotifier {
       isLoadingTransactions = false;
       notifyListeners();
     }
+  }
+
+  // =========================
+  // Auto-process Recurring
+  // =========================
+
+  Future<void> _processRecurringTransactions(String uid) async {
+    final due = _allTransactions
+        .where((t) => t.recurringInterval != 'never' && t.isDueNow)
+        .toList();
+
+    if (due.isEmpty) return;
+
+    for (final original in due) {
+      final now = DateTime.now();
+
+      final newTransaction = original.copyWith(
+        id: '',
+        dateTime: now,
+        lastRecurredAt: now,
+        nextDueDate: TransactionModel.computeNextDueDate(
+            now, original.recurringInterval),
+      );
+
+      await transactionRepository.addTransaction(newTransaction);
+
+      final updatedOriginal = original.copyWith(
+        lastRecurredAt: now,
+        nextDueDate: TransactionModel.computeNextDueDate(
+            now, original.recurringInterval),
+      );
+
+      await transactionRepository.updateTransaction(updatedOriginal);
+    }
+
+    _allTransactions = await transactionRepository.getTransactions(uid);
   }
 
   // =========================
@@ -138,15 +211,11 @@ class TransactionController extends ChangeNotifier {
       return;
     }
     if (_selectedCategory == null) {
-      SnackbarUtil.showErrorSnackbar(
-        context,
-        'Please select a category',
-      );
+      SnackbarUtil.showErrorSnackbar(context, 'Please select a category');
       return;
     }
 
     final amount = double.tryParse(amountController.text.trim());
-
     if (amount == null || amount <= 0) {
       SnackbarUtil.showErrorSnackbar(context, 'Please enter a valid amount');
       return;
@@ -156,6 +225,17 @@ class TransactionController extends ChangeNotifier {
     notifyListeners();
 
     try {
+      // Upload receipt if a file was picked
+      String? uploadedUrl;
+      if (_receiptFile != null) {
+        uploadedUrl =
+            await transactionRepository.uploadImageToFirebase(_receiptFile!);
+      }
+
+      final interval = _recurringInterval.firestoreValue;
+      final nextDue =
+          TransactionModel.computeNextDueDate(_selectedDate, interval);
+
       final transaction = TransactionModel(
         id: '',
         userId: uid,
@@ -165,6 +245,10 @@ class TransactionController extends ChangeNotifier {
         payMethod: selectedPaymentMethod,
         dateTime: _selectedDate,
         category: selectedCategory,
+        recurringInterval: interval,
+        lastRecurredAt: interval != 'never' ? _selectedDate : null,
+        nextDueDate: nextDue,
+        receiptUrl: uploadedUrl,
       );
 
       await transactionRepository.addTransaction(transaction);
@@ -173,14 +257,12 @@ class TransactionController extends ChangeNotifier {
 
       if (context.mounted) {
         SnackbarUtil.showSuccessSnackbar(
-          context,
-          'Transaction added successfully',
-        );
-
+            context, 'Transaction added successfully');
         Navigator.pop(context);
       }
     } catch (e) {
       if (context.mounted) {
+        print("Error creating transaction: $e");
         SnackbarUtil.showErrorSnackbar(context, e.toString());
       }
     } finally {
@@ -198,7 +280,6 @@ class TransactionController extends ChangeNotifier {
     TransactionModel originalTransaction,
   ) async {
     final amount = double.tryParse(amountController.text.trim());
-
     if (amount == null || amount <= 0) {
       SnackbarUtil.showErrorSnackbar(context, 'Please enter a valid amount');
       return;
@@ -208,6 +289,22 @@ class TransactionController extends ChangeNotifier {
     notifyListeners();
 
     try {
+      // Determine the final receipt URL:
+      // - new file picked  → upload it
+      // - no file, url set → keep existing
+      // - both null        → user removed it
+      String? finalReceiptUrl;
+      if (_receiptFile != null) {
+        finalReceiptUrl =
+            await transactionRepository.uploadImageToFirebase(_receiptFile!);
+      } else if (_receiptUrl != null) {
+        finalReceiptUrl = _receiptUrl;
+      }
+
+      final interval = _recurringInterval.firestoreValue;
+      final nextDue =
+          TransactionModel.computeNextDueDate(_selectedDate, interval);
+
       final updatedTransaction = originalTransaction.copyWith(
         amount: amount,
         note: noteController.text.trim(),
@@ -215,6 +312,10 @@ class TransactionController extends ChangeNotifier {
         payMethod: selectedPaymentMethod,
         dateTime: _selectedDate,
         category: _selectedCategory,
+        recurringInterval: interval,
+        lastRecurredAt: interval != 'never' ? _selectedDate : null,
+        nextDueDate: nextDue,
+        receiptUrl: finalReceiptUrl,
       );
 
       await transactionRepository.updateTransaction(updatedTransaction);
@@ -222,10 +323,7 @@ class TransactionController extends ChangeNotifier {
 
       if (context.mounted) {
         SnackbarUtil.showSuccessSnackbar(
-          context,
-          'Transaction updated successfully',
-        );
-
+            context, 'Transaction updated successfully');
         Navigator.pop(context);
       }
     } catch (e) {
@@ -241,6 +339,7 @@ class TransactionController extends ChangeNotifier {
   // =========================
   // Delete Transaction
   // =========================
+
   Future<void> deleteTransaction(
     BuildContext context,
     TransactionModel transaction,
@@ -249,24 +348,16 @@ class TransactionController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await transactionRepository.deleteTransaction(
-        transaction,
-      );
-
+      await transactionRepository.deleteTransaction(transaction);
       await loadTransactions();
 
       if (context.mounted) {
         SnackbarUtil.showSuccessSnackbar(
-          context,
-          'Transaction deleted successfully',
-        );
+            context, 'Transaction deleted successfully');
       }
     } catch (e) {
       if (context.mounted) {
-        SnackbarUtil.showErrorSnackbar(
-          context,
-          e.toString(),
-        );
+        SnackbarUtil.showErrorSnackbar(context, e.toString());
       }
     } finally {
       isDeleting = false;
@@ -277,20 +368,27 @@ class TransactionController extends ChangeNotifier {
   // =========================
   // Prepare for Editing
   // =========================
+
   void prepareForEditing(TransactionModel transaction) {
     selectedType = transaction.type;
     selectedPaymentMethod = transaction.payMethod;
     amountController.text = transaction.amount.toString();
     noteController.text = transaction.note;
     _selectedDate = transaction.dateTime;
-
     _selectedCategory = transaction.category;
+    _recurringInterval =
+        RecurringIntervalLabel.fromString(transaction.recurringInterval);
+
+    // Load existing receipt URL; clear any locally picked file
+    _receiptFile = null;
+    _receiptUrl = transaction.receiptUrl;
 
     dateEditingController.text =
         DateTimeUtils.formatDateMonthDayYear(_selectedDate);
 
     notifyListeners();
   }
+
   // =========================
   // Reset Form
   // =========================
@@ -300,10 +398,12 @@ class TransactionController extends ChangeNotifier {
     noteController.clear();
 
     _selectedCategory = null;
-
     selectedType = TransactionType.income;
     selectedPaymentMethod = PayMethod.cash;
     _selectedDate = DateTime.now();
+    _recurringInterval = RecurringInterval.never;
+    _receiptFile = null;
+    _receiptUrl = null;
 
     dateEditingController.text =
         DateTimeUtils.formatDateMonthDayYear(_selectedDate);

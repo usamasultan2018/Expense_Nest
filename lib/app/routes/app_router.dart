@@ -4,7 +4,11 @@ import 'package:expense_tracker/features/auth/view/login/login_screen.dart';
 import 'package:expense_tracker/features/auth/view/signup/signup_screen.dart';
 import 'package:expense_tracker/features/auth/view/auth_wrapper.dart';
 import 'package:expense_tracker/features/dashboard/view/bottom_nav/bottom_navigator.dart';
+import 'package:expense_tracker/features/dashboard/view/budget/budget_screen.dart';
 import 'package:expense_tracker/features/dashboard/view/home/home_screen.dart';
+import 'package:expense_tracker/features/dashboard/view/home/view/all_transaction_screen.dart';
+import 'package:expense_tracker/features/dashboard/view/home/view/monthly_recape_screen.dart';
+import 'package:expense_tracker/features/dashboard/view/home/view/recurring_transaction_screen.dart';
 import 'package:expense_tracker/features/dashboard/view/notications/view/notication_screen.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/appearance/appearance_screen.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/categories/categories_screen.dart';
@@ -14,6 +18,7 @@ import 'package:expense_tracker/features/dashboard/view/profile/profile_screen.d
 import 'package:expense_tracker/features/dashboard/view/profile/settings/feedback_screen.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/settings/setting_screens.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/settings/delete_account_screen.dart';
+import 'package:expense_tracker/features/dashboard/view/stats/calender_screen.dart';
 import 'package:expense_tracker/features/dashboard/view/stats/stats_screen.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/add_transaction.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/edit_transactions.dart';
@@ -148,6 +153,31 @@ class AppRouter {
         name: RouteName.addCategory,
         builder: (context, state) => const AddCategoryScreen(),
       ),
+      GoRoute(
+        path: RouteName.transactions,
+        name: RouteName.transactions,
+        builder: (context, state) => const AllTransactionScreen(),
+      ),
+      GoRoute(
+        path: RouteName.recurringTransactions,
+        name: RouteName.recurringTransactions,
+        builder: (context, state) => const RecurringTransactionsScreen(),
+      ),
+      GoRoute(
+        path: RouteName.monthlyRecap,
+        name: RouteName.monthlyRecap,
+        builder: (context, state) => const MonthlyRecapScreen(),
+      ),
+        GoRoute(
+          path: RouteName.calender,
+          name: RouteName.calender,
+          builder: (context, state) => const CalendarScreen(),
+        ),
+        GoRoute(
+          path: RouteName.budget,
+          name: RouteName.budget,
+          builder: (context, state) => const BudgetScreen(),
+        ),
     ],
 
     // Error Route

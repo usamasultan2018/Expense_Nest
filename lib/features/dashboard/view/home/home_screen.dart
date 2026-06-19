@@ -1,8 +1,12 @@
+import 'package:expense_tracker/app/routes/route_name.dart';
+import 'package:expense_tracker/features/dashboard/view/bottom_nav/bottom_navigator.dart';
+import 'package:expense_tracker/features/dashboard/view/bottom_nav/controller/bottom_nav_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/home/widgets/balance_overview.dart';
 import 'package:expense_tracker/features/dashboard/view/home/widgets/recent_transactions.dart';
 import 'package:expense_tracker/features/dashboard/view/home/widgets/user_greeting.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/controller/user_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -24,6 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const UserGreeting(),
@@ -41,11 +47,27 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 20),
               const BalanceOverview(),
               const SizedBox(height: 20),
-              Text(
-                "Transactions",
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Transactions",
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      //navigate to bottomnav tab 1 index
+                      context.read<BottomNavController>().setIndex(1);
+                    },
+                    child: Text("View All",
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.primaryColor,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  ),
+                ],
               ),
               const SizedBox(height: 10),
               const RecentTransactions(),

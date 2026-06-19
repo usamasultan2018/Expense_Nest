@@ -1,14 +1,16 @@
 import 'package:expense_tracker/core/models/account.dart';
 import 'package:expense_tracker/core/utils/constant.dart';
+import 'package:expense_tracker/features/dashboard/view/profile/appearance/controller/currency_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class BalanceCardTile extends StatefulWidget {
   final AccountModel accountModel;
 
   const BalanceCardTile({
-    Key? key,
+    super.key,
     required this.accountModel,
-  }) : super(key: key);
+  });
 
   @override
   State<BalanceCardTile> createState() => _BalanceCardTileState();
@@ -25,6 +27,9 @@ class _BalanceCardTileState extends State<BalanceCardTile> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+
+    // ✅ Reactively reads currency — rebuilds when user changes it
+    final currency = context.watch<CurrencyController>();
 
     return Container(
       width: double.infinity,
@@ -63,9 +68,10 @@ class _BalanceCardTileState extends State<BalanceCardTile> {
                   const SizedBox(height: 6),
                   _MaskedText(
                     visible: _isVisible,
+                    // ✅ uses dynamic currency code instead of hardcoded "PKR"
                     value:
-                        "PKR ${formatLargeNumber(widget.accountModel.balance)}",
-                    maskedValue: "PKR ••••••••",
+                        "${currency.currencyCode} ${formatLargeNumber(widget.accountModel.balance)}",
+                    maskedValue: "${currency.currencyCode} ••••••••",
                     style: TextStyle(
                       color: colorScheme.onPrimary,
                       fontSize: 30,
@@ -123,7 +129,9 @@ class _BalanceCardTileState extends State<BalanceCardTile> {
                   colorScheme: colorScheme,
                   icon: Icons.arrow_downward_rounded,
                   title: "Income",
-                  value: formatLargeNumber(widget.accountModel.totalIncome),
+                  // ✅ symbol prefix on income
+                  value:
+                      "${currency.symbol}${formatLargeNumber(widget.accountModel.totalIncome)}",
                   iconColor: Colors.greenAccent.withValues(alpha: 0.85),
                 ),
               ),
@@ -133,7 +141,9 @@ class _BalanceCardTileState extends State<BalanceCardTile> {
                   colorScheme: colorScheme,
                   icon: Icons.arrow_upward_rounded,
                   title: "Expense",
-                  value: formatLargeNumber(widget.accountModel.totalExpense),
+                  // ✅ symbol prefix on expense
+                  value:
+                      "${currency.symbol}${formatLargeNumber(widget.accountModel.totalExpense)}",
                   iconColor: Colors.redAccent.withValues(alpha: 0.85),
                 ),
               ),

@@ -7,7 +7,12 @@ class RouteName {
 
   // Existing routes
   static const String home = '/home';
+  static const String transactions = '/transactions';
+  static const String recurringTransactions = '/recurring-transactions';
+  static const String monthlyRecap = '/monthly-recap';
+  static const String calender = '/calender';
   static const String notifications = '/notifications';
+  static const String budget = '/budget';
   static const String login = '/login';
   static const String signup = '/signup';
   static const String profile = '/profile';

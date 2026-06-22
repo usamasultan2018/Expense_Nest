@@ -1,4 +1,3 @@
-import 'package:expense_tracker/core/repository/category_repository.dart';
 import 'package:expense_tracker/core/repository/transaction_repository.dart';
 import 'package:expense_tracker/core/theme/app_theme.dart';
 import 'package:expense_tracker/app/routes/app_router.dart';
@@ -23,7 +22,6 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => BottomNavController()),
         ChangeNotifierProvider(create: (_) => CurrencyController()),
-
         ChangeNotifierProvider(create: (_) => UserController()..fetchUser()),
         ChangeNotifierProvider(
           create: (_) => TransactionController(

@@ -50,7 +50,6 @@ class StatChart extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    // ✅ reads currency reactively
     final currency = context.watch<CurrencyController>();
 
     return Container(
@@ -71,37 +70,47 @@ class StatChart extends StatelessWidget {
       return const SizedBox(height: 200, child: Center(child: Text('No data')));
     }
 
+    // ── DONUT ──────────────────────────────────────────────────────────────
     if (chartType == ChartType.donut) {
+      // cats is already sorted descending by amount from StatScreen
+      final top = cats.first;
+      final topPct = total > 0 ? top.amount / total * 100 : 0.0;
+
       return SizedBox(
         height: 260,
         child: Stack(
           alignment: Alignment.center,
           children: [
-            PieChart(PieChartData(
-              sectionsSpace: 2,
-              centerSpaceRadius: 70,
-              sections: cats.map((c) {
-                final pct = total > 0 ? c.amount / total * 100 : 0.0;
-                return PieChartSectionData(
-                  color: c.color,
-                  value: c.amount,
-                  title: '${pct.toStringAsFixed(1)}%',
-                  radius: 50,
-                  titleStyle: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
-                );
-              }).toList(),
-            )),
+            PieChart(
+              PieChartData(
+                sectionsSpace: 2,
+                centerSpaceRadius: 72,
+                startDegreeOffset: -90, // top category starts at 12 o'clock
+                sections: cats.map((c) {
+                  final isTop = c.title == top.title;
+                  return PieChartSectionData(
+                    color: c.color,
+                    value: c.amount,
+                    title: '', // no cluttered labels on slices
+                    radius: isTop ? 58 : 48, // top slice pops out visually
+                  );
+                }).toList(),
+              ),
+            ),
+            // Center: icon + name + percentage of top category
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(cats.first.title,
-                    style: theme.textTheme.bodySmall
-                        ?.copyWith(color: theme.hintColor)),
+                Icon(top.icon, color: top.color, size: 22),
+                const SizedBox(height: 4),
                 Text(
-                  '${(cats.first.amount / total * 100).toStringAsFixed(1)}%',
+                  top.title,
+                  style: theme.textTheme.bodySmall
+                      ?.copyWith(color: theme.hintColor),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  '${topPct.toStringAsFixed(1)}%',
                   style: theme.textTheme.titleMedium
                       ?.copyWith(fontWeight: FontWeight.bold),
                 ),
@@ -112,6 +121,7 @@ class StatChart extends StatelessWidget {
       );
     }
 
+    // ── BAR ────────────────────────────────────────────────────────────────
     if (chartType == ChartType.bar) {
       return SizedBox(
         height: 220,
@@ -138,6 +148,7 @@ class StatChart extends StatelessWidget {
       );
     }
 
+    // ── LINE ───────────────────────────────────────────────────────────────
     return SizedBox(
       height: 220,
       child: LineChart(LineChartData(
@@ -176,8 +187,6 @@ class StatChart extends StatelessWidget {
     );
   }
 
-  // ✅ currencySymbol passed in as param (StatChart is a StatelessWidget
-  //    so we can't call context.watch inside a helper — we pass it from build)
   Widget _buildTransactionChart(
       ColorScheme cs, ThemeData theme, String currencySymbol) {
     if (barEntries.isEmpty) {
@@ -186,42 +195,59 @@ class StatChart extends StatelessWidget {
 
     final barColor = isIncome ? cs.primary : cs.error;
     final displayTotal = isIncome ? totalIncome : totalExpense;
+    final topCategory = catList.isNotEmpty ? catList.first : null;
 
+    final topPercent = topCategory != null && catTotal > 0
+        ? (topCategory.amount / catTotal) * 100
+        : 0.0;
+        
+
+    // ── DONUT ──────────────────────────────────────────────────────────────
     if (chartType == ChartType.donut) {
       return SizedBox(
         height: 260,
         child: Stack(
           alignment: Alignment.center,
           children: [
-            PieChart(PieChartData(
-              sectionsSpace: 2,
-              centerSpaceRadius: 70,
-              sections: [
-                PieChartSectionData(
-                  color: barColor,
-                  value: displayTotal > 0 ? displayTotal : 1,
-                  title: displayTotal > 0 ? '100%' : '',
-                  radius: 50,
-                  titleStyle: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
-                ),
-              ],
-            )),
+            PieChart(
+              PieChartData(
+                sectionsSpace: 2,
+                centerSpaceRadius: 72,
+                sections: [
+                  PieChartSectionData(
+                    color: barColor,
+                    value: displayTotal > 0 ? displayTotal : 1,
+                    title: '',
+                    radius: 50,
+                  ),
+                ],
+              ),
+            ),
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (topCategory != null)
+                  Icon(
+                    topCategory.icon,
+                    color: topCategory.color,
+                    size: 26,
+                  ),
+                const SizedBox(height: 6),
                 Text(
-                  isIncome ? 'Income' : 'Expense',
-                  style: theme.textTheme.bodySmall
-                      ?.copyWith(color: theme.hintColor),
+                  topCategory?.title ?? (isIncome ? 'Income' : 'Expense'),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.hintColor,
+                  ),
                 ),
                 Text(
-                  // ✅ dynamic symbol instead of hardcoded "PKR"
-                  '$currencySymbol${displayTotal.toStringAsFixed(0)}',
-                  style: theme.textTheme.titleSmall
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  '${topPercent.toStringAsFixed(1)}%',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  '$currencySymbol${(topCategory?.amount ?? displayTotal).toStringAsFixed(0)}',
+                  style: theme.textTheme.bodyMedium,
                 ),
               ],
             ),
@@ -229,7 +255,12 @@ class StatChart extends StatelessWidget {
         ),
       );
     }
+    debugPrint('===== TRANSACTION DATA =====');
 
+    for (final item in barEntries) {
+      debugPrint('${item.label} => ${item.value}');
+    }
+    // ── BAR ────────────────────────────────────────────────────────────────
     if (chartType == ChartType.bar) {
       return SizedBox(
         height: 220,
@@ -252,6 +283,7 @@ class StatChart extends StatelessWidget {
       );
     }
 
+    // ── LINE ───────────────────────────────────────────────────────────────
     return SizedBox(
       height: 220,
       child: LineChart(LineChartData(
@@ -304,14 +336,25 @@ class StatChart extends StatelessWidget {
         ),
       );
 
-  LineChartBarData _lineBar(List<FlSpot> spots, Color color) =>
-      LineChartBarData(
-        spots: spots,
-        isCurved: true,
-        color: color,
-        barWidth: 3,
-        dotData: const FlDotData(show: false),
-        belowBarData:
-            BarAreaData(show: true, color: color.withValues(alpha: 0.08)),
-      );
+  LineChartBarData _lineBar(List<FlSpot> spots, Color color) {
+    return LineChartBarData(
+      spots: spots,
+      isCurved: spots.length > 1,
+      color: color,
+      barWidth: spots.length > 1 ? 3 : 0,
+      dotData: FlDotData(
+        show: true,
+        getDotPainter: (_, __, ___, ____) => FlDotCirclePainter(
+          radius: spots.length == 1 ? 8 : 4,
+          color: color,
+          strokeWidth: 2,
+          strokeColor: Colors.white,
+        ),
+      ),
+      belowBarData: BarAreaData(
+        show: spots.length > 1,
+        color: color.withValues(alpha: 0.08),
+      ),
+    );
+  }
 }

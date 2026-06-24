@@ -26,73 +26,51 @@ class UserController extends ChangeNotifier {
 
   /// Controllers
   final TextEditingController usernameController = TextEditingController();
-
   final TextEditingController emailController = TextEditingController();
 
   /// State
   File? selectedImage;
-
   bool isLoading = false;
-
   bool isTransactionCountLoading = false;
-
   UserModel? currentUser;
-
   AccountModel? currentAccount;
-
   int _incomeTransactionCount = 0;
-
   int _expenseTransactionCount = 0;
 
   /// Getters
   int get incomeTransactionCount => _incomeTransactionCount;
-
   int get expenseTransactionCount => _expenseTransactionCount;
 
   /// Fetch User + Account + Transaction Counts
   Future<void> fetchUser() async {
     isLoading = true;
-
     notifyListeners();
 
     final authUser = FirebaseAuth.instance.currentUser;
 
     if (authUser != null) {
       try {
-        /// User
-        final fetchedUser = await _userRepository.getUserData(
-          authUser.uid,
-        );
+        final fetchedUser = await _userRepository.getUserData(authUser.uid);
 
         if (fetchedUser != null) {
-          currentUser = fetchedUser;
-
-          /// Prefill Controllers
+          currentUser = fetchedUser; // isPremium comes from Firestore as-is
           usernameController.text = fetchedUser.username;
-
           emailController.text = fetchedUser.email;
         }
 
-        /// Account
-        final fetchedAccount = await _userRepository.getAccountData(
-          authUser.uid,
-        );
-
+        final fetchedAccount =
+            await _userRepository.getAccountData(authUser.uid);
         if (fetchedAccount != null) {
           currentAccount = fetchedAccount;
         }
 
-        /// Transaction Counts
         await fetchTransactionCounts();
       } catch (e) {
-        debugPrint(
-          'Error fetching user: $e',
-        );
+        debugPrint('Error fetching user: $e');
       }
     }
 
     isLoading = false;
-
     notifyListeners();
   }
 
@@ -100,27 +78,18 @@ class UserController extends ChangeNotifier {
   Future<void> fetchTransactionCounts() async {
     try {
       isTransactionCountLoading = true;
-
       notifyListeners();
 
       final user = currentUser;
-
       if (user == null) return;
 
-      final counts = await _userRepository.getTransactionCounts(
-        user.id,
-      );
-
+      final counts = await _userRepository.getTransactionCounts(user.id);
       _incomeTransactionCount = counts['income'] ?? 0;
-
       _expenseTransactionCount = counts['expense'] ?? 0;
     } catch (e) {
-      debugPrint(
-        'Error fetching transaction counts: $e',
-      );
+      debugPrint('Error fetching transaction counts: $e');
     } finally {
       isTransactionCountLoading = false;
-
       notifyListeners();
     }
   }
@@ -130,66 +99,50 @@ class UserController extends ChangeNotifier {
     BuildContext context,
     ImageSource source,
   ) async {
-    final image = await CustomImagePicker.pickImage(
-      source: source,
-    );
-
+    final image = await CustomImagePicker.pickImage(source: source);
     if (image != null) {
       selectedImage = image;
-
       notifyListeners();
     }
   }
 
-  /// Update Profile
+  /// Update Profile — preserves isPremium via toProfileUpdateMap()
   Future<void> uploadProfilePictureAndUpdate(
     BuildContext context,
     UserModel currentUser,
   ) async {
     isLoading = true;
-
     notifyListeners();
 
     try {
       String profilePictureUrl = currentUser.profilePicture;
 
-      /// Upload Image
       if (selectedImage != null) {
         final uploaded = await _userRepository.uploadProfilePicture(
           selectedImage!,
           currentUser.id,
         );
-
         if (uploaded != null && uploaded.isNotEmpty) {
           profilePictureUrl = uploaded;
         }
       }
 
-      /// Updated User
-      final updatedUser = UserModel(
-        id: currentUser.id,
+      /// copyWith preserves isPremium and subscriptionStatus
+      final updatedUser = currentUser.copyWith(
         username: usernameController.text.trim().isEmpty
             ? currentUser.username
             : usernameController.text.trim(),
-        email: currentUser.email,
         profilePicture: profilePictureUrl,
-        createdAt: currentUser.createdAt,
-        deviceToken: currentUser.deviceToken,
       );
 
-      /// Update Firestore
-      await _userRepository.updateUserData(
-        updatedUser,
-      );
+      /// updateUserData uses toProfileUpdateMap() — never writes isPremium
+      await _userRepository.updateUserData(updatedUser);
 
-      /// Update Local State
       this.currentUser = updatedUser;
-
       selectedImage = null;
 
       if (context.mounted) {
         Navigator.of(context).pop();
-
         SnackbarUtil.showSuccessSnackbar(
           context,
           'Profile updated successfully',
@@ -197,14 +150,10 @@ class UserController extends ChangeNotifier {
       }
     } catch (e) {
       if (context.mounted) {
-        SnackbarUtil.showErrorSnackbar(
-          context,
-          e.toString(),
-        );
+        SnackbarUtil.showErrorSnackbar(context, e.toString());
       }
     } finally {
       isLoading = false;
-
       notifyListeners();
     }
   }
@@ -217,10 +166,7 @@ class UserController extends ChangeNotifier {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      SnackbarUtil.showErrorSnackbar(
-        context,
-        "User not found",
-      );
+      SnackbarUtil.showErrorSnackbar(context, 'User not found');
       return;
     }
 
@@ -229,7 +175,6 @@ class UserController extends ChangeNotifier {
 
     try {
       final providers = user.providerData.map((e) => e.providerId).toList();
-
       final bool isGoogleUser = providers.contains('google.com');
       final bool isAppleUser = providers.contains('apple.com');
 
@@ -248,54 +193,39 @@ class UserController extends ChangeNotifier {
         final appleProvider = AppleAuthProvider();
         await user.reauthenticateWithProvider(appleProvider);
       } else {
-        /// Re-authenticate email/password user
         final credential = EmailAuthProvider.credential(
           email: user.email ?? '',
           password: password,
         );
-
-        await user.reauthenticateWithCredential(
-          credential,
-        );
+        await user.reauthenticateWithCredential(credential);
       }
 
-      /// Delete firestore user document
-      await _userRepository.deleteUserData(
-        user.uid,
-      );
-
-      /// Delete firebase auth account
+      await _userRepository.deleteUserData(user.uid);
       await user.delete();
 
-      /// Clear local state
       currentUser = null;
       currentAccount = null;
       selectedImage = null;
-
       _incomeTransactionCount = 0;
       _expenseTransactionCount = 0;
 
       if (context.mounted) {
         SnackbarUtil.showSuccessSnackbar(
           context,
-          "Account deleted successfully",
+          'Account deleted successfully',
         );
-
         context.go('/introduction');
       }
     } on FirebaseAuthException catch (e) {
       if (context.mounted) {
         SnackbarUtil.showErrorSnackbar(
           context,
-          e.message ?? "Authentication failed",
+          e.message ?? 'Authentication failed',
         );
       }
     } catch (e) {
       if (context.mounted) {
-        SnackbarUtil.showErrorSnackbar(
-          context,
-          e.toString(),
-        );
+        SnackbarUtil.showErrorSnackbar(context, e.toString());
       }
     } finally {
       isLoading = false;
@@ -304,25 +234,17 @@ class UserController extends ChangeNotifier {
   }
 
   /// Logout
-  Future<void> logout(
-    BuildContext context,
-  ) async {
+  Future<void> logout(BuildContext context) async {
     isLoading = true;
-
     notifyListeners();
 
     try {
       await _authRepository.signOut();
 
-      /// Clear State
       currentUser = null;
-
       currentAccount = null;
-
       _incomeTransactionCount = 0;
-
       _expenseTransactionCount = 0;
-
       selectedImage = null;
 
       if (context.mounted) {
@@ -330,14 +252,10 @@ class UserController extends ChangeNotifier {
       }
     } catch (e) {
       if (context.mounted) {
-        SnackbarUtil.showErrorSnackbar(
-          context,
-          e.toString(),
-        );
+        SnackbarUtil.showErrorSnackbar(context, e.toString());
       }
     } finally {
       isLoading = false;
-
       notifyListeners();
     }
   }
@@ -345,9 +263,7 @@ class UserController extends ChangeNotifier {
   @override
   void dispose() {
     usernameController.dispose();
-
     emailController.dispose();
-
     super.dispose();
   }
 }

@@ -1,4 +1,6 @@
+import 'package:expense_tracker/features/dashboard/view/profile/controller/user_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/settings/controller/setting_controller.dart';
+import 'package:expense_tracker/features/subscription/screens/subscription_screen.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -51,6 +53,8 @@ class ColorSchemeTile extends StatelessWidget {
 
   void _showColorSchemeBottomSheet(BuildContext context) {
     final controller = context.read<SettingController>();
+    final userController =
+        context.read<UserController>(); // 👈 read before sheet opens
     final colorScheme = Theme.of(context).colorScheme;
 
     showModalBottomSheet(
@@ -61,8 +65,12 @@ class ColorSchemeTile extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        return ChangeNotifierProvider.value(
-          value: controller,
+        return MultiProvider(
+          // 👈 provide both controllers to the sheet
+          providers: [
+            ChangeNotifierProvider.value(value: controller),
+            ChangeNotifierProvider.value(value: userController),
+          ],
           child: DraggableScrollableSheet(
             expand: false,
             initialChildSize: 0.6,
@@ -71,7 +79,6 @@ class ColorSchemeTile extends StatelessWidget {
             builder: (context, scrollController) {
               return Column(
                 children: [
-                  // Handle bar
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     child: Container(
@@ -83,14 +90,15 @@ class ColorSchemeTile extends StatelessWidget {
                       ),
                     ),
                   ),
-
-                  // List of schemes
                   Expanded(
-                    child: Consumer<SettingController>(
-                      builder: (context, ctrl, _) {
+                    child: Consumer2<SettingController, UserController>(
+                      builder: (context, ctrl, userCtrl, _) {
                         final schemes = FlexScheme.values
                             .where((s) => FlexColor.schemes.containsKey(s))
                             .toList();
+
+                        final isPremium =
+                            userCtrl.currentUser?.isPremium ?? false;
 
                         return ListView.builder(
                           controller: scrollController,
@@ -100,16 +108,26 @@ class ColorSchemeTile extends StatelessWidget {
                             final scheme = schemes[index];
                             final data = FlexColor.schemes[scheme]!;
                             final selected = ctrl.currentScheme == scheme;
+                            final isFree = index < 3;
+                            final isLocked = !isFree && !isPremium;
 
                             return ListTile(
                               onTap: () {
+                                if (isLocked) {
+                                  Navigator.pop(context);
+                                  SubscriptionScreen.show(context);
+                                  return;
+                                }
                                 ctrl.setColorScheme(scheme);
                               },
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 20,
                                 vertical: 4,
                               ),
-                              leading: _buildColorSwatch(data.light),
+                              leading: Opacity(
+                                opacity: isLocked ? 0.55 : 1.0,
+                                child: _buildColorSwatch(data.light),
+                              ),
                               title: Text(
                                 data.name,
                                 style: Theme.of(context)
@@ -119,23 +137,31 @@ class ColorSchemeTile extends StatelessWidget {
                                       fontWeight: selected
                                           ? FontWeight.bold
                                           : FontWeight.normal,
-                                      color: selected
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                          : null,
+                                      color: isLocked
+                                          ? colorScheme.onSurfaceVariant
+                                              .withOpacity(0.4)
+                                          : selected
+                                              ? colorScheme.primary
+                                              : null,
                                     ),
                               ),
-                              trailing: Icon(
-                                selected
-                                    ? Icons.check_circle_rounded
-                                    : Icons.radio_button_unchecked,
-                                color: selected
-                                    ? colorScheme.primary
-                                    : colorScheme.onSurfaceVariant
-                                        .withValues(alpha: 0.4),
-                                size: 20,
-                              ),
+                              trailing: isLocked
+                                  ? Icon(
+                                      Icons.workspace_premium,
+                                      size: 16,
+                                      color: Colors.amber.shade700
+                                          .withOpacity(0.9),
+                                    )
+                                  : Icon(
+                                      selected
+                                          ? Icons.check_circle_rounded
+                                          : Icons.radio_button_unchecked,
+                                      color: selected
+                                          ? colorScheme.primary
+                                          : colorScheme.onSurfaceVariant
+                                              .withValues(alpha: 0.4),
+                                      size: 20,
+                                    ),
                             );
                           },
                         );

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:expense_tracker/core/models/account.dart';
+import 'package:expense_tracker/core/models/subscription_status.dart';
 import 'package:expense_tracker/core/models/user.dart';
 
 abstract class IUserRepository {
@@ -21,9 +22,6 @@ abstract class IUserRepository {
 
   // Get account data for a user
   Future<AccountModel?> getAccountData(String userId);
-
-  // Stream account data for a user
-  Stream<AccountModel?> streamAccount(String userId);
 
   // Logout function
   Future<void> logout();

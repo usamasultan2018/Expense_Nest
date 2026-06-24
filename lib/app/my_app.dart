@@ -8,10 +8,13 @@ import 'package:expense_tracker/features/dashboard/view/profile/categories/contr
 import 'package:expense_tracker/features/dashboard/view/profile/controller/user_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/settings/controller/app_info_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/settings/controller/setting_controller.dart';
+import 'package:expense_tracker/features/subscription/controller/subscription_controller.dart';
+import 'package:expense_tracker/features/subscription/services/revenuecat_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 final _transactionRepository = TransactionRepository();
+final _revenueCatService = RevenueCatService();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -31,6 +34,16 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CategoryController()),
         ChangeNotifierProvider(
           create: (_) => AppInfoController()..loadVersion(),
+        ),
+     ChangeNotifierProxyProvider<UserController, SubscriptionController>(
+          create: (context) => SubscriptionController(
+            userController: context.read<UserController>(),
+          ),
+          update: (context, userController, previous) =>
+              previous ??
+              SubscriptionController(
+                userController: userController,
+              ),
         ),
       ],
       child: Consumer<SettingController>(

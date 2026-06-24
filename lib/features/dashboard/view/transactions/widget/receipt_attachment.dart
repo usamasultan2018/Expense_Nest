@@ -4,8 +4,11 @@
 import 'dart:io';
 import 'package:expense_tracker/core/components/custom_button.dart';
 import 'package:expense_tracker/core/utils/image_picker.dart';
+import 'package:expense_tracker/features/dashboard/view/profile/controller/user_controller.dart';
+import 'package:expense_tracker/features/subscription/screens/subscription_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ReceiptAttachment extends StatelessWidget {
   const ReceiptAttachment({
@@ -17,20 +20,33 @@ class ReceiptAttachment extends StatelessWidget {
   });
 
   final File? imageFile;
-  final String? imageUrl; // for existing transactions loaded from Firestore
+  final String? imageUrl;
   final ValueChanged<File> onImagePicked;
   final VoidCallback onRemove;
 
   bool get _hasImage =>
       imageFile != null || (imageUrl != null && imageUrl!.isNotEmpty);
 
-  Future<void> _pick(BuildContext context, ImageSource source) async {
+  Future<void> _pick(
+    BuildContext context,
+    ImageSource source,
+    bool isPremium,
+  ) async {
+    if (!isPremium) {
+      SubscriptionScreen.show(context);
+      return;
+    }
     final file = await CustomImagePicker.pickImage(source: source);
     if (file != null) onImagePicked(file);
   }
 
   @override
   Widget build(BuildContext context) {
+    final controller = context.watch<UserController>();
+    final isPremium = controller.isLoading
+        ? false
+        : controller.currentUser?.isPremium ?? false;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -39,8 +55,6 @@ class ReceiptAttachment extends StatelessWidget {
           style: Theme.of(context).textTheme.titleMedium,
         ),
         const SizedBox(height: 10),
-
-        // ── Preview (shown only when an image exists) ──
         if (_hasImage) ...[
           _ReceiptPreview(
             imageFile: imageFile,
@@ -49,21 +63,19 @@ class ReceiptAttachment extends StatelessWidget {
           ),
           const SizedBox(height: 10),
         ],
-
-        // ── Buttons ──
         Row(
           children: [
             Expanded(
               child: RoundButton(
                 title: _hasImage ? "Retake" : "Camera",
-                onPressed: () => _pick(context, ImageSource.camera),
+                onPressed: () => _pick(context, ImageSource.camera, isPremium),
               ),
             ),
             const SizedBox(width: 10),
             Expanded(
               child: RoundButton(
                 title: _hasImage ? "Replace" : "Gallery",
-                onPressed: () => _pick(context, ImageSource.gallery),
+                onPressed: () => _pick(context, ImageSource.gallery, isPremium),
               ),
             ),
           ],
@@ -72,7 +84,6 @@ class ReceiptAttachment extends StatelessWidget {
     );
   }
 }
-
 // ─── Preview card ─────────────────────────────────────────────────────────────
 
 class _ReceiptPreview extends StatelessWidget {

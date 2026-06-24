@@ -1,25 +1,32 @@
 import 'package:expense_tracker/core/utils/google_fonts_helper.dart';
+import 'package:expense_tracker/features/dashboard/view/profile/controller/user_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/settings/controller/setting_controller.dart';
+import 'package:expense_tracker/features/subscription/screens/subscription_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class FontTile extends StatelessWidget {
   const FontTile({super.key});
+
   void _showFonts(BuildContext context) {
     final controller = context.read<SettingController>();
+    final userController =
+        context.read<UserController>(); // 👈 read before sheet
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(24),
-        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
-        return ChangeNotifierProvider.value(
-          value: controller,
+        return MultiProvider(
+          // 👈 both controllers in scope
+          providers: [
+            ChangeNotifierProvider.value(value: controller),
+            ChangeNotifierProvider.value(value: userController),
+          ],
           child: DraggableScrollableSheet(
             expand: false,
             initialChildSize: 0.7,
@@ -51,38 +58,57 @@ class FontTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Expanded(
-                    child: Consumer<SettingController>(
-                      builder: (context, ctrl, _) {
+                    child: Consumer2<SettingController, UserController>(
+                      builder: (context, ctrl, userCtrl, _) {
+                        final isPremium =
+                            userCtrl.currentUser?.isPremium ?? false;
+                        final colorScheme = Theme.of(context).colorScheme;
+
                         return ListView.builder(
                           controller: scrollController,
                           itemCount: FontOption.values.length,
                           itemBuilder: (context, index) {
                             final font = FontOption.values[index];
                             final selected = ctrl.currentFont == font;
+                            final isFree = index < 3; // 👈 first 3 free
+                            final isLocked = !isFree && !isPremium;
 
                             return ListTile(
-                              title: Text(
-                                font.label,
-                                style: AppFonts.getTextTheme(font)
-                                    .titleMedium
-                                    ?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface,
-                                    ),
-                              ),
-                              trailing: Icon(
-                                selected
-                                    ? Icons.check_circle_rounded
-                                    : Icons.radio_button_unchecked,
-                                color: selected
-                                    ? Theme.of(context).colorScheme.primary
-                                    : Theme.of(context).colorScheme.outline,
-                              ),
                               onTap: () {
+                                if (isLocked) {
+                                  Navigator.pop(context);
+                                  SubscriptionScreen.show(context);
+                                  return;
+                                }
                                 ctrl.setFont(font);
                                 Navigator.pop(context);
                               },
+                              title: Opacity(
+                                opacity: isLocked ? 0.55 : 1.0,
+                                child: Text(
+                                  font.label,
+                                  style: AppFonts.getTextTheme(font)
+                                      .titleMedium
+                                      ?.copyWith(
+                                        color: colorScheme.onSurface,
+                                      ),
+                                ),
+                              ),
+                              trailing: isLocked
+                                  ? Icon(
+                                      Icons.workspace_premium_rounded,
+                                      size: 16,
+                                      color:
+                                          colorScheme.primary.withOpacity(0.5),
+                                    )
+                                  : Icon(
+                                      selected
+                                          ? Icons.check_circle_rounded
+                                          : Icons.radio_button_unchecked,
+                                      color: selected
+                                          ? colorScheme.primary
+                                          : colorScheme.outline,
+                                    ),
                             );
                           },
                         );
@@ -100,10 +126,13 @@ class FontTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<SettingController>(
-      builder: (context, controller, child) {
+    return Consumer2<SettingController, UserController>(
+      builder: (context, controller, userCtrl, child) {
         final theme = Theme.of(context);
         final colorScheme = theme.colorScheme;
+        final isPremium = userCtrl.currentUser?.isPremium ?? false;
+        final fontIndex = FontOption.values.indexOf(controller.currentFont);
+        final currentFontLocked = fontIndex >= 3 && !isPremium;
 
         return InkWell(
           borderRadius: BorderRadius.circular(18),
@@ -116,7 +145,6 @@ class FontTile extends StatelessWidget {
             ),
             child: Row(
               children: [
-                // Leading Icon
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
@@ -128,10 +156,7 @@ class FontTile extends StatelessWidget {
                     color: colorScheme.onPrimaryContainer,
                   ),
                 ),
-
                 const SizedBox(width: 14),
-
-                // Title
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,22 +177,28 @@ class FontTile extends StatelessWidget {
                     ],
                   ),
                 ),
-
-                // Current Font + Chevron
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      controller.currentFont.label,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: AppFonts.getTextTheme(
-                          controller.currentFont,
-                        ).bodyMedium?.fontFamily,
+                    // 👇 show crown if current font is a premium one
+                    if (currentFontLocked)
+                      Icon(
+                        Icons.workspace_premium_rounded,
+                        size: 14,
+                        color: colorScheme.primary.withOpacity(0.5),
+                      )
+                    else
+                      Text(
+                        controller.currentFont.label,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: AppFonts.getTextTheme(
+                            controller.currentFont,
+                          ).bodyMedium?.fontFamily,
+                        ),
                       ),
-                    ),
                     const SizedBox(width: 8),
                     Icon(
                       Icons.chevron_right_rounded,

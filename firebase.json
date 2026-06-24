@@ -1,1 +1,38 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"expense-tracker-deb32","appId":"1:942125477468:android:00ff0d924621d763a98099","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"expense-tracker-deb32","configurations":{"android":"1:942125477468:android:00ff0d924621d763a98099","ios":"1:942125477468:ios:2da9c654bde10603a98099"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "expense-tracker-deb32",
+          "appId": "1:942125477468:android:00ff0d924621d763a98099",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "expense-tracker-deb32",
+          "configurations": {
+            "android": "1:942125477468:android:00ff0d924621d763a98099",
+            "ios": "1:942125477468:ios:2da9c654bde10603a98099"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    }
+  ]
+}

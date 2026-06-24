@@ -24,6 +24,7 @@ import 'package:expense_tracker/features/dashboard/view/transactions/add_transac
 import 'package:expense_tracker/features/dashboard/view/transactions/edit_transactions.dart';
 import 'package:expense_tracker/features/introduction/view/introduction_screen.dart';
 import 'package:expense_tracker/features/splash/view/splash.dart';
+import 'package:expense_tracker/features/subscription/screens/subscription_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'route_name.dart';
@@ -177,6 +178,11 @@ class AppRouter {
           path: RouteName.budget,
           name: RouteName.budget,
           builder: (context, state) => const BudgetScreen(),
+        ),
+        GoRoute(
+          path: RouteName.subscription,
+          name: RouteName.subscription,
+          builder: (context, state) => const SubscriptionScreen(),
         ),
     ],
 

@@ -4,71 +4,67 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracker/core/models/account.dart';
 import 'package:expense_tracker/core/models/user.dart';
 import 'package:expense_tracker/core/repository/base/i_user_repository.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 class UserRepository implements IUserRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance; // Initialize FirebaseAuth
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Get user data
+  /// Get user data
   @override
   Future<UserModel?> getUserData(String uid) async {
     try {
-      DocumentSnapshot doc =
-          await _firestore.collection('users').doc(uid).get();
+      final doc = await _firestore.collection('users').doc(uid).get();
       if (doc.exists) {
         return UserModel.fromJson(doc.data() as Map<String, dynamic>);
-      } else {
-        print('User not found');
-        return null;
       }
+      debugPrint('User not found: $uid');
+      return null;
     } catch (e) {
-      print('Error fetching user data: $e');
-      rethrow; // Handle the exception as necessary
+      debugPrint('Error fetching user data: $e');
+      rethrow;
     }
   }
 
-  // Stream user data
+  /// Stream user data — widgets using this will react to webhook updates live
   @override
   Stream<UserModel?> streamUserData(String uid) {
     return _firestore.collection('users').doc(uid).snapshots().map((snapshot) {
       if (snapshot.exists) {
         return UserModel.fromJson(snapshot.data() as Map<String, dynamic>);
-      } else {
-        return null; // Return null if user does not exist
       }
+      return null;
     });
   }
 
-  // Update user data
+  /// Profile update — never touches isPremium or subscriptionStatus
   @override
   Future<void> updateUserData(UserModel userModel) async {
     try {
       await _firestore
           .collection('users')
           .doc(userModel.id)
-          .update(userModel.toJson());
-      print('User data updated successfully for ${userModel.email}');
+          .set(
+            userModel.toProfileUpdateMap(),
+            SetOptions(merge: true), // webhook fields are never overwritten
+          );
+      debugPrint('Profile updated for ${userModel.email}');
     } catch (e) {
-      print('Error updating user data: $e');
-      rethrow; // Handle the exception as necessary
+      debugPrint('Error updating user data: $e');
+      rethrow;
     }
   }
 
-  // Delete user data
+  /// Delete user data + account + transactions
   @override
   Future<void> deleteUserData(String uid) async {
     try {
-      // Delete user document
       await _firestore.collection('users').doc(uid).delete();
-
-      // Delete account document
       await _firestore.collection('accounts').doc(uid).delete();
 
-      // Delete transactions
       final transactions = await _firestore
           .collection('transactions')
           .where('userId', isEqualTo: uid)
@@ -78,70 +74,66 @@ class UserRepository implements IUserRepository {
         await doc.reference.delete();
       }
 
-      print(
-          'User data, account, and transactions deleted successfully for UID: $uid');
+      debugPrint('User data deleted for UID: $uid');
     } catch (e) {
-      print('Error deleting user data: $e');
-      rethrow; // Handle the exception as necessary
+      debugPrint('Error deleting user data: $e');
+      rethrow;
     }
   }
 
-  // Upload profile picture to Firebase Storage
+  /// Upload profile picture to Firebase Storage
   @override
   Future<String?> uploadProfilePicture(File imageFile, String userId) async {
     try {
-      String filePath =
-          "profile_pics/$userId/${DateTime.now().millisecondsSinceEpoch}.png";
+      final filePath =
+          'profile_pics/$userId/${DateTime.now().millisecondsSinceEpoch}.png';
 
-      UploadTask uploadTask = _storage.ref().child(filePath).putFile(imageFile);
-
-      TaskSnapshot taskSnapshot = await uploadTask;
-
-      String downloadUrl = await taskSnapshot.ref.getDownloadURL();
-      return downloadUrl;
+      final uploadTask = _storage.ref().child(filePath).putFile(imageFile);
+      final snapshot = await uploadTask;
+      return await snapshot.ref.getDownloadURL();
     } catch (e) {
-      print("Error uploading profile picture: $e");
-      return null; // Return null if error occurs
+      debugPrint('Error uploading profile picture: $e');
+      return null;
     }
   }
 
-  // Get Account data for user
+  /// Get account data
   @override
   Future<AccountModel?> getAccountData(String userId) async {
     try {
-      DocumentSnapshot doc =
+      final doc =
           await _firestore.collection('accounts').doc(userId).get();
       if (doc.exists) {
         return AccountModel.fromFirestore(doc);
-      } else {
-        print('Account not found for userId: $userId');
-        return null;
       }
+      debugPrint('Account not found for userId: $userId');
+      return null;
     } catch (e) {
-      print('Error fetching account: $e');
-      return null; // Handle error
+      debugPrint('Error fetching account: $e');
+      return null;
     }
   }
 
-  // Stream Account data for user
+  /// Stream account data
   @override
   Stream<AccountModel?> streamAccount(String userId) {
-    return _firestore.collection('accounts').doc(userId).snapshots().map((doc) {
+    return _firestore
+        .collection('accounts')
+        .doc(userId)
+        .snapshots()
+        .map((doc) {
       if (doc.exists) {
         return AccountModel.fromFirestore(doc);
-      } else {
-        print('Account not found for userId: $userId');
-        return null; // Return null if the document doesn't exist
       }
+      return null;
     }).handleError((error) {
-      print('Error fetching account: $error');
-      return null; // Handle error
+      debugPrint('Error streaming account: $error');
+      return null;
     });
   }
 
-  Future<Map<String, int>> getTransactionCounts(
-    String userId,
-  ) async {
+  /// Get income/expense transaction counts
+  Future<Map<String, int>> getTransactionCounts(String userId) async {
     try {
       final transactions = await _firestore
           .collection('transactions')
@@ -153,7 +145,6 @@ class UserRepository implements IUserRepository {
 
       for (final doc in transactions.docs) {
         final data = doc.data();
-
         if (data['type'] == 'income') {
           incomeCount++;
         } else if (data['type'] == 'expense') {
@@ -161,31 +152,22 @@ class UserRepository implements IUserRepository {
         }
       }
 
-      return {
-        'income': incomeCount,
-        'expense': expenseCount,
-      };
+      return {'income': incomeCount, 'expense': expenseCount};
     } catch (e) {
-      debugPrint(
-        'Error fetching transaction counts: $e',
-      );
-
-      return {
-        'income': 0,
-        'expense': 0,
-      };
+      debugPrint('Error fetching transaction counts: $e');
+      return {'income': 0, 'expense': 0};
     }
   }
 
-  // Logout function
+  /// Logout
   @override
   Future<void> logout() async {
     try {
       await _auth.signOut();
-      print('User logged out successfully');
+      debugPrint('User logged out successfully');
     } catch (e) {
-      print('Error logging out: $e');
-      rethrow; // Handle error during logout
+      debugPrint('Error logging out: $e');
+      rethrow;
     }
   }
 }

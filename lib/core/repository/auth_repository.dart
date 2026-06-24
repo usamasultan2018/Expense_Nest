@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 class AuthRepository implements IAuthRepository {
   final FirebaseAuth _auth;
@@ -23,10 +24,20 @@ class AuthRepository implements IAuthRepository {
   @override
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
+  // ── RevenueCat Login ───────────────────────────────────────────────────────
+
+  Future<void> _syncRevenueCat(String userId) async {
+    try {
+      await Purchases.logIn(userId);
+      debugPrint('✅ RevenueCat synced for user: $userId');
+    } catch (e) {
+      debugPrint('⚠️ Could not sync RevenueCat: $e');
+      // Non-fatal — don't rethrow
+    }
+  }
+
   // ── FCM Token ─────────────────────────────────────────────────────────────
 
-  /// Fetches the current FCM token and saves it to Firestore for the given user.
-  /// Call this on login/signup and whenever the token refreshes.
   Future<void> saveDeviceToken(String userId) async {
     try {
       final token = await FirebaseMessaging.instance.getToken();
@@ -39,7 +50,6 @@ class AuthRepository implements IAuthRepository {
       debugPrint('✅ FCM token saved for user: $userId');
     } catch (e) {
       debugPrint('⚠️ Could not save FCM token: $e');
-      // Non-fatal — don't rethrow
     }
   }
 
@@ -63,15 +73,11 @@ class AuthRepository implements IAuthRepository {
       final User? user = userCredential.user;
 
       if (user != null) {
-        // Get real FCM token
         final String? fcmToken = await FirebaseMessaging.instance.getToken();
-
         await _initializeUserInFirestore(user, fcmToken: fcmToken);
         await _fetchUserFromFirestore(user.uid);
-
-        // Keep token fresh on every login
         await saveDeviceToken(user.uid);
-
+        await _syncRevenueCat(user.uid); // ← syncs RevenueCat ID
         debugPrint('✅ Google sign-in successful for user: ${user.uid}');
       }
 
@@ -101,13 +107,11 @@ class AuthRepository implements IAuthRepository {
       final User? user = userCredential.user;
 
       if (user != null) {
-        // Get real FCM token
         final String? fcmToken = await FirebaseMessaging.instance.getToken();
-
         await _initializeUserInFirestore(user,
             username: username, fcmToken: fcmToken);
         await _fetchUserFromFirestore(user.uid);
-
+        await _syncRevenueCat(user.uid); // ← syncs RevenueCat ID
         debugPrint('✅ Email sign-up successful for user: ${user.uid}');
       }
 
@@ -137,10 +141,8 @@ class AuthRepository implements IAuthRepository {
 
       if (user != null) {
         await _fetchUserFromFirestore(user.uid);
-
-        // Refresh FCM token on every login (token can rotate)
         await saveDeviceToken(user.uid);
-
+        await _syncRevenueCat(user.uid); // ← syncs RevenueCat ID
         debugPrint('✅ Sign-in successful for user: ${user.uid}');
       }
 
@@ -157,6 +159,7 @@ class AuthRepository implements IAuthRepository {
   @override
   Future<void> signOut() async {
     try {
+      await Purchases.logOut(); // ← log out from RevenueCat too
       await _googleSignIn.signOut();
       await _auth.signOut();
       debugPrint('✅ User signed out successfully');
@@ -252,7 +255,7 @@ class AuthRepository implements IAuthRepository {
           email: user.email ?? '',
           profilePicture: user.photoURL ?? '',
           createdAt: DateTime.now(),
-          deviceToken: fcmToken, // ← real token saved here
+          deviceToken: fcmToken,
         );
 
         await _firestore

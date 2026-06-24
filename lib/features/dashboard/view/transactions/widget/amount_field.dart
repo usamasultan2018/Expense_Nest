@@ -1,4 +1,5 @@
 import 'package:expense_tracker/features/dashboard/controller/transaction_controller.dart';
+import 'package:expense_tracker/features/dashboard/view/profile/appearance/controller/currency_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -7,6 +8,8 @@ class AmountInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currency = context.watch<CurrencyController>();
+
     return Consumer<TransactionController>(
       builder: (context, controller, child) {
         return Column(
@@ -33,7 +36,7 @@ class AmountInput extends StatelessWidget {
               child: Row(
                 children: [
                   Text(
-                    '\$',
+                    currency.symbol,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.w500,
                           color: Theme.of(context).colorScheme.primary,

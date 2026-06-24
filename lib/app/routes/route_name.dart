@@ -30,6 +30,7 @@ class RouteName {
   static const String contact = '/contact';
   static const String categories = '/categories';
   static const String addCategory = '/add-category';
+  static const String subscription = '/subscription';
 
   // Bottom Navigation Screen
   static const String bottomNavBar = '/bottom-nav';

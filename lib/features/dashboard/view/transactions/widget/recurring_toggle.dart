@@ -8,7 +8,10 @@
 //     onChanged: (v) => context.read<TransactionController>().setRecurringInterval(v),
 //   )
 
+import 'package:expense_tracker/features/dashboard/view/profile/controller/user_controller.dart';
+import 'package:expense_tracker/features/subscription/screens/subscription_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 // ─── Enum ────────────────────────────────────────────────────────────────────
 
@@ -57,7 +60,6 @@ extension RecurringIntervalLabel on RecurringInterval {
 }
 
 // ─── Widget ──────────────────────────────────────────────────────────────────
-
 class RecurringToggle extends StatelessWidget {
   const RecurringToggle({
     super.key,
@@ -74,6 +76,10 @@ class RecurringToggle extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+   final controller = context.watch<UserController>();
+    final isPremium = controller.isLoading
+        ? false // treat as non-premium until user data arrives
+        : controller.currentUser?.isPremium ?? false;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,7 +95,6 @@ class RecurringToggle extends StatelessWidget {
         const SizedBox(height: 10),
         LayoutBuilder(
           builder: (context, constraints) {
-            // Fit all 4 chips in a single row; let them share the available width.
             final chipWidth =
                 (constraints.maxWidth - (_options.length - 1) * 8) /
                     _options.length;
@@ -102,7 +107,18 @@ class RecurringToggle extends StatelessWidget {
                     interval: _options[i],
                     isSelected: selected == _options[i],
                     width: chipWidth,
-                    onTap: () => onChanged(_options[i]),
+                    onTap: () {
+                      // never is free, everything else needs premium
+                      if (_options[i] == RecurringInterval.never) {
+                        onChanged(_options[i]);
+                        return;
+                      }
+                      if (!isPremium) {
+                        SubscriptionScreen.show(context);
+                        return;
+                      }
+                      onChanged(_options[i]);
+                    },
                   ),
                 ],
               ],
@@ -113,7 +129,6 @@ class RecurringToggle extends StatelessWidget {
     );
   }
 }
-
 // ─── Single chip ─────────────────────────────────────────────────────────────
 
 class _Chip extends StatelessWidget {

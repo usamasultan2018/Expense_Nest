@@ -5,6 +5,7 @@ import 'package:expense_tracker/features/dashboard/view/home/widgets/balance_ove
 import 'package:expense_tracker/features/dashboard/view/home/widgets/recent_transactions.dart';
 import 'package:expense_tracker/features/dashboard/view/home/widgets/user_greeting.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/controller/user_controller.dart';
+import 'package:expense_tracker/features/subscription/widgets/premium_banner_card.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -71,6 +72,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 10),
               const RecentTransactions(),
+              const SizedBox(height: 16),
+              const PremiumBannerCard(),
               const SizedBox(height: 20),
             ],
           ),

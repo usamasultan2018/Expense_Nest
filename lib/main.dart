@@ -11,7 +11,6 @@ void main() async {
     await dotenv.load(fileName: ".env");
 
   await RevenueCatService().initialize(AppConfig.revenueCatKey);
-  print('RevenueCat initialized with key: ${AppConfig.revenueCatKey}');
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

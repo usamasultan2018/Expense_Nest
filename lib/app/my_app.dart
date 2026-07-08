@@ -1,20 +1,20 @@
+import 'package:expense_tracker/core/repository/budget_repository.dart';
 import 'package:expense_tracker/core/repository/transaction_repository.dart';
 import 'package:expense_tracker/core/theme/app_theme.dart';
 import 'package:expense_tracker/app/routes/app_router.dart';
 import 'package:expense_tracker/features/dashboard/controller/transaction_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/bottom_nav/controller/bottom_nav_controller.dart';
+import 'package:expense_tracker/features/dashboard/view/budget/controller/budget_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/appearance/controller/currency_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/categories/controller/category_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/controller/user_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/settings/controller/app_info_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/settings/controller/setting_controller.dart';
 import 'package:expense_tracker/features/subscription/controller/subscription_controller.dart';
-import 'package:expense_tracker/features/subscription/services/revenuecat_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 final _transactionRepository = TransactionRepository();
-final _revenueCatService = RevenueCatService();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -27,15 +27,22 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CurrencyController()),
         ChangeNotifierProvider(create: (_) => UserController()..fetchUser()),
         ChangeNotifierProvider(
-          create: (_) => TransactionController(
-              transactionRepository: _transactionRepository),
+          create: (_) => BudgetController()..loadBudgets(),
+        ),
+        ChangeNotifierProxyProvider<BudgetController, TransactionController>(
+          create: (context) => TransactionController(
+            transactionRepository: _transactionRepository,
+            budgetController: context.read<BudgetController>(),
+          ),
+          update: (context, budgetController, previous) =>
+              previous!..updateBudgetController(budgetController),
         ),
         ChangeNotifierProvider(create: (_) => SettingController()..init()),
         ChangeNotifierProvider(create: (_) => CategoryController()),
         ChangeNotifierProvider(
           create: (_) => AppInfoController()..loadVersion(),
         ),
-     ChangeNotifierProxyProvider<UserController, SubscriptionController>(
+        ChangeNotifierProxyProvider<UserController, SubscriptionController>(
           create: (context) => SubscriptionController(
             userController: context.read<UserController>(),
           ),

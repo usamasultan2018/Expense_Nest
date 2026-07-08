@@ -1,3 +1,4 @@
+import 'package:expense_tracker/core/components/app_app_bar.dart';
 import 'package:expense_tracker/core/components/custom_button.dart';
 import 'package:expense_tracker/core/components/fade_effect.dart';
 import 'package:flutter/material.dart';
@@ -47,16 +48,9 @@ class _FeedBackScreenState extends State<FeedBackScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        centerTitle: false,
-        title: const Text(
-          "Feedback",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+      appBar: AppAppBar.title(
+        'Feedback',
+        showBack: true,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),

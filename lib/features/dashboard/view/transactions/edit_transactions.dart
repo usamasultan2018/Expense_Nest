@@ -1,3 +1,4 @@
+import 'package:expense_tracker/core/components/app_app_bar.dart';
 import 'package:expense_tracker/core/components/custom_button.dart';
 import 'package:expense_tracker/core/models/transaction_model.dart';
 import 'package:expense_tracker/core/utils/dialog.dart';
@@ -60,19 +61,12 @@ class _EditTransactionState extends State<EditTransaction> {
     final ctrl = context.watch<TransactionController>();
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        centerTitle: false,
-        title: const Text(
-          "Edit Transaction",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+      appBar: AppAppBar.title(
+        'Edit Transaction',
+        showBack: true,
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 12),
+            padding: const EdgeInsets.only(right: 8),
             child: ctrl.isDeleting
                 ? const Center(
                     child: SizedBox(
@@ -81,22 +75,19 @@ class _EditTransactionState extends State<EditTransaction> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     ),
                   )
-                : InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () => _deleteTransaction(context),
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
+                : IconButton(
+                    tooltip: 'Delete transaction',
+                    onPressed: () => _deleteTransaction(context),
+                    style: IconButton.styleFrom(
+                      backgroundColor:
+                          Theme.of(context).colorScheme.errorContainer,
+                      foregroundColor:
+                          Theme.of(context).colorScheme.onErrorContainer,
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
-                        color: Theme.of(context)
-                            .colorScheme
-                            .surfaceContainerHighest,
-                      ),
-                      child: Icon(
-                        Icons.delete_outline,
-                        color: Theme.of(context).colorScheme.error,
                       ),
                     ),
+                    icon: const Icon(Icons.delete_outline_rounded, size: 22),
                   ),
           ),
         ],

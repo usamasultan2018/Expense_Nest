@@ -1,4 +1,5 @@
 import 'package:expense_tracker/app/routes/route_name.dart';
+import 'package:expense_tracker/core/components/app_app_bar.dart';
 import 'package:expense_tracker/core/components/custom_group_tiles.dart';
 import 'package:expense_tracker/core/components/custom_tile.dart';
 import 'package:expense_tracker/core/components/loading_widget.dart';
@@ -20,16 +21,9 @@ class ProfileScreen extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        centerTitle: false,
-        title: const Text(
-          "Profile",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+      appBar: AppAppBar.title(
+        'Profile',
+        showBack: true,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),

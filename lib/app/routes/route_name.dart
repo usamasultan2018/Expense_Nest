@@ -31,6 +31,7 @@ class RouteName {
   static const String categories = '/categories';
   static const String addCategory = '/add-category';
   static const String subscription = '/subscription';
+  static const String addBudget = '/add-budget';
 
   // Bottom Navigation Screen
   static const String bottomNavBar = '/bottom-nav';

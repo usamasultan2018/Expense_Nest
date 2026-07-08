@@ -8,18 +8,28 @@ import 'package:expense_tracker/core/repository/transaction_repository.dart';
 import 'package:expense_tracker/core/utils/constant.dart';
 import 'package:expense_tracker/core/utils/date.dart';
 import 'package:expense_tracker/core/utils/snackbar_util.dart';
+import 'package:expense_tracker/features/dashboard/view/budget/controller/budget_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/recurring_toggle.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class TransactionController extends ChangeNotifier {
-  TransactionController({required this.transactionRepository}) {
+  TransactionController({
+    required this.transactionRepository,
+    BudgetController? budgetController,
+  }) : _budgetController = budgetController {
     loadTransactions();
     dateEditingController.text =
         DateTimeUtils.formatDateMonthDayYear(_selectedDate);
   }
 
   final TransactionRepository transactionRepository;
+  BudgetController? _budgetController;
+
+  /// Called by ProxyProvider when BudgetController is rebuilt.
+  void updateBudgetController(BudgetController budgetController) {
+    _budgetController = budgetController;
+  }
 
   // Controllers
   final TextEditingController amountController = TextEditingController();
@@ -254,6 +264,7 @@ class TransactionController extends ChangeNotifier {
       await transactionRepository.addTransaction(transaction);
       resetForm();
       await loadTransactions();
+      await _budgetController?.loadBudgets(); // refresh budget UI
 
       if (context.mounted) {
         SnackbarUtil.showSuccessSnackbar(
@@ -320,6 +331,7 @@ class TransactionController extends ChangeNotifier {
 
       await transactionRepository.updateTransaction(updatedTransaction);
       await loadTransactions();
+      await _budgetController?.loadBudgets(); // refresh budget UI
 
       if (context.mounted) {
         SnackbarUtil.showSuccessSnackbar(
@@ -350,6 +362,7 @@ class TransactionController extends ChangeNotifier {
     try {
       await transactionRepository.deleteTransaction(transaction);
       await loadTransactions();
+      await _budgetController?.loadBudgets(); // refresh budget UI
 
       if (context.mounted) {
         SnackbarUtil.showSuccessSnackbar(

@@ -1,4 +1,5 @@
 import 'package:expense_tracker/app/routes/route_name.dart';
+import 'package:expense_tracker/core/components/app_app_bar.dart';
 import 'package:expense_tracker/core/components/app_toggle.dart';
 import 'package:expense_tracker/core/components/category_stat_tile.dart';
 import 'package:expense_tracker/core/components/transaction_tile.dart';
@@ -202,14 +203,8 @@ class _StatScreenState extends State<StatScreen> {
         : tabFiltered.isEmpty;
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        centerTitle: false,
-        title: const Text(
-          'Analytics',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+      appBar: AppAppBar.title(
+        'Analytics',
         actions: [
           IconButton(
             onPressed: () => context.push(RouteName.calender),

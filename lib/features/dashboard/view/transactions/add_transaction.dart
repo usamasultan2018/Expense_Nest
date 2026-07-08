@@ -1,5 +1,7 @@
 // add_transaction.dart
 
+import 'package:expense_tracker/core/components/app_app_bar.dart';
+import 'package:expense_tracker/core/utils/constant.dart';
 import 'package:expense_tracker/features/dashboard/controller/transaction_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/categories/controller/category_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/transactions/widget/amount_field.dart';
@@ -15,7 +17,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AddTransaction extends StatefulWidget {
-  const AddTransaction({super.key});
+    final TransactionType? initialType;
+
+  const AddTransaction({super.key, this.initialType});
 
   @override
   State<AddTransaction> createState() => _AddTransactionState();
@@ -27,25 +31,20 @@ class _AddTransactionState extends State<AddTransaction> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<TransactionController>().resetForm();
+   WidgetsBinding.instance.addPostFrameCallback((_) {
+      final controller = context.read<TransactionController>();
+      controller.resetForm();
+      if (widget.initialType != null) {
+        controller
+            .setType(widget.initialType!); // or whatever your setter is named
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        centerTitle: false,
-        title: const Text(
-          "Add Transaction",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+      appBar: const AppAppBar.title('Add Transaction', showBack: true),
       body: SafeArea(
         child: Form(
           key: _formKey,

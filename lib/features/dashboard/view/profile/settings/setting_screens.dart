@@ -1,3 +1,4 @@
+import 'package:expense_tracker/core/components/app_app_bar.dart';
 import 'package:expense_tracker/core/components/custom_group_tiles.dart';
 import 'package:expense_tracker/core/components/custom_tile.dart';
 import 'package:expense_tracker/core/components/fade_effect.dart';
@@ -14,16 +15,9 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        centerTitle: false,
-        title: const Text(
-          "Settings",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+      appBar: AppAppBar.title(
+        'Settings',
+        showBack: true,
       ),
       body: SafeArea(
         child: FadeTransitionEffect(

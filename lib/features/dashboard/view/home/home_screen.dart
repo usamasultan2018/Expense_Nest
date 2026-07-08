@@ -1,13 +1,10 @@
-import 'package:expense_tracker/app/routes/route_name.dart';
-import 'package:expense_tracker/features/dashboard/view/bottom_nav/bottom_navigator.dart';
+import 'package:expense_tracker/core/components/app_app_bar.dart';
 import 'package:expense_tracker/features/dashboard/view/bottom_nav/controller/bottom_nav_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/home/widgets/balance_overview.dart';
 import 'package:expense_tracker/features/dashboard/view/home/widgets/recent_transactions.dart';
-import 'package:expense_tracker/features/dashboard/view/home/widgets/user_greeting.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/controller/user_controller.dart';
 import 'package:expense_tracker/features/subscription/widgets/premium_banner_card.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -32,11 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const UserGreeting(),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
+      appBar: const AppAppBar.home(),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
@@ -59,7 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   TextButton(
                     onPressed: () {
-                      //navigate to bottomnav tab 1 index
                       context.read<BottomNavController>().setIndex(1);
                     },
                     child: Text("View All",

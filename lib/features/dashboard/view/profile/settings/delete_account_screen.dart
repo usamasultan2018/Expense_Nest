@@ -1,3 +1,4 @@
+import 'package:expense_tracker/core/components/app_app_bar.dart';
 import 'package:expense_tracker/core/components/custom_button.dart';
 import 'package:expense_tracker/core/components/custom_textfield.dart';
 import 'package:expense_tracker/core/components/fade_effect.dart';
@@ -49,17 +50,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        centerTitle: false,
-        title: const Text(
-          "Delete Account",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+      appBar: AppAppBar.title(" Delete Account", showBack: true),
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),

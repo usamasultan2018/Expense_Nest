@@ -1,10 +1,12 @@
 import 'package:expense_tracker/core/models/transaction_model.dart';
+import 'package:expense_tracker/core/utils/constant.dart';
 import 'package:expense_tracker/features/auth/view/forgot_password/forgot_password.dart';
 import 'package:expense_tracker/features/auth/view/login/login_screen.dart';
 import 'package:expense_tracker/features/auth/view/signup/signup_screen.dart';
 import 'package:expense_tracker/features/auth/view/auth_wrapper.dart';
 import 'package:expense_tracker/features/dashboard/view/bottom_nav/bottom_navigator.dart';
 import 'package:expense_tracker/features/dashboard/view/budget/budget_screen.dart';
+import 'package:expense_tracker/features/dashboard/view/budget/screens/add_budget/add_budget_screen.dart';
 import 'package:expense_tracker/features/dashboard/view/home/home_screen.dart';
 import 'package:expense_tracker/features/dashboard/view/home/view/all_transaction_screen.dart';
 import 'package:expense_tracker/features/dashboard/view/home/view/monthly_recape_screen.dart';
@@ -128,7 +130,11 @@ class AppRouter {
       GoRoute(
         path: RouteName.addTransaction,
         name: RouteName.addTransaction,
-        builder: (context, state) => const AddTransaction(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          final type = extra?['type'] as TransactionType?;
+          return AddTransaction(initialType: type);
+        },
       ),
       GoRoute(
         path: RouteName.editTransaction,
@@ -169,21 +175,26 @@ class AppRouter {
         name: RouteName.monthlyRecap,
         builder: (context, state) => const MonthlyRecapScreen(),
       ),
-        GoRoute(
-          path: RouteName.calender,
-          name: RouteName.calender,
-          builder: (context, state) => const CalendarScreen(),
-        ),
-        GoRoute(
-          path: RouteName.budget,
-          name: RouteName.budget,
-          builder: (context, state) => const BudgetScreen(),
-        ),
-        GoRoute(
-          path: RouteName.subscription,
-          name: RouteName.subscription,
-          builder: (context, state) => const SubscriptionScreen(),
-        ),
+      GoRoute(
+        path: RouteName.calender,
+        name: RouteName.calender,
+        builder: (context, state) => const CalendarScreen(),
+      ),
+      GoRoute(
+        path: RouteName.budget,
+        name: RouteName.budget,
+        builder: (context, state) => const BudgetScreen(),
+      ),
+      GoRoute(
+        path: RouteName.subscription,
+        name: RouteName.subscription,
+        builder: (context, state) => const SubscriptionScreen(),
+      ),
+      GoRoute(
+        path: RouteName.addBudget,
+        name: RouteName.addBudget,
+        builder: (context, state) => const AddBudgetScreen(),
+      ),
     ],
 
     // Error Route

@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracker/core/models/transaction_model.dart';
 import 'package:expense_tracker/core/repository/base/i_trasaction_repository.dart';
+import 'package:expense_tracker/core/repository/budget_repository.dart';
 import 'package:expense_tracker/core/utils/constant.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class TransactionRepository implements ITransactionRepository {
@@ -11,6 +13,7 @@ class TransactionRepository implements ITransactionRepository {
       FirebaseFirestore.instance.collection('transactions');
   final CollectionReference _accountsCollection =
       FirebaseFirestore.instance.collection('accounts');
+  final BudgetRepository _budgetRepository = BudgetRepository();
 
   @override
   Future<Map<String, int>> getTransactionCounts(String userId) async {
@@ -40,6 +43,16 @@ class TransactionRepository implements ITransactionRepository {
       await ref.update({"id": ref.id});
       await _updateAccountBalanceOnAdd(
           transaction.userId, transaction.amount, transaction.type);
+
+      // Sync budget if this is an expense with a category
+      if (transaction.type == TransactionType.expense &&
+          transaction.category != null) {
+        await _syncBudgetSpent(
+          transaction.category!.id,
+          transaction.dateTime.month,
+          transaction.dateTime.year,
+        );
+      }
     } catch (e) {
       print('Error adding transaction: $e');
       rethrow;
@@ -58,6 +71,16 @@ class TransactionRepository implements ITransactionRepository {
       await _transactionsCollection.doc(transaction.id).delete();
       await _updateAccountBalanceOnDelete(
           transaction.userId, transaction.amount, transaction.type);
+
+      // Sync budget if this was an expense with a category
+      if (transaction.type == TransactionType.expense &&
+          transaction.category != null) {
+        await _syncBudgetSpent(
+          transaction.category!.id,
+          transaction.dateTime.month,
+          transaction.dateTime.year,
+        );
+      }
     } catch (e) {
       print('Error deleting transaction: $e');
       rethrow;
@@ -85,6 +108,31 @@ class TransactionRepository implements ITransactionRepository {
 
       await transactionRef.update(newTransaction.toJson());
       await _adjustAccountBalanceOnUpdate(oldTransaction, newTransaction);
+
+      // Sync budget for the new category/period
+      if (newTransaction.type == TransactionType.expense &&
+          newTransaction.category != null) {
+        await _syncBudgetSpent(
+          newTransaction.category!.id,
+          newTransaction.dateTime.month,
+          newTransaction.dateTime.year,
+        );
+      }
+
+      // Also sync the old category/period if it changed
+      final oldCatId = oldTransaction.category?.id;
+      final newCatId = newTransaction.category?.id;
+      if (oldTransaction.type == TransactionType.expense &&
+          oldCatId != null &&
+          (oldCatId != newCatId ||
+              oldTransaction.dateTime.month != newTransaction.dateTime.month ||
+              oldTransaction.dateTime.year != newTransaction.dateTime.year)) {
+        await _syncBudgetSpent(
+          oldCatId,
+          oldTransaction.dateTime.month,
+          oldTransaction.dateTime.year,
+        );
+      }
     } catch (e) {
       print('Error updating transaction: $e');
       rethrow;
@@ -193,6 +241,50 @@ class TransactionRepository implements ITransactionRepository {
     } catch (e) {
       print('Error updating account balance: $e');
       rethrow;
+    }
+  }
+
+  // =========================
+  // Budget Sync Helper
+  // =========================
+
+  /// Recalculates the total expense for [categoryId] in [month]/[year]
+  /// directly from Firestore and pushes the result to the matching budget
+  /// via [BudgetRepository.updateSpentAmount].
+  Future<void> _syncBudgetSpent(
+    String categoryId,
+    int month,
+    int year,
+  ) async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId == null) return;
+
+      // Find the matching budget document
+      final budget = await _budgetRepository.getBudgetByCategory(
+        categoryId,
+        month,
+        year,
+      );
+      if (budget == null) return; // No budget set for this category/period
+
+      // Sum all expense transactions for this category/month/year from Firestore
+      final snapshot = await _transactionsCollection
+          .where('userId', isEqualTo: userId)
+          .where('type', isEqualTo: 'expense')
+          .where('category.id', isEqualTo: categoryId)
+          .get();
+
+      final totalSpent = snapshot.docs
+          .map((doc) =>
+              TransactionModel.fromJson(doc.data() as Map<String, dynamic>))
+          .where((t) => t.dateTime.month == month && t.dateTime.year == year)
+          .fold(0.0, (sum, t) => sum + t.amount);
+
+      await _budgetRepository.updateSpentAmount(budget.id, totalSpent);
+    } catch (e) {
+      // Best-effort — don't block the transaction flow
+      print('Budget sync error: $e');
     }
   }
 

@@ -93,30 +93,6 @@ class _ChartToggleItem extends StatelessWidget {
                       : colorScheme.onSurfaceVariant,
             ),
           ),
-
-          // Premium lock badge — top-right corner of the button
-          if (isLocked)
-            Positioned(
-              top: -4,
-              right: -4,
-              child: Container(
-                width: 14,
-                height: 14,
-                decoration: BoxDecoration(
-                  color: colorScheme.primary,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: colorScheme.surface,
-                    width: 1.5,
-                  ),
-                ),
-                child: Icon(
-                  Icons.lock_rounded,
-                  size: 8,
-                  color: colorScheme.onPrimary,
-                ),
-              ),
-            ),
         ],
       ),
     );

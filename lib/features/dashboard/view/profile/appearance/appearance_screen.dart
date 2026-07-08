@@ -1,3 +1,4 @@
+import 'package:expense_tracker/core/components/app_app_bar.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/appearance/controller/currency_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/appearance/widgets/color_scheme_tile.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/appearance/widgets/font_tile.dart';
@@ -13,15 +14,7 @@ class AppearanceScreen extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        centerTitle: false,
-        title: const Text(
-          "Appearance",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
+      appBar: AppAppBar.title('Appearance', showBack: true),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [

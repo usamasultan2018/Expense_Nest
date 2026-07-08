@@ -1,3 +1,4 @@
+import 'package:expense_tracker/core/components/app_app_bar.dart';
 import 'package:expense_tracker/core/components/app_toggle.dart';
 import 'package:expense_tracker/core/utils/constant.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/categories/controller/category_controller.dart';
@@ -12,16 +13,9 @@ class CategoriesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        centerTitle: false,
-        title: const Text(
-          "Categories",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+      appBar: AppAppBar.title(
+        'Categories',
+        showBack: true,
       ),
       body: SafeArea(
         child: Padding(

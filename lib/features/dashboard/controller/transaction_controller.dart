@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:expense_tracker/core/models/category_model.dart';
 import 'package:expense_tracker/core/models/transaction_model.dart';
 import 'package:expense_tracker/core/repository/transaction_repository.dart';
+import 'package:expense_tracker/core/service/notification_service.dart';
 import 'package:expense_tracker/core/utils/constant.dart';
 import 'package:expense_tracker/core/utils/date.dart';
 import 'package:expense_tracker/core/utils/snackbar_util.dart';
@@ -25,6 +26,17 @@ class TransactionController extends ChangeNotifier {
 
   final TransactionRepository transactionRepository;
   BudgetController? _budgetController;
+
+  /// User info for personalised daily reminder. Set via [setUserInfo].
+  String _userName = 'there';
+  DateTime? _accountCreatedAt;
+
+  /// Call this after the user profile is loaded so the reminder can be
+  /// personalised and correctly gated to the account-creation date.
+  void setUserInfo({required String name, required DateTime createdAt}) {
+    _userName = name.isNotEmpty ? name : 'there';
+    _accountCreatedAt = createdAt;
+  }
 
   /// Called by ProxyProvider when BudgetController is rebuilt.
   void updateBudgetController(BudgetController budgetController) {
@@ -126,6 +138,27 @@ class TransactionController extends ChangeNotifier {
     try {
       _allTransactions = await transactionRepository.getTransactions(uid);
       await _processRecurringTransactions(uid);
+
+      // ── Daily reminder logic ─────────────────────────────
+      // Check whether the user has logged any transaction TODAY.
+      final today = DateTime.now();
+      final hasTransactionToday = _allTransactions.any((t) {
+        final d = t.dateTime;
+        return d.year == today.year &&
+            d.month == today.month &&
+            d.day == today.day;
+      });
+
+      if (hasTransactionToday) {
+        // User already logged something today — no need to nag them.
+        await NotificationService.instance.cancelDailyReminder();
+      } else {
+        // Schedule (or reschedule) the reminder for 9 PM today.
+        await NotificationService.instance.scheduleDailyReminder(
+          userName: _userName,
+          accountCreatedAt: _accountCreatedAt,
+        );
+      }
     } catch (e) {
       _error = e.toString();
       _allTransactions = [];
@@ -262,6 +295,10 @@ class TransactionController extends ChangeNotifier {
       );
 
       await transactionRepository.addTransaction(transaction);
+
+      // User logged a transaction — cancel today's daily reminder immediately.
+      await NotificationService.instance.cancelDailyReminder();
+
       resetForm();
       await loadTransactions();
       await _budgetController?.loadBudgets(); // refresh budget UI

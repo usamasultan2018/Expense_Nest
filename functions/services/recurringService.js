@@ -79,6 +79,7 @@ async function processRecurringTransactions() {
         const user = userDoc.data();
 
         await sendRecurringNotification(
+            item.userId,
             user.fcmToken,
             item.category,
             item.amount,

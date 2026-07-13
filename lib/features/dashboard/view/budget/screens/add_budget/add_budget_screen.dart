@@ -1,15 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expense_tracker/app/routes/route_name.dart';
 import 'package:expense_tracker/core/models/budget_model.dart';
 import 'package:expense_tracker/core/models/category_model.dart';
 import 'package:expense_tracker/features/dashboard/view/budget/controller/budget_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/appearance/controller/currency_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/categories/data/default_categories.dart';
-import 'package:expense_tracker/features/dashboard/view/profile/controller/user_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'widgets/alert_threshold_card.dart';
@@ -166,14 +163,6 @@ class _AddBudgetScreenState extends State<AddBudgetScreen> {
                         enabled: _canSave,
                         isLoading: budgetController.isLoading,
                         onPressed: () async {
-                          // Gate behind premium
-                          final userController =
-                              context.read<UserController>();
-                          if (userController.currentUser?.isPremium != true) {
-                            context.push(RouteName.subscription);
-                            return;
-                          }
-
                           final controller = context.read<BudgetController>();
 
                           final now = DateTime.now();
@@ -345,14 +334,14 @@ class _CreateBudgetButton extends StatelessWidget {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         ),
-        onPressed: (enabled && !isLoading) ? onPressed : null,
+        onPressed: enabled ? onPressed : null,
         child: isLoading
-            ? SizedBox(
+            ? const SizedBox(
                 width: 22,
                 height: 22,
                 child: CircularProgressIndicator(
                   strokeWidth: 2.5,
-                  color: colorScheme.onPrimary,
+                  color: Colors.white,
                 ),
               )
             : const Text(

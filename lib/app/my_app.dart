@@ -1,10 +1,10 @@
-import 'package:expense_tracker/core/repository/budget_repository.dart';
 import 'package:expense_tracker/core/repository/transaction_repository.dart';
 import 'package:expense_tracker/core/theme/app_theme.dart';
 import 'package:expense_tracker/app/routes/app_router.dart';
 import 'package:expense_tracker/features/dashboard/controller/transaction_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/bottom_nav/controller/bottom_nav_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/budget/controller/budget_controller.dart';
+import 'package:expense_tracker/features/dashboard/view/notifications/controller/notification_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/appearance/controller/currency_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/categories/controller/category_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/controller/user_controller.dart';
@@ -29,13 +29,26 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => BudgetController()..loadBudgets(),
         ),
-        ChangeNotifierProxyProvider<BudgetController, TransactionController>(
+        ChangeNotifierProxyProvider2<BudgetController, UserController,
+            TransactionController>(
           create: (context) => TransactionController(
             transactionRepository: _transactionRepository,
             budgetController: context.read<BudgetController>(),
           ),
-          update: (context, budgetController, previous) =>
-              previous!..updateBudgetController(budgetController),
+          update: (context, budgetController, userController, previous) {
+            final controller = previous!
+              ..updateBudgetController(budgetController);
+
+            // Pass user info for personalised daily reminder
+            final user = userController.currentUser;
+            if (user != null) {
+              controller.setUserInfo(
+                name: user.username,
+                createdAt: user.createdAt,
+              );
+            }
+            return controller;
+          },
         ),
         ChangeNotifierProvider(create: (_) => SettingController()..init()),
         ChangeNotifierProvider(create: (_) => CategoryController()),
@@ -52,6 +65,8 @@ class MyApp extends StatelessWidget {
                 userController: userController,
               ),
         ),
+        // Notification list — streams from Firestore in real-time
+        ChangeNotifierProvider(create: (_) => NotificationController()),
       ],
       child: Consumer<SettingController>(
         builder: (context, settingController, child) {

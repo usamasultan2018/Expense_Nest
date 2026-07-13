@@ -1,4 +1,5 @@
 import 'package:expense_tracker/app/app_config.dart';
+import 'package:expense_tracker/core/service/notification_service.dart';
 import 'package:expense_tracker/features/subscription/services/revenuecat_service.dart';
 import 'package:expense_tracker/firebase_options.dart';
 import 'package:expense_tracker/app/my_app.dart';
@@ -14,6 +15,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Initialise notification service (local + FCM)
+  await NotificationService.instance.initialize();
   
   runApp(const MyApp());
 }

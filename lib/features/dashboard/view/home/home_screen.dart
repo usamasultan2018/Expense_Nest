@@ -1,10 +1,13 @@
+import 'package:expense_tracker/app/routes/route_name.dart';
 import 'package:expense_tracker/core/components/app_app_bar.dart';
 import 'package:expense_tracker/features/dashboard/view/bottom_nav/controller/bottom_nav_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/home/widgets/balance_overview.dart';
 import 'package:expense_tracker/features/dashboard/view/home/widgets/recent_transactions.dart';
+import 'package:expense_tracker/features/dashboard/view/notifications/controller/notification_controller.dart';
 import 'package:expense_tracker/features/dashboard/view/profile/controller/user_controller.dart';
 import 'package:expense_tracker/features/subscription/widgets/premium_banner_card.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -29,7 +32,28 @@ class _HomeScreenState extends State<HomeScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: const AppAppBar.home(),
+      appBar: AppAppBar.home(
+        actions: [
+          Consumer<NotificationController>(
+            builder: (context, notifCtrl, _) {
+              return IconButton(
+                tooltip: 'Notifications',
+                onPressed: () => context.push(RouteName.notifications),
+                icon: Badge(
+                  isLabelVisible: notifCtrl.hasUnread,
+                  label: Text(
+                    notifCtrl.unreadCount > 99
+                        ? '99+'
+                        : '${notifCtrl.unreadCount}',
+                    style: const TextStyle(fontSize: 10),
+                  ),
+                  child: const Icon(Icons.notifications_outlined),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {

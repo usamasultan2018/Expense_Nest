@@ -14,6 +14,7 @@ import firebase_messaging
 import firebase_remote_config
 import firebase_storage
 import flutter_email_sender_method_channel
+import flutter_local_notifications
 import google_sign_in_ios
 import package_info_plus
 import purchases_flutter
@@ -32,6 +33,7 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   FirebaseRemoteConfigPlugin.register(with: registry.registrar(forPlugin: "FirebaseRemoteConfigPlugin"))
   FLTFirebaseStoragePlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseStoragePlugin"))
   FlutterEmailSenderPlugin.register(with: registry.registrar(forPlugin: "FlutterEmailSenderPlugin"))
+  FlutterLocalNotificationsPlugin.register(with: registry.registrar(forPlugin: "FlutterLocalNotificationsPlugin"))
   FLTGoogleSignInPlugin.register(with: registry.registrar(forPlugin: "FLTGoogleSignInPlugin"))
   FPPPackageInfoPlusPlugin.register(with: registry.registrar(forPlugin: "FPPPackageInfoPlusPlugin"))
   PurchasesFlutterPlugin.register(with: registry.registrar(forPlugin: "PurchasesFlutterPlugin"))

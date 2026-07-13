@@ -68,6 +68,8 @@ dependencies:
   fl_chart: ^1.2.0
   purchases_flutter: ^10.3.0
   flutter_dotenv: ^6.0.1
+  flutter_local_notifications: ^18.0.0
+  timezone: ^0.10.0
   
 
   

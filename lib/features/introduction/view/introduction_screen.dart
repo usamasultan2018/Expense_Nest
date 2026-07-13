@@ -1,4 +1,3 @@
-import 'package:expense_tracker/core/components/custom_button.dart';
 import 'package:expense_tracker/core/models/onboarding.dart';
 import 'package:expense_tracker/features/introduction/view/widgets/custom_indicator.dart';
 import 'package:expense_tracker/features/introduction/view/widgets/onboarding_card.dart';
@@ -14,7 +13,8 @@ class IntroductionScreen extends StatefulWidget {
 }
 
 class _IntroductionScreenState extends State<IntroductionScreen> {
-  final PageController pageController = PageController(initialPage: 0);
+  final PageController pageController = PageController();
+
   final List<Onboarding> onboardingData = [
     Onboarding(
       title1: 'Track spending instantly',
@@ -44,69 +44,118 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
     super.dispose();
   }
 
+  void _next() {
+    if (currentIndex < onboardingData.length - 1) {
+      pageController.nextPage(
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      context.pushNamed(RouteName.signup);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isLast = currentIndex == onboardingData.length - 1;
+
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 30),
-              Expanded(
-                flex: 2,
-                child: PageView.builder(
-                  itemCount: onboardingData.length,
-                  controller: pageController,
-                  onPageChanged: (value) {
-                    setState(() {
-                      currentIndex = value;
-                    });
-                  },
-                  itemBuilder: (context, index) {
-                    return OnBoardingCard(
-                      index: index,
-                      onboarding: onboardingData[index],
-                    );
-                  },
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 28),
+        child: Column(
+          children: [
+            // Skip
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () => context.pushNamed(RouteName.signup),
+                child: Text(
+                  'Skip',
+                  style: TextStyle(
+                    color: colorScheme.onSurface.withValues(alpha: 0.4),
+                    fontSize: 14,
+                  ),
                 ),
               ),
-              CustomIndicator(
-                position: currentIndex,
-                dotsCount: onboardingData.length,
+            ),
+
+            // Pages
+            Expanded(
+              child: PageView.builder(
+                controller: pageController,
+                itemCount: onboardingData.length,
+                onPageChanged: (v) => setState(() => currentIndex = v),
+                itemBuilder: (_, i) => OnBoardingCard(
+                  index: i,
+                  onboarding: onboardingData[i],
+                ),
               ),
-              const SizedBox(height: 20),
-              RoundButton(
-                  title: "Sign Up",
-                  onPressed: () {
-                    context.pushNamed(RouteName.signup);
-                  }),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Already have an account?",
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.7)),
+            ),
+
+            // Dots
+            CustomIndicator(
+              position: currentIndex,
+              dotsCount: onboardingData.length,
+            ),
+
+            const SizedBox(height: 32),
+
+            // Next / Get Started
+            SizedBox(
+              width: double.infinity,
+              height: 52,
+              child: FilledButton(
+                onPressed: _next,
+                style: FilledButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero,
+                ),
+                child: Text(
+                  isLast ? 'Get Started' : 'Next',
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            // Log in
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Already have an account?',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: colorScheme.onSurface.withValues(alpha: 0.5),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => context.pushNamed(RouteName.login),
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: Text(
+                    'Log In',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.primary,
                     ),
-                    onPressed: () {
-                      context.pushNamed(RouteName.login);
-                    },
-                    child: const Text("Log In"),
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 12),
+          ],
         ),
       ),
     );

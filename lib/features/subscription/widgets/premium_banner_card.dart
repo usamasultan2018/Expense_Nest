@@ -16,8 +16,9 @@ class PremiumBannerCard extends StatelessWidget {
     if (controller.isLoading) return const SizedBox.shrink();
 
     // Hide if already premium
-    if (controller.currentUser?.isPremium == true)
+    if (controller.currentUser?.isPremium == true) {
       return const SizedBox.shrink();
+    }
 
     return InkWell(
       borderRadius: BorderRadius.circular(20),
